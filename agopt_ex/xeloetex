@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TEXFILE=$1
+JOBNAME=${TEXFILE%.tex}
+
+
+JOBNAME2=${JOBNAME/uebung/loesung}
+JOBNAME2=${JOBNAME2/Uebung/Loesung}
+JOBNAME2=${JOBNAME2/blatt/loesung}
+JOBNAME2=${JOBNAME2/Blatt/Loesung}
+JOBNAME2=${JOBNAME2/exercise/solution}
+JOBNAME2=${JOBNAME2/Exercise/Solution}
+JOBNAME2=${JOBNAME2/sheet/solution}
+JOBNAME2=${JOBNAME2/Sheet/Solution}
+
+# compile exercise sheet to $JOBNAME.pdf
+xelatex -interaction=nonstopmode -synctex=1 "$TEXFILE"
+if [ "$JOBNAME2" != "$JOBNAME" ]; then
+  # if jobnames differ, separately compile solution sheet
+  xelatex -interaction=nonstopmode -synctex=1 -jobname="$JOBNAME2" "$TEXFILE"
+fi

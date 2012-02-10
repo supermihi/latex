@@ -1,0 +1,6 @@
+This repository contains my personal LaTeX classes.
+
+* mh_basic.sty: Sets up fonts and language, works with both (pdf)LaTeX and XeTeX. Also defines some refformats for the prettyref package.
+* mh_math.sty: Loads my favourite math typesetting packages and defines a couple of useful commands.
+* mh_theorems.sty: Theorem environment definitions, uses the ntheorem package.
+* mh_tikz.sty: Some tikz definitions (not really useful yet).

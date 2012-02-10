@@ -1,0 +1,215 @@
+\documentclass[11pt,german,a4paper,parskip=half-]{scrartcl}
+% Übungsblatt erstellen: xelatex uebungX.tex
+% Lösungsblatt erstellen: xelatex -jobname loesungX uebungX.tex
+\usepackage{mh_basic}
+\usepackage{mh_math}
+\usepackage[modern]{agopt_ex}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{xspace}
+
+\renewcommand{\u}[1]{\ensuremath{\underline{#1}}} % für Vektoren in Hamacher-Schreibweise
+\hyphenation{equi-va-lent}
+%\usepackage{enumerate}
+\Sheetnumber{5}
+\Deadline{26.05.2011 13:45 Uhr, Erdgeschoss Geb. 48}
+\Lecture{PraMa: Lineare und Netzwerkoptimierung}
+\Semester{SS 2011}
+\Homepage{http://optimierung.mathematik.uni-kl.de/teaching/ss11/prama.html}
+\LectureShort{PraMa Optimierung}
+\Lecturer{Dr.\ Florentine Bunke, Jun.-Prof.\ Dr.\ Stefan Ruzika}
+\Operator{Michael Helmling, Florian Seipp}
+
+\sloppy
+\begin{document}
+\maketitle
+
+\begin{exercise}{4}
+ Gegeben sei das folgende lineare Programm:
+\[\text{(LP)}\quad\begin{array}{rcrcrcrcrcr}
+\min && 2x_{1} &+& 3x_{2} &+& 5x_{3} &+& 6x_{4} \\
+\text{s.t.} && x_{1} &+& 2x_{2} &+& 3x_{3} &+& x_{4} &\geq& 2\\
+&-& x_{1} &+& x_{2} &-& x_{3} &+& 3x_{4} &\leq& -3 \\
+&&&&& \multicolumn{4}{r}{x_{1},x_{2},x_{3},x_{4}}&\geq& 0
+\end{array}\]
+\begin{enumerate}
+ \item Stellen Sie das zu (LP) duale Problem (DLP) auf. Lösen Sie dieses mit einem Verfahren Ihrer Wahl (grafisch, Tableau, GLPK, Matlab).
+  Benutzen Sie dann den Satz vom komplementären Schlupf, um eine primale Optimallösung für (LP) zu finden.
+ \item Lösen Sie (LP) mit dem dualen Simplex (mit den Schlupfvariablen als Startbasis).
+\end{enumerate}
+{\it Hinweis:} Wenn Sie richtig rechnen, sollte in beiden Teilaufgaben das selbe Ergebnis herauskommen!
+\end{exercise}
+\begin{solution}
+ \begin{enumerate}
+  \item Zum Dualisieren kann man die 2. Ungleichung mit $(-1)$ multiplizieren, dann erhält man als duale Variablen $\pi_1, \pi_2 \geq 0$ und (DLP) ist
+\begin{align*}
+ \max\;&2\pi_1 + 3 \pi_2\\
+\st\quad&\pi_1+\pi_2 \leq 2\\
+&2\pi_1 -\pi_2 \leq 3\\
+&3 \pi_1 + \pi_2 \leq 5\\
+&\pi_1 - 3\pi_2 \leq 6\\
+&\u \pi \geq \u 0
+\end{align*}
+Die Optimallösung von (DLP) ist $\hat{\u{\pi}} = (0,2)^T$ mit Zielfunktionswert $6$. Also hat auch (LP) eine optimale Lösung $\hat{\u x}$ mit ZFW $6$. Diese bestimmen wir nun mit dem Satz vom komplementären
+Schlupf: $\hat{\u \pi}$ erfüllt nur die erste Ungleichung von (DLP) mit Gleichheit, also kann nur $\hat x_1 \neq 0$ sein. Da umgekehrt $\hat\pi_2 \neq 0$ ist, muss die zweite Ungleichung von (LP) mit Gleichheit
+erfüllt sein, also gilt $\hat x_1 = 3$ und die Optimallösung ist $\u{\hat x} = (3,0,0,0)$.
+\item Jetzt empfiehlt es sich, die erste Gleichung von (LP) mit $(-1)$ zu multiplizieren. Dann ist das Starttableau
+\[\begin{array}{rrrrrr|r}
+   2&3&5&6&0&0&0\\\hline
+   -1&-2&-3&-1&1&0&-2\\
+   -1&1&-1&3&0&1&-3
+  \end{array}\]
+und nach einer Pivotoperation (mit dem Element $(t_{2,1})$) erhalten wir das optimale Tableau
+\[\begin{array}{rrrrrr|r}
+   0&5&3&0&0&2&-6\\\hline
+   0&-3&-2&-4&1&-1&5\\
+   1&-1&1&-3&0&-1&3
+  \end{array}\]
+ \end{enumerate}
+\end{solution}
+
+
+\begin{exercise}{4}
+Sei $A \in \R^{m\times n}$ und $\u b \in \R^m$. Das \emph{Lemma von Farkas} besagt, dass genau eines der beiden
+folgenden Systeme eine Lösung ($\u x \in \R^n$ bzw. $\u y \in \R^m$) besitzt:
+\[ \text{(1):}\; A \u x = \u b,\; \u x \geq \u 0 \qquad \text{(2):}\;\u b^T \u y < 0,\; A^T \u y  \geq \u 0\]
+\begin{enumerate}
+ \item Beweisen Sie das Lemma von Farkas, indem Sie ein geeignetes LP aufstellen und den starken Dualitätssatz anwenden.
+ \item Finden Sie eine geometrische Interpretation des Lemmas. Verwenden Sie dazu folgende Definition: Seien $\u a^1,\dotsc, \u a^k \in \R^n$ gegeben,
+ dann heißt
+\[ \op{cone}(\u a^1,\dotsc,\u a^k) := \left\{ \sum_{i=0}^k \lambda_i \u a^i:\, \lambda_i \geq 0\text{ für }i=1,\dotsc,n\right\}\]
+der von $\u a^1,\dotsc,\u a^k$ aufgespannte \emph{Kegel}. Skizzieren Sie für $\u y \in \R^2$ ein Beispiel.\\
+{\it Hinweis:} Was bedeuten die beiden Aussagen für die Lage von $\u b$ zu den \emph{Spaltenvektoren} von $A$?
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+ \item Betrachte das Problem
+\begin{align*}
+ \text{(LP)}\quad\max\;&\u 0\ \u x\\
+\st\quad&A\u x  = \u b\\
+&\u x\geq \u 0
+\end{align*}
+mit dem dualen Problem
+\begin{align*}
+ \text{(DLP)}\quad\min\;&\u b^T\u y\\
+\st\quad&A^T\u y \geq \u 0
+\end{align*}
+Angenommen (1) ist lösbar, dann ist (LP) zulässig und (da die Zielfunktion immer $0$ ist) auch beschränkt, hat also eine Optimallösung mit ZFW $0$. Nach dem Dualitätssatz ist dann auch (DLP) optimal lösbar
+mit ZFW $0$, also existiert kein $\u y$ das (2) erfüllt.
+
+Sei umgekehrt (2) nicht lösbar. Damit ist $\u y = \u 0$ eine Optimallösung für (DLP). Nach dem Dualitätssatz hat dann auch (LP) eine Optimallösung, d.h. (1) ist lösbar.
+
+Wir haben also gezeigt: (1) lösbar $\Llra$ (2) nicht lösbar; mit anderen Worten: Genau eines der Systeme ist lösbar.
+\item Eine Lösung $\u x$ von (1) bedeutet, dass $\u b$ im durch die Spalten von $A$ aufgespannten Kegel liegt: $\u b = \sum_{i=1}^n x_i A_{•,i}$ mit $x_i \geq 0$ für $i=1,\dotsc,n$ ($\u x$ entspricht also
+dem $\u \lambda$ in der Definition des Kegels).
+
+Wenn umgekehrt (2) lösbar ist, gibt es eine Hyperebene, definiert durch $H_{\u y} := \{ \u z \in \R^m:\,  \u z^T \u y = 0\}$, die $\u b$ von den Spalten von $A$ trennt: $\u b$ liegt auf der einen Seite ($\u b^T\u y < 0$) und alle Spalten von $A$ auf der anderen ($(A^T \u y)_j = A_{•,j}^T \u y \geq 0$). Ein Bild für $n=4,m=2$:
+\begin{center}
+\begin{tikzpicture}[every node/.style={fill=red,draw,circle,inner sep=0mm,minimum size=1.5mm},scale=.8]
+
+ \draw[->] (-1,0) -- (5,0);
+ \draw[->] (0,-1) -- (0,5);
+ \node[fill=blue,label=left:{$\u b$}] at (-.5,3) {};
+ \node[label=right:{$A_{•,1}$}] at (1,4) {};
+ \node[label=right:{$A_{•,2}$}] at (1.3,1) {};
+ \node[label=right:{$A_{•,3}$}] at (3,1) {};
+ \node[label=right:{$A_{•,4}$}] at (2,-1) {};
+ \draw[thick,gray,dashed] (0.5,5) -- node[right,fill=none,draw=none] {$\u z^T \u y = 0$} (-.15, -1.5);
+\end{tikzpicture}\qquad
+\begin{tikzpicture}[every node/.style={fill=red,draw,circle,inner sep=0mm,minimum size=1.5mm},scale=.8]
+
+ \draw[->] (-1,0) -- (5,0);
+ \draw[->] (0,-1) -- (0,5);
+\draw[thick,gray,dashed] (0,0) -- (1.3,1) -- (4.3,2); 
+\node[fill=blue,label=right:{$\u b = 1\cdot A_{•,2} + 1\cdot A_{•,3}$}] at (4.3,2) {}; 
+ \node[label=right:{$A_{•,1}$}] at (1,4) {};
+ \node[label=right:{$A_{•,2}$}] at (1.3,1) {};
+ \node[label=right:{$A_{•,3}$}] at (3,1) {};
+ \node[label=right:{$A_{•,4}$}] at (2,-1) {};
+\end{tikzpicture}
+\end{center}
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}{4}
+Auch wenn der Simplex-Algorithmus in den meisten Fällen sehr schnell ist und deshalb auch in der Praxis eingesetzt wird, ist seine Worst-Case-Laufzeit exponentiell.
+Auf diesem und dem nächsten Übungsblatt soll dies anhand des sogenannten \emph{Klee-Minty-Würfels} gezeigt werden. Dabei handelt es sich um einen leicht verzerrten
+Hyperwürfel mit $2^n$ Eckpunkten, die im ungünstigsten Fall alle vom Simplex durchlaufen werden.
+
+Es sei $0 < \varepsilon < \frac12$ und $n \in \N$. Wir betrachten das LP
+\[\max\,\left\{x_n\,|\,\varepsilon x_{i-1} \leq x_i \leq 1-\varepsilon x_{i-1}\text{ für }i=1,\dotsc,n\text{ und } \u x \geq \u 0\right\}\tk\]
+wobei $x_0=1$ festgesetzt (keine Variable) ist. Beachten Sie, dass der zulässige Bereich bei $\varepsilon=0$ genau der Einheitswürfel wäre.
+\begin{enumerate}
+ \item Bringen Sie das LP in Standardform, indem Sie für die Ungleichungen auf der linken Seite Schlupfvariablen $r_i$, für die auf der rechten Seite Schlupfvariablen $s_i$ einführen.
+ \item Zeigen Sie, dass jede zulässige Basis alle $x_i$ und für jedes $i\in\{1,\dotsc,n\}$ entweder $r_i$ oder $s_i$ enthält. Ist das Problem degeneriert?\\
+{\it Hinweis:} Verwenden Sie, dass eine Variable, die nicht $0$ sein kann, in jeder Basis enthalten sein muss, und dass die Basis so viele Elemente wie das LP Zeilen haben muss.
+ \item Die vorherige Teilaufgabe zeigt, dass in jeder Basislösung $x$ jedes $x_i$ entweder den minimalen $(r_i=0)$ oder maximalen $(s_i=0)$ Wert annimmt und dass die Basis dadurch bereits
+vollständig definiert ist – es existiert also eine 1-zu-1-Beziehung zwischen den Basislösungen und den Teilmengen $L \subseteq N := \{1,\dotsc,n\}$ durch die Festlegung $i \in L \Llra s_i=0$. Wir
+erhalten dann für jedes solche $L$ durch
+\[J^L := \{x_1,\dotsc,x_n\} \cup \{r_i:\, i \in L\} \cup \{s_i:\, i \in N \setminus L\}\]
+eine zulässige Basis. Sei $x^L$ die zugehörige Basislösung. Zeigen Sie, dass für $L, L' \subseteq N$ mit $n \in L$ und $n \notin L'$ gilt: $x_n^{L'} < x_n^L$, d.h. dass jede Basis, die $r_n$ enthält,
+einen echt größeren Zielfunktionswert hat als alle Basen, die $r_n$ nicht enthalten. Zeigen Sie weiter, dass für $L' \definedAs L\setminus\{n\}$ gilt: $x_n^{L'} = 1-x_n^L$.
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\begin{enumerate}
+ \item Standardform:
+\begin{align*}
+ -\min\;&-x_n\\
+\st\quad&x_1 + s_1 = 1-\varepsilon\\
+&x_1-r_1 = \varepsilon\\
+&\varepsilon x_{i-1} + x_i + s_i = 1&i=2,\dotsc,n\\
+&-\varepsilon x_{i-1} + x_i - r_i = 0&i=2,\dotsc,n\\
+&r_i,s_i \geq 0&i=1,\dotsc,n
+\end{align*}
+\item Wir zeigen zunächst per Induktion, dass alle $x_i>0$ sind. Induktionsanfang ($n=1$): $x_1 > \varepsilon x_0 = \varepsilon > 0$. Induktionsschluss ($n-1\rightarrow n$):
+$x_n$ erfüllt $\varepsilon x_{n-1} \leq x_n$, also $x_n > 0$ da $\varepsilon >0$ und $x_{n-1} > 0$ nach Induktion.
+
+Nun zeigen wir (ohne Induktion), dass für kein $i$ sowohl $r_i=0$ als auch $s_i=0$ sein kann. Für $i=1$: Falls $s_1=r_1=0$ lassen sich die ersten zwei Gleichungen in der Standardform zusammenfassen zu
+$\varepsilon = 1-\varepsilon$, was wegen $\varepsilon < \frac12$ ein Widerspruch ist. Für $i>1$ kann man unter der Annahme $s_i=r_i=0$ analog die dritte und vierte Gleichung für dieses $i$ zusammenfassen
+und erhält $1-\varepsilon x_{i-1} = \varepsilon x_{i-1}$ bzw. $\frac12 = \varepsilon x_{i-1}$, was wegen $\varepsilon < \frac12$ und $x_{i-1} < 1$ (was offensichtlich gilt) ein Widerspruch ist.
+Also sind alle $x_i$ und jeweils mindestens eines von $\{r_i,s_i\}$ echt größer als $0$. Da das LP $2n$ Nebenbedingungen hat, enthält jede Basis $2n$ Variablen, also können auch für kein $i$ sowohl 
+$r_i$ als auch $s_i$ in der Basis enthalten sein $\folgt$ jede Basis enthält alle $x_i$ und \emph{genau} eine der Variablen $\{r_i,s_i\}$ für jedes $i=1,\dotsc,n$. Das Problem ist nicht degeneriert: wir haben
+gezeigt dass alle Basisvariablen $>0$ sein müssen.
+\item Sei $n \in L \folgt r^L_n > 0$ und $s^L_n = 0 \folgt x_n^L = 1-\underbrace{\varepsilon x_{n-1}^L}_{<\frac12} > \frac12$. (1)\\
+Sei $n \notin L' \folgt r_n^{L'} = 0$ und $s_n^{L'} > 0 \folgt x_n^{L'} = \underbrace{\varepsilon x_{n-1}^{L'}}_{<\frac12} < \frac12$. (2)\\
+$\folgt x_n^{L'} < x_n^{L}$.
+
+Sei nun $L' = L\setminus \{n\}$. Dann ist
+\[x_n^{L'} \stackrel{\text{(2)}}{=} \varepsilon x_{n-1}^{L'} = \varepsilon x_{n-1}^L \stackrel{\text{(1)}}{=} 1-x_n^L\tk\]
+wobei die mittlere Gleichung gilt da $L$ und $L'$ eingeschränkt auf $\{1,\dotsc,n-1\}$ übereinstimmen.
+
+\end{enumerate}
+\end{solution}
+
+\lstset{basicstyle=\small\ttfamily,keywordstyle=\bfseries,frame=single,language=Matlab,numbers=left}
+\begin{exercise}[Praktische Aufgabe]{4}
+\begin{enumerate}
+ \item 
+Implementieren Sie eine Matlab-/Octave-Funktion
+\begin{center}\lstinline!function [A_Ph1, b_Ph1, c_Ph1, B_Ph1 ] = InitPhase1 (A, b, c)!\end{center}
+die die Eingabedaten eines LP in Standardform so transformiert (also ggf. künstliche Variablen einfügt, die Zielfunktion ersetzt etc.), dass Phase 1 des Simplex direkt angewendet werden kann. Dabei ist ${\tt B\_Ph1} \in \N^m$  der Indexvektor der Startbasis
+für Phase 1.
+\item Benutzen Sie Ihre bisherige Programme, um eine Funktion
+\begin{center}\lstinline!function [EndTab, x_opt, z_opt] = TwoPhaseMethod(A,b,c, rule)!\end{center}
+zu implementieren, die jedes beliebige LP in Standardform löst. Der Parameter \lstinline!rule! soll sich so verhalten wie zuvor. Das Verhalten bei unbeschränkten LPs soll dem der Funktion
+\lstinline!simplex! auf dem letzten Blatt entsprechen. Ist das LP unzulässig, soll \lstinline!x_opt = z_opt = []! gelten.\\
+{\it Hinweis:} Ändern Sie vorher Ihre Funktion \lstinline!simplex! so ab, dass auch die optimale Basis \lstinline!B_opt! ausgegeben wird.
+\end{enumerate}
+
+\end{exercise}
+
+\begin{solution}
+\lstset{basicstyle=\tiny\ttfamily}
+ \begin{enumerate}
+  \item~\hfill \lstinputlisting{InitPhase1.m}
+  \item~\hfill \lstinputlisting{TwoPhaseMethod.m}
+ \end{enumerate}
+
+\end{solution}
+
+
+\end{document}

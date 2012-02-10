@@ -1,0 +1,77 @@
+%% mh_basic -- basic tex setup (fonts, encoding, XeTeX support) by Michael Helmling.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mh_basic}
+
+\RequirePackage{ifxetex}
+\RequirePackage{ifthen}
+
+\newif\ifgerman
+\germanfalse % default: english texts
+\DeclareOption{german}{
+  \germantrue
+}
+\DeclareOption{english}{
+  \germanfalse
+}
+\ProcessOptions\relax
+\ifxetex
+  \RequirePackage{amsfonts,amssymb}
+  \RequirePackage{euler}
+  \RequirePackage{xltxtra}
+  \RequirePackage{xunicode}
+
+  \RequirePackage{polyglossia}
+ % \usepackage{fontspec}
+  \defaultfontfeatures{Mapping=tex-text} % damit -- und --- funktionieren
+
+  \setromanfont[Numbers=Proportional]{Linux Libertine O}
+  \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
+  \ifgerman
+	  \setdefaultlanguage{german}
+  \else
+	   \setdefaultlanguage[variant=american]{english}
+  \fi
+  \usepackage[xetex,colorlinks=false,plainpages=false]{hyperref}
+  %\usepackage[math-style=TeX]{unicode-math}
+  %\setmathfont{Asana-Math.otf}
+\else
+  \ifgerman
+  	\usepackage[ngerman]{babel}
+  \else
+  	\usepackage[american]{babel}
+  \fi
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage{libertine}
+%  \RequirePackage[colorlinks=false,plainpages=false]{hyperref}
+  %\usepackage{euler}
+\fi
+
+% references (package prettyref)
+\RequirePackage{prettyref}
+\newrefformat{eq}{\textup{(\ref{#1})}}
+\newrefformat{def}{Definition~\ref{#1}}
+\newrefformat{lemma}{Lemma~\ref{#1}}
+\ifgerman
+ 	\newrefformat{alg}{Algorithmus~\ref{#1}}
+ 	\newrefformat{fig}{Abbildung~\ref{#1}}
+ 	\newrefformat{rem}{Bemerkung~\ref{#1}}
+ 	\newrefformat{example}{Beispiel~\ref{#1}}
+ 	\newrefformat{chapter}{Kapitel~\ref{#1}}
+ 	\newrefformat{sec}{Abschnitt~\ref{#1}}
+ 	\newrefformat{thm}{Satz~\ref{#1}}
+ 	\newrefformat{obs}{Beobachtung~\ref{#1}}
+ 	\newrefformat{cor}{Korollar~\ref{#1}}
+ 	\newrefformat{line}{Zeile~\ref{#1}}
+\else
+	\newrefformat{alg}{Algorithm~\ref{#1}}
+	\newrefformat{fig}{Figure~\ref{#1}}
+	\newrefformat{rem}{Remark~\ref{#1}}
+	\newrefformat{example}{Example~\ref{#1}}
+	\newrefformat{chapter}{Chapter~\ref{#1}}
+	\newrefformat{sec}{Section~\ref{#1}}
+	\newrefformat{thm}{Theorem~\ref{#1}}
+	\newrefformat{obs}{Observation~\ref{#1}}
+	\newrefformat{cor}{Corollary~\ref{#1}}
+	\newrefformat{line}{Line~\ref{#1}}
+\fi

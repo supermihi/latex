@@ -1,0 +1,588 @@
+% \iffalse meta-comment
+%
+% Copyright (c) 2011-2012 by Michael Helmling
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any later
+% version. The latest version of this license is in:
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of
+% LaTeX version 2011/06/27 or later.
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}[2011/06/27]
+%<package>\ProvidesPackage{agopt_ex}
+%<package>  [ 2012/01/16 v0.3 exercise sheets for optimization research group ]
+%
+%<*driver>
+\documentclass{ltxdoc}
+\setlength{\parindent}{0pt}
+\usepackage{sectsty}
+\allsectionsfont{\sffamily}
+\usepackage[utf8]{inputenc}
+\usepackage[english,classic,solution]{agopt_ex}
+\providecommand*\pkg[1]{\textsf{#1}}
+\providecommand*\env[1]{\texttt{#1}}
+\providecommand*\mode[1]{\texttt{[#1]}}
+\renewcommand{\nobreakspace}{\nobreak\ }
+\Lecture{Using the \pkg{agopt\_ex} package}
+\Semester{Winter 2012}
+\Deadline{16.01.2012}
+\IssueDate{16.01.2012}
+\Lecturer{N.\,N.}
+\Operator{Michael Helmling}
+\renewcommand{\exercisesheettext}{Package Documentation}
+\renewcommand{\withsolutiontext}{plus code}
+\LectureShort{The \pkg{agopt\_ex} Package}
+
+\cfoot{Documentation}
+
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+\DocInput{agopt_ex.dtx}
+\end{document}
+%</driver>
+% \fi
+
+% \CheckSum{0}
+% \changes{v0.3}{2012/01/16}{A first complete proof-read, again lots of small changes}
+% \changes{v0.2.2}{2012/01/11}{Improve on AG logo}
+% \changes{v0.2.1}{2012/01/10}{Add font definitions}
+% \changes{v0.2}{2012/01/06}{Largely rewritten}
+% \changes{v0.1}{2011/12/22}{Initial version}
+% \GetFileInfo{agopt_ex.sty}
+
+% \title{The \textsf{agopt\_ex} package\thanks{This document
+% corresponds to \textsf{agopt\_ex}~\fileversion,
+% dated~\filedate.}}
+% \author{ Michael Helmling \\ \texttt{helmling@mathematik.uni-kl.de}}
+%
+
+% \maketitle
+% \begin{abstract}
+%   The \pkg{agopt\_ex} package is an aid to generate exercise sheets for the Optimization Research Group, TU Kai\-sers\-lau\-tern.
+% \end{abstract}
+%
+% The \pkg{agopt\_ex} package defines:
+% \begin{itemize}
+%   \item environments for exercises and solutions,
+%   \item two layout variants (|classic| and |modern|, respectively,
+%       the latter containig a colored AG logo); includes a nice footer and predefined macros for a ``in-class'' and ``take-home'' sections,
+%   \item various ways to decide whether or not the solutions should be included in the output, including an \emph{auto-magic}$\textsuperscript{\textregistered}$ mechanism,
+%   \item a number of useful features and macros.
+% \end{itemize}
+%
+% This package documentation shows how to use the package by describing all package options and (re)defined macros. The corresponding source
+% code snippets are included at the appropriate place for easy customization (and, of course, for instructional reasons).
+%
+% \section{Package Loading}
+%
+%
+% \subsection{Package Options}\label{sec:options}
+%
+% \subsubsection*{Language Settings}
+%  \begin{macro}{german}
+%  \begin{macro}{english}
+%  Define the language of the exercise sheet. The default is \texttt{german}. This option influences
+%  various textual elements of the exercise sheet.
+%    \begin{macrocode}
+\def\ublanguage{german}
+\DeclareOption{german}{
+  \def\ublanguage{german}
+}
+\DeclareOption{english}{
+  \def\ublanguage{english}
+}
+%    \end{macrocode}
+%  \end{macro}
+%  \end{macro}
+%
+% \subsubsection*{Toggle Solution Output}
+%  \begin{macro}{solution}
+%  \begin{macro}{nosolution}
+%  These options define whether or not solutions should be included in the output document or not.
+%  If neither option is present, \emph{auto-magic} detection is enabled.
+%
+%  With \emph{auto-magic} detection, the solutions are output if and only if the jobname contains the string
+% ``olution'' (in |english| mode) or ``oesung'' (in |german| mode). Note that this is
+% not a typo; the first letter is omitted in order to be case insensitive. If you need a different detection string,
+% redefine the |\solutionfilename| macro.
+% 
+% The jobname is normally the name of the source file without the |.tex| extension, but can
+% be overridden in (pdf)latex, xelatex etc.\ with the |-jobname=NAME| option. This allows
+% for a convenient workflow: Create a single |.tex| file, e.\,g.\ |exercise1.tex|, then run
+%
+% \begin{itemize}
+% \item \texttt{xelatex exercise1}
+% \item \texttt{xelatex -jobname=solution1 exercise1}
+% \end{itemize}
+% (substitude \texttt{xelatex} with your favourite \LaTeX{} engine, e.\,g.\ \texttt{pdflatex}, \texttt{latex}, \dots)
+% in order to generate \texttt{exercise1.pdf} (without solutions) and \texttt{solution1.pdf} (including solutions).
+% The bash script |xeloetex| distributed together with this package shows how to merge both steps into one command
+% that can be used as compile command in your favourite \TeX{} editor.
+%    \begin{macrocode}
+\newif\ifautoshowanswers
+\newif\ifshowanswers
+\showanswersfalse
+\autoshowanswerstrue
+\DeclareOption{solution}{\showanswerstrue\autoshowanswersfalse}
+\DeclareOption{nosolution}{\showanswersfalse\autoshowanswersfalse}
+%    \end{macrocode}
+%  \end{macro}
+%  \end{macro}
+%
+% \subsubsection*{Choose Layout}
+%  \begin{macro}{classic}
+%  \begin{macro}{modern}
+%  Defines the style of the exercise sheet. \texttt{modern} uses a colored graphical logo of the AG in the title
+% (as in this document). \texttt{classic} resembles the classical exercise sheet style which hasn't changed for the
+% past 30 years.
+%    \begin{macrocode}
+\newif\ifmodern
+\DeclareOption{modern}{\moderntrue}
+\DeclareOption{classic}{\modernfalse}
+\moderntrue % the default
+%    \end{macrocode}
+%  \end{macro}
+%  \end{macro}
+% This closes the options section.
+%    \begin{macrocode}
+\ProcessOptions\relax
+%    \end{macrocode}
+% \subsection{Fonts}
+% The package configures \TeX{} to use fonts of the Linux Libertine \ifxetex\char"E040\else\libertineGlyph{uniE040}\fi{} family and the Euler math font. The implementation
+% differs for |(pdf)latex| and |xelatex|. For this package to work with |xelatex|, you need to have the Linux Libertine
+% and Linux Biolinum OpenType fonts installed.
+%    \begin{macrocode}
+\RequirePackage{ifxetex}
+\RequirePackage{ifthen}
+\ifxetex
+  \RequirePackage{amsfonts,amssymb}
+  \RequirePackage{euler}
+  \RequirePackage{xltxtra}
+  \RequirePackage{xunicode}
+  \RequirePackage{polyglossia}
+  \defaultfontfeatures{Mapping=tex-text} % needed for -- and --- to work
+  \setromanfont[Numbers=Proportional]{Linux Libertine O}
+  \setsansfont[Numbers=Proportional]{Linux Biolinum O}
+  \ifthenelse{\equal{\ublanguage}{german}}{
+	  \setdefaultlanguage{german}
+  }{
+	   \setdefaultlanguage[variant=american]{english}
+	}
+\else
+  \ifthenelse{\equal{\ublanguage}{german}}{
+  	\usepackage[ngerman]{babel}
+  }{
+  	\usepackage[american]{babel}
+  }
+  \RequirePackage{libertine}
+  \RequirePackage[T1]{fontenc}
+
+  \usepackage{euler}
+\fi
+%    \end{macrocode} 
+% \subsection{Required Packages}
+% The following packages are needed by \pkg{agopt\_ex}:
+%    \begin{macrocode}
+\RequirePackage{amsmath}
+\RequirePackage{geometry}
+\RequirePackage{hyperref}
+\RequirePackage{fancyhdr}
+\RequirePackage{zref-totpages}
+\RequirePackage{prettyref}
+\RequirePackage{url}
+\RequirePackage{xspace}
+%    \end{macrocode}
+%
+% \section{Providing Lecture and Exercise Parameters}
+%
+%
+% The following lecture and tutorial data should be set in every exercise sheet.
+%  \begin{macro}{\Lecture}
+%   Specify the name of the lecture (e.\,g. ``Praktische Mathematik: Lineare und Netzwerkoptimierung'').
+%    \begin{macrocode}
+ \def\Lecture#1{\def\lecture{#1}}
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\LectureShort}
+%   Specify a short name of the lecture, used in the footer (e.\,g. ``PraMa Optimierung'').
+% \begin{macrocode}
+\def\LectureShort#1{\def\lectureshort{#1}}
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Sheetnumber}
+%   Specify the exercise sheet number.
+% \begin{macrocode}
+\def\Sheetnumber#1{\def\sheetnumber{#1}}
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Deadline}
+%   Specify the deadline for turn-in exercises.
+% \begin{macrocode}
+\def\Deadline#1{\def\deadline{#1}} 
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\IssueDate}
+%   Specify the date when the sheet was issued.
+% \begin{macrocode}
+\def\IssueDate#1{\def\issuedate{#1}} 
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Lecturer}
+%   Specify the name of the lecturer.
+% \begin{macrocode}
+\def\Lecturer#1{\def\lecturer{#1}} 
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Operator}
+%   Specify the name of the exercise operator.
+% \begin{macrocode}
+\def\Operator#1{\def\operator{#1}} 
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Semester}
+%   Specify the current semester or term (e.\,g. ``winter term 2012'').
+% \begin{macrocode}
+\def\Semester#1{\def\semester{#1}}
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Homepage}
+%  This optional parameter defines a homepage for the exercises. If it is
+%  used, the document output will contain a note where to download exercises.
+%    \begin{macrocode}
+\def\Homepage#1{\def\homepage{#1}}
+%    \end{macrocode}
+%  \end{macro}
+%  \begin{macro}{\Inclassdate}
+%  This optional parameter defines the date for in-class exercises.
+%    \begin{macrocode}
+\def\InclassDate#1{\def\inclassdate{#1}}
+%    \end{macrocode}
+%  \end{macro}
+% The parameters defined by the above macros can be accessed by their lowercase equivalents.
+%    \begin{macrocode}
+\def\lecture{Default lecture name}
+\def\lectureshort{PraMa Optimierung}
+\def\sheetnumber{1}
+\def\deadline{24.12.1970}
+\def\issuedate{06.12.1970}
+\def\lecturer{Lecturer}
+\def\operator{Exercise Operator}
+\def\semester{Semester}
+\def\homepage{}
+%    \end{macrocode}
+%
+%
+% \subsection{Change Default Textual Elements}
+%
+% The words used for ``Exercise'', ``Sheet'' etc.\ can be modified
+% by redefining the following commands:
+%    \begin{macrocode}
+\ifthenelse{\equal{\ublanguage}{german}}{
+  \def\solutiontext{L\"osung}
+  \def\exercisetext{Aufgabe}
+  \newcommand{\exercisesheettext}{\"Ubungsblatt}
+  \def\withsolutiontext{mit L\"osung}
+  \def\pagetext{Seite}
+  \def\pointstext{Punkte}
+  \def\solutionsheettext{L\"osungsblatt}
+  \def\deadlinetext{Abgabe bis}
+  \def\solutionfilename{oesung}
+  \def\lecturetext{Vorlesung}
+  \newcommand{\exercisestext}{\"Ubungen}
+  \newcommand{\homepagetext}{Dieses \"Ubungsblatt sowie weitere %
+  Informationen zur \"Ubung sind unter \url{\homepage} erh\"altlich.}
+  \newcommand{\inclasstexttitle}{Pr\"asenz\"ubungen}
+  \newcommand{\inclasstext}{(Zur Bearbeitung in der \"Ubung am \inclassdate)}
+  \newcommand{\takehometexttitle}{Haus\"ubungen}
+  \newcommand{\takehometext}{(Abgabe bis \deadline{}.)}
+}{
+  \def\solutiontext{Solution}
+  \def\exercisetext{Exercise}
+  \def\exercisesheettext{Exercise Sheet}
+  \def\solutionsheettext{Solution Sheet}
+  \def\withsolutiontext{including solutions}
+  \def\pagetext{Page}
+  \def\pointstext{points}
+  \def\deadlinetext{Due date:}
+  \def\solutionfilename{olution}
+  \def\lecturetext{Lecture}
+  \def\exercisestext{Exercises}
+  \newcommand{\homepagetext}{Download of exercises at \url{\homepage}}
+  \newcommand{\inclasstexttitle}{In-Class Exercises}
+  \newcommand{\inclasstext}{(To be done in the tutorial on \inclassdate)}
+  \newcommand{\takehometexttitle}{Turn-In Exercises}
+    \newcommand{\takehometext}{(Please hand in by \deadline{})}
+}
+%    \end{macrocode}
+% For example, if you wish to name exercises ``Problem'' rather than ``Exercise'',
+% simply put \[|\renewcommand{\exercisetext}{Problem}|\] in your preamble.
+%
+%
+% \section{Typesetting Exercises and Solutions}
+%
+% \subsection{Exercises}
+%
+% \DescribeEnv{exercise} The |exercise| environment is used in the
+% following way:
+% 
+% \noindent|\begin{exercise}| \oarg{title} \marg{points}\\
+% |  ...|\\
+% |\end{exercise}|
+% 
+% The parameter \meta{points} will be typeset in
+% parenthesis after the exercise title, unless it is empty.
+% If the optional \meta{title} is given, the exercise title is typeset after the
+% exercise number, separated by an endash (--).
+%
+% Exercises are numbered by a special counter (|exercise|); the number is
+% displayed in the style |x.y| where |x| is the sheet number and
+% |y| the exercise number on the sheet. You can thus use |\label| and |\ref|
+% for exercise refercening as well as |\theexercise| to output the current
+% exercise number.
+%
+% As an example, the code
+% \begin{verbatim}
+% \begin{exercise}[$P \neq NP$]{4}
+%   Prove that $P$ is a proper subset of $NP$.
+% \end{exercise}
+% \end{verbatim}
+%
+% will be output as
+%
+% \begin{exercise}[$P \neq NP$]{4}
+%   Prove that $P$ is a proper subset of $NP$.
+% \end{exercise}
+%
+%
+%    \begin{macrocode}
+\newcommand{\exheader}[1]{\par\vspace{2.5mm}\noindent{\bfseries #1}\par\vspace{1.5mm}}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newenvironment{exercise}[2][{}]%
+{%
+  \refstepcounter{exercise}
+  \exheader{\exercisetext{} \sheetnumber.\arabic{exercise}
+  \ifthenelse{\equal{#1}{}}{}{-- #1}
+  \ifthenelse{\equal{#2}{}}{}{(#2 \pointstext)}}
+}%
+{\par\vspace{2mm}}
+%    \end{macrocode}
+%
+% Subexercises can be typeset with usual |\enumerate| environments. In order not
+% to mix up exercise and subexercise numbering, this package sets the first-order
+% enumeration labelling to alphabetic numbering and the second order to arabic:
+%    \begin{macrocode}
+\RequirePackage{enumitem}
+\setlist[enumerate,1]{label=\alph*)}
+\setlist[enumerate,2]{label=\arabic*.}
+%    \end{macrocode}
+%
+% \subsection{Solutions}
+%
+% \DescribeEnv{solution} The |solution| environment can be used to create a
+% sample solution. You can decide whether or not solutions will be included
+% in the output, in order to distinguish between exercise and solution sheets
+% (see Section~\ref{sec:options}).
+%
+% The |solution| environment is used as follows:
+%
+% \begin{verbatim}
+% \begin{solution}
+%   ...
+% \end{solution}
+% \end{verbatim}
+%
+% For example, the code
+% \begin{verbatim}
+% \begin{solution}
+%   Base clause: Let $N=1$, then obviously $P=NP$. 
+% \end{solution}
+% \end{verbatim}
+%
+% will be output to (if solution output is active)
+%
+% \begin{solution}
+%   Base clause: Let $N=1$, then obviously $P=NP$. 
+% \end{solution}
+%
+%
+% \subsection{Implementation of the Auto-Magic Solution Feature}
+% If neither |solution| nor |nosolution| is provided as package option,
+% test if the |\jobname| contains the (language specific) word
+% for ``solution''. The test requires the \pkg{xstring} package.
+%    \begin{macrocode}
+
+\ifautoshowanswers
+\RequirePackage{xstring}
+\IfSubStr*{\jobname}{\solutionfilename}{
+ \showanswerstrue
+}{
+ \showanswersfalse
+}
+\fi
+\newenvironment{solution}%
+{%
+  \ifshowanswers
+    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}:}
+  \else
+    \par\vspace*{0pt}%
+    \setbox\z@\vbox\bgroup
+  \fi
+}{%
+  \ifshowanswers
+    %
+  \else
+    \egroup
+  \fi
+}%
+%    \end{macrocode}
+%
+%
+% \subsection{In-Class and Take-Home Exercises}
+%
+%\begin{macro}{\inclass}
+%\begin{macro}{\takehome}
+% These optional macros create a title that marks the begin of the ``in-class'' or ``take-home'' part, respectively,
+% of the exersice sheet.
+%    \begin{macrocode}
+\newcommand{\inclass}{\par{\large
+\ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
+\inclasstext\par
+}
+\newcommand{\takehome}{\par{\large
+\ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
+\takehometext\par
+}
+%    \end{macrocode}
+%\end{macro}
+%\end{macro}
+% \section{Miscellaneous Features}
+%
+% \subsection{PDF parameters}
+% This package sets some PDF parameters according to the exercise sheet
+% definition.
+%    \begin{macrocode}
+\hypersetup{%
+  pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
+  pdfauthor={Optimization Research Group}, %
+  pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
+%    \end{macrocode}
+%
+%
+% \subsection{Referencing Exercises and Solutions}
+%
+% This package defines to reference formats for the \pkg{prettyref} package
+% which can be used to reference exercises and solutions, respectively.
+% Example:\\
+% |Use the graph of \prettyref{ex:dijkstra} and ...|\\
+% Would be typeset as, say,
+% \begin{quote}Use the graph of~Exercise 2 and \dots\end{quote}
+%
+%
+%    \begin{macrocode}
+\newrefformat{ex}{\exercisetext~\ref{#1}}
+\newrefformat{solution}{\solutiontext~\ref{#1}}
+%    \end{macrocode}
+%
+% \subsection{Headers and Footers}
+% \pkg{agopt\_ex} uses \pkg{fancyhdr} to set an empty header and a nice footer. 
+% You can modify the following default layout if you wish.
+%    \begin{macrocode}
+\pagestyle{fancy}
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{.4pt}
+\cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
+\rfoot{\pagetext{} \thepage/\ztotpages}
+\lfoot{\lectureshort}
+%    \end{macrocode}
+%
+% \section{Implementation of the Layouts}
+%
+% The modern layout uses \pkg{tikz} to draw the logo.
+%    \begin{macrocode}
+\ifmodern
+\RequirePackage{tikz}
+\definecolor{tublau}{rgb}{0.125,0.34,0.68}
+\renewcommand{\maketitle}{
+\hrule\vspace{2mm}
+\begin{minipage}{0.55\textwidth}
+{\sffamily \lecture{} / \semester\\
+\LARGE \scshape  \exercisesheettext{} \sheetnumber %
+\ifshowanswers%
+  {\Large{} (\withsolutiontext)}%
+\fi\\
+\small \upshape \itshape \rmfamily \deadlinetext{} \deadline{}}
+\end{minipage}
+\begin{minipage}{0.44\textwidth}
+\begin{flushright}
+\begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
+                    every edge/.append style={very thick},scale=.9]
+ \node[fill=red,klumpen] (k1) at (0,0) {};
+ \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
+ \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
+ \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
+ \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
+ \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
+   {\begin{minipage}{2.6cm}Optimizaton\\Research Group\end{minipage}};
+\end{tikzpicture}
+\end{flushright}
+\end{minipage}\vspace{2mm}\hrule
+\begin{center}\small
+ \textbf{\lecturetext:} \lecturer\\
+ \textbf{\exercisestext:} \operator
+\end{center}\vspace{-2mm}
+\ifthenelse{\equal{\homepage}{}}{}{
+{\small \homepagetext}
+}
+}
+%    \end{macrocode}
+%
+% This is the implementation of the classic layout.
+%    \begin{macrocode}
+\else 
+\renewcommand{\maketitle}{
+\begin{minipage}{0.49\textwidth}
+\begin{flushleft}
+Technische Universit\"at Kaiserslautern\\
+Fachbereich Mathematik\\
+\issuedate
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.49\textwidth}
+\begin{flushright}
+\lecturer\\
+\operator\\
+\semester
+\end{flushright}
+\end{minipage}
+
+\begin{center}
+{\Large \bfseries \lecture}\\[0.6cm]
+{\Large \bfseries%
+\ifshowanswers%
+  \solutionsheettext{}%
+\else
+  \exercisesheettext{}%
+\fi{} \sheetnumber}\\[1cm]
+\end{center}
+}
+% URL at end of document
+\AtEndDocument{%
+\ifthenelse{\equal{\homepage}{}}{}{
+	\begin{center}
+		\vfill{\small \homepagetext}
+	\end{center}
+	}
+}
+\fi
+%    \end{macrocode}
+% \PrintChanges
+% \PrintIndex
+% \Finale

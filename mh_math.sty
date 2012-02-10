@@ -1,0 +1,59 @@
+%% mh_math -- some useful general math definitions by Michael Helmling.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mh_math}
+
+\RequirePackage{amsmath,amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{xspace}
+
+% Commands für den Mathemodus
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\ifx\C\undefined
+  \newcommand{\C}{\mathbb{C}}
+\else
+  \renewcommand{\C}{\mathbb{C}}
+\fi
+\newcommand{\F}{\mathbb{F}}
+\renewcommand{\O}{\mathcal{O}} % Landau-Symbol
+\newcommand{\E}{\mathbb{E}} % Erwartungswert
+\newcommand{\NP}{{\sffamily NP}}
+\renewcommand{\P}{{\sffamily P}} %\P gibts schon ...
+\newcommand{\emphex}[1]{\emph{#1}\index{#1}} % Hervorhebung und Indizierung in einem 
+\newcommand{\Llra}{\Longleftrightarrow} % nur eine Abkürzung
+\newcommand{\folgt}{\ \Rightarrow\ } %man könnte überlegen \Longrightarrow zu nehmen und/oder die Abstände anzupassen
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert} %Betrag
+% Darstellung des algebraischen Faktoroperators. Ist Geschmackssache, meistens sind
+% alle hässlich.
+%\newcommand{\modulo}[2]{\nicefrac{#1}{#2}}
+\newcommand{\modulo}[2]{\faktor{#1}{#2}}
+%newcommand{\modulo}[2]{{#1}_{/#2}}
+\newcommand{\entspricht}{\mathrel{\widehat{=}}}
+\newcommand{\legendre}[2]{\left(\frac{#1}{#2}\right)} %Legendre-Symbol (Bruch mit Klammern drum)
+\newcommand{\gauss}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\op}[1]{\operatorname{#1}} %nur eine Abkürzung
+
+\newcommand\tp{\text{.}} %Textmodus-Punkt; wenn Sätze mit Display-Gleichungen aufhören.
+\newcommand\tk{\text{,}} %dasselbe in Komma
+\newcommand\ts{\text{;}} % und in semikolon
+% common english abbreviations
+\newcommand\st{\text{s.\,t.}\xspace}
+\newcommand\ie{\text{i.\,e.}\xspace}
+\newcommand\eg{\text{e.\,g.}\xspace}
+
+\newcommand\definedAs{\vcentcolon=} % := with vertically centered column (requires mathtools)
+
+% Mathe-Operatoren
+\DeclareMathOperator{\ggT}{ggT}
+\DeclareMathOperator{\kgV}{kgV}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\eq}{eq} %equality set
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\spn}{span}
+
+\newcommand{\algname}[1]{\textsc{#1}} % name of algorithms in small caps

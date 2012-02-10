@@ -1,0 +1,53 @@
+  %% mh_theorems -- theorem definitions by Michael Helmling.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mh_theorems}
+
+\RequirePackage[amsmath,thmmarks]{ntheorem}
+
+\def\theoremCountBasis{None}
+\DeclareOption{chapter}{
+ \def\theoremCountBasis{chapter}
+}
+\DeclareOption{section}{
+ \def\theoremCountBasis{section}
+}
+\ProcessOptions
+\relax
+%Theorem-Umgebungen
+%\swapnumbers
+%\theoremheaderfont{\normalfont\bfseries\scshape}
+\qedsymbol{\ensuremath{_\Box}}
+
+
+ %Aussagen in Kursiv
+\theorembodyfont{\itshape}
+\theoremseparator{:}
+\ifthenelse{\equal{\theoremCountBasis}{None}}
+	{\theoremstyle{plain} % erst name dann zahl
+	\newtheorem{theorem}{Theorem}
+	}
+	{\theoremstyle{change} %erst Zahl dann Name
+	\newtheorem{theorem}{Theorem}[\theoremCountBasis]}
+
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{algo}[theorem]{Algorithm}
+\newtheorem{observation}[theorem]{Observation}
+
+% Anderes in normaler Schrift, dafür mit Dreieck am Ende
+\theorembodyfont{\normalfont}
+\theoremsymbol{\ensuremath{_\lhd}} %ein Dreieck am Ende von Beispielen ist cool
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{remark}[theorem]{Remark}
+
+\theoremsymbol{}
+\theoremstyle{nonumberplain}
+\theoremseparator{.}
+\theoremheaderfont{\normalfont\bfseries\itshape}
+\theoremsymbol{\ensuremath{_\Box}}
+\newtheorem{proof}{Proof}
+\theoremseparator{}
+\theoremindent0cm
+\newtheorem{fakeproof}{}
