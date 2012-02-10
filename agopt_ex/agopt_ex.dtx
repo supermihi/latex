@@ -225,7 +225,7 @@
 %    \end{macrocode}
 %  \end{macro}
 %  \begin{macro}{\Deadline}
-%   Specify the deadline for turn-in exercises.
+%   Specify the deadline for turn-in exercises. May include additional information such as ``in the lecture'' or ``into the mailboxes in building 48''.
 % \begin{macrocode}
 \def\Deadline#1{\def\deadline{#1}} 
 %    \end{macrocode}
@@ -303,7 +303,8 @@
   \newcommand{\inclasstexttitle}{Pr\"asenz\"ubungen}
   \newcommand{\inclasstext}{(Zur Bearbeitung in der \"Ubung am \inclassdate)}
   \newcommand{\takehometexttitle}{Haus\"ubungen}
-  \newcommand{\takehometext}{(Abgabe bis \deadline{}.)}
+  \newcommand{\takehometext}{Bitte bis \deadline{} abgeben.}
+  \newcommand{\deadlinepre}{\textbf{Abgabefrist: }}
 }{
   \def\solutiontext{Solution}
   \def\exercisetext{Exercise}
@@ -320,7 +321,8 @@
   \newcommand{\inclasstexttitle}{In-Class Exercises}
   \newcommand{\inclasstext}{(To be done in the tutorial on \inclassdate)}
   \newcommand{\takehometexttitle}{Turn-In Exercises}
-    \newcommand{\takehometext}{(Please hand in by \deadline{})}
+  \newcommand{\takehometext}{Please hand in by \deadline{}}
+  \newcommand{\deadlinepre}{\textbf{Deadline: }}
 }
 %    \end{macrocode}
 % For example, if you wish to name exercises ``Problem'' rather than ``Exercise'',
@@ -454,13 +456,19 @@
 % These optional macros create a title that marks the begin of the ``in-class'' or ``take-home'' part, respectively,
 % of the exersice sheet.
 %    \begin{macrocode}
+% marks if an exercise type (inclass, takehome) was explicitly chosen, because otherwise the layout
+% has to automatically print the deadline information.
+\newif\ifexplicittype 
+\explicittypefalse
 \newcommand{\inclass}{\par{\large
 \ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
-\inclasstext\par
+(\inclasstext)\par
+\explicittypetrue
 }
 \newcommand{\takehome}{\par{\large
 \ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
-\takehometext\par
+(\takehometext)\par
+\explicittypetrue
 }
 %    \end{macrocode}
 %\end{macro}
@@ -578,6 +586,11 @@ Fachbereich Mathematik\\
 }
 % URL at end of document
 \AtEndDocument{%
+\ifexplicittype
+\else
+	\par
+  \deadlinepre\takehometext
+\fi
 \ifthenelse{\equal{\homepage}{}}{}{
 	\begin{center}
 		\vfill{\small \homepagetext}
