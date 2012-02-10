@@ -14,7 +14,7 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2011/06/27]
 %<package>\ProvidesPackage{agopt_ex}
-%<package>  [ 2012/01/16 v0.3 exercise sheets for optimization research group ]
+%<package>  [2012/02/10 v0.3.1 exercise sheets for optimization research group ]
 %
 %<*driver>
 \documentclass{ltxdoc}
@@ -22,15 +22,17 @@
 \usepackage{sectsty}
 \allsectionsfont{\sffamily}
 \usepackage[utf8]{inputenc}
+\let\savetitle=\maketitle
 \usepackage[english,classic,solution]{agopt_ex}
+\let\maketitle=\savetitle
 \providecommand*\pkg[1]{\textsf{#1}}
 \providecommand*\env[1]{\texttt{#1}}
 \providecommand*\mode[1]{\texttt{[#1]}}
 \renewcommand{\nobreakspace}{\nobreak\ }
 \Lecture{Using the \pkg{agopt\_ex} package}
 \Semester{Winter 2012}
-\Deadline{16.01.2012}
-\IssueDate{16.01.2012}
+\Deadline{24.12.2039}
+\IssueDate{10.02.2012}
 \Lecturer{N.\,N.}
 \Operator{Michael Helmling}
 \renewcommand{\exercisesheettext}{Package Documentation}
@@ -49,6 +51,7 @@
 % \fi
 
 % \CheckSum{0}
+% \changes{v0.3.1}{2012/02/10}{Fixed modern layout, added URL to documentation}
 % \changes{v0.3}{2012/01/16}{A first complete proof-read, again lots of small changes}
 % \changes{v0.2.2}{2012/01/11}{Improve on AG logo}
 % \changes{v0.2.1}{2012/01/10}{Add font definitions}
@@ -58,7 +61,7 @@
 
 % \title{The \textsf{agopt\_ex} package\thanks{This document
 % corresponds to \textsf{agopt\_ex}~\fileversion,
-% dated~\filedate.}}
+% dated~\filedate. Obtain the newest version at \url{http://github.com/supermihi/latex}}}
 % \author{ Michael Helmling \\ \texttt{helmling@mathematik.uni-kl.de}}
 %
 
