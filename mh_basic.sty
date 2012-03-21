@@ -36,12 +36,14 @@
   %\usepackage[math-style=TeX]{unicode-math}
   %\setmathfont{Asana-Math.otf}
 \else
+  \RequirePackage[utf8]{inputenc}
+  \usepackage{csquotes}
   \ifgerman
   	\usepackage[ngerman]{babel}
   \else
   	\usepackage[american]{babel}
   \fi
-  \RequirePackage[utf8]{inputenc}
+
   \RequirePackage[T1]{fontenc}
   \RequirePackage{libertine}
 %  \RequirePackage[colorlinks=false,plainpages=false]{hyperref}
