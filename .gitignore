@@ -1,0 +1,9 @@
+*.aux
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.log
+*.out
+*.thm

@@ -2,8 +2,15 @@ The agopt_ex package
 
 The agopt_ex package is an aid to generate exercise sheets for the AG Optimization, TU Kaiserslautern.
 
-To create the package (.sty file), run latex on agopt_ex.ins. To compile the documentation (pdf file),
-run latex on agopt_ex.dtx (.sty-file needs te be created before). Use the "compile_package.sh" script
+To create the package (.sty file), run:
+
+  latex agopt_ex.ins
+
+To compile the documentation (pdf file), run
+
+  pdflatex agopt_ex.dtx
+
+(the package needs te be created beforehand). Use the "compile_package.sh" script
 to do all in one step; this will also handle index generation.
 
 See the package documentation and/or the example folders for how to use this package.
