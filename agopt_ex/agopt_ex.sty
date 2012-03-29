@@ -1,0 +1,273 @@
+%%
+%% This is file `agopt_ex.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% agopt_ex.dtx  (with options: `package')
+%% This is a generated file.
+%% Copyright (C) 2011-2012 by Michael Helmling
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.3c of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%% http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of
+%% LaTeX version 2011/06/27 or later.
+\NeedsTeXFormat{LaTeX2e}[2011/06/27]
+\ProvidesPackage{agopt_ex}
+  [2012/02/10 v0.3.1 exercise sheets for optimization research group ]
+
+
+
+\def\ublanguage{german}
+\DeclareOption{german}{
+  \def\ublanguage{german}
+}
+\DeclareOption{english}{
+  \def\ublanguage{english}
+}
+\newif\ifautoshowanswers
+\newif\ifshowanswers
+\showanswersfalse
+\autoshowanswerstrue
+\DeclareOption{solution}{\showanswerstrue\autoshowanswersfalse}
+\DeclareOption{nosolution}{\showanswersfalse\autoshowanswersfalse}
+\newif\ifmodern
+\DeclareOption{modern}{\moderntrue}
+\DeclareOption{classic}{\modernfalse}
+\moderntrue % the default
+\ProcessOptions\relax
+\RequirePackage{ifxetex}
+\RequirePackage{ifthen}
+\ifxetex
+  \RequirePackage{amsfonts,amssymb}
+  \RequirePackage{euler}
+  \RequirePackage{xltxtra}
+  \RequirePackage{xunicode}
+  \RequirePackage{polyglossia}
+  \defaultfontfeatures{Mapping=tex-text} % needed for -- and --- to work
+  \setromanfont[Numbers=Proportional]{Linux Libertine O}
+  \setsansfont[Numbers=Proportional]{Linux Biolinum O}
+  \ifthenelse{\equal{\ublanguage}{german}}{
+  \setdefaultlanguage{german}
+  }{
+   \setdefaultlanguage[variant=american]{english}
+}
+\else
+  \ifthenelse{\equal{\ublanguage}{german}}{
+   \usepackage[ngerman]{babel}
+  }{
+   \usepackage[american]{babel}
+  }
+  \RequirePackage{libertine}
+  \RequirePackage[T1]{fontenc}
+
+  \usepackage{euler}
+\fi
+\RequirePackage{amsmath}
+\RequirePackage{geometry}
+\RequirePackage{hyperref}
+\RequirePackage{fancyhdr}
+\RequirePackage{zref-totpages}
+\RequirePackage{prettyref}
+\RequirePackage{url}
+\RequirePackage{xspace}
+ \def\Lecture#1{\def\lecture{#1}}
+\def\LectureShort#1{\def\lectureshort{#1}}
+\def\Sheetnumber#1{\def\sheetnumber{#1}}
+\def\Deadline#1{\def\deadline{#1}}
+\def\IssueDate#1{\def\issuedate{#1}}
+\def\Lecturer#1{\def\lecturer{#1}}
+\def\Operator#1{\def\operator{#1}}
+\def\Semester#1{\def\semester{#1}}
+\def\Homepage#1{\def\homepage{#1}}
+\def\InclassDate#1{\def\inclassdate{#1}}
+\def\lecture{Default lecture name}
+\def\lectureshort{PraMa Optimierung}
+\def\sheetnumber{1}
+\def\deadline{24.12.1970}
+\def\issuedate{06.12.1970}
+\def\lecturer{Lecturer}
+\def\operator{Exercise Operator}
+\def\semester{Semester}
+\def\homepage{}
+\ifthenelse{\equal{\ublanguage}{german}}{
+  \def\solutiontext{L\"osung}
+  \def\exercisetext{Aufgabe}
+  \newcommand{\exercisesheettext}{\"Ubungsblatt}
+  \def\withsolutiontext{mit L\"osung}
+  \def\pagetext{Seite}
+  \def\pointstext{Punkte}
+  \def\solutionsheettext{L\"osungsblatt}
+  \def\deadlinetext{Abgabe bis}
+  \def\solutionfilename{oesung}
+  \def\lecturetext{Vorlesung}
+  \newcommand{\exercisestext}{\"Ubungen}
+  \newcommand{\homepagetext}{Dieses \"Ubungsblatt sowie weitere %
+  Informationen zur \"Ubung sind unter \url{\homepage} erh\"altlich.}
+  \newcommand{\inclasstexttitle}{Pr\"asenz\"ubungen}
+  \newcommand{\inclasstext}{(Zur Bearbeitung in der \"Ubung am \inclassdate)}
+  \newcommand{\takehometexttitle}{Haus\"ubungen}
+  \newcommand{\takehometext}{Bitte bis \deadline{} abgeben.}
+  \newcommand{\deadlinepre}{\textbf{Abgabefrist: }}
+}{
+  \def\solutiontext{Solution}
+  \def\exercisetext{Exercise}
+  \def\exercisesheettext{Exercise Sheet}
+  \def\solutionsheettext{Solution Sheet}
+  \def\withsolutiontext{including solutions}
+  \def\pagetext{Page}
+  \def\pointstext{points}
+  \def\deadlinetext{Due date:}
+  \def\solutionfilename{olution}
+  \def\lecturetext{Lecture}
+  \def\exercisestext{Exercises}
+  \newcommand{\homepagetext}{Download of exercises at \url{\homepage}}
+  \newcommand{\inclasstexttitle}{In-Class Exercises}
+  \newcommand{\inclasstext}{(To be done in the tutorial on \inclassdate)}
+  \newcommand{\takehometexttitle}{Turn-In Exercises}
+  \newcommand{\takehometext}{Please hand in by \deadline{}}
+  \newcommand{\deadlinepre}{\textbf{Deadline: }}
+}
+\newcommand{\exheader}[1]{\par\vspace{2.5mm}\noindent{\bfseries #1}\par\vspace{1.5mm}}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newenvironment{exercise}[2][{}]%
+{%
+  \refstepcounter{exercise}
+  \exheader{\exercisetext{} \sheetnumber.\arabic{exercise}
+  \ifthenelse{\equal{#1}{}}{}{-- #1}
+  \ifthenelse{\equal{#2}{}}{}{(#2 \pointstext)}}
+}%
+{\par\vspace{2mm}}
+\RequirePackage{enumitem}
+\setlist[enumerate,1]{label=\alph*)}
+\setlist[enumerate,2]{label=\arabic*.}
+
+\ifautoshowanswers
+\RequirePackage{xstring}
+\IfSubStr*{\jobname}{\solutionfilename}{
+ \showanswerstrue
+}{
+ \showanswersfalse
+}
+\fi
+\newenvironment{solution}%
+{%
+  \ifshowanswers
+    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}:}
+  \else
+    \par\vspace*{0pt}%
+    \setbox\z@\vbox\bgroup
+  \fi
+}{%
+  \ifshowanswers
+    %
+  \else
+    \egroup
+  \fi
+}%
+\newif\ifexplicittype
+\explicittypefalse
+\newcommand{\inclass}{\par{\large
+\ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
+(\inclasstext)\par
+\explicittypetrue
+}
+\newcommand{\takehome}{\par{\large
+\ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
+(\takehometext)\par
+\explicittypetrue
+}
+\hypersetup{%
+  pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
+  pdfauthor={Optimization Research Group}, %
+  pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
+\newrefformat{ex}{\exercisetext~\ref{#1}}
+\newrefformat{solution}{\solutiontext~\ref{#1}}
+\pagestyle{fancy}
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{.4pt}
+\cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
+\rfoot{\pagetext{} \thepage/\ztotpages}
+\lfoot{\lectureshort}
+\ifmodern
+\RequirePackage{tikz}
+\definecolor{tublau}{rgb}{0.125,0.34,0.68}
+\renewcommand{\maketitle}{
+\hrule\vspace{2mm}
+\begin{minipage}{0.55\textwidth}
+{\sffamily \lecture{} / \semester\\
+\LARGE \scshape  \exercisesheettext{} \sheetnumber %
+\ifshowanswers%
+  {\Large{} (\withsolutiontext)}%
+\fi\\
+\small \upshape \itshape \rmfamily \deadlinetext{} \deadline{}}
+\end{minipage}
+\begin{minipage}{0.44\textwidth}
+\begin{flushright}
+\begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
+                    every edge/.append style={very thick},scale=.9]
+ \node[fill=red,klumpen] (k1) at (0,0) {};
+ \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
+ \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
+ \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
+ \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
+ \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
+   {\begin{minipage}{2.6cm}Optimizaton\\Research Group\end{minipage}};
+\end{tikzpicture}
+\end{flushright}
+\end{minipage}\vspace{2mm}\hrule
+\begin{center}\small
+ \textbf{\lecturetext:} \lecturer\\
+ \textbf{\exercisestext:} \operator
+\end{center}\vspace{-2mm}
+\ifthenelse{\equal{\homepage}{}}{}{
+{\small \homepagetext}
+}
+}
+\else
+\renewcommand{\maketitle}{
+\begin{minipage}{0.49\textwidth}
+\begin{flushleft}
+Technische Universit\"at Kaiserslautern\\
+Fachbereich Mathematik\\
+\issuedate
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.49\textwidth}
+\begin{flushright}
+\lecturer\\
+\operator\\
+\semester
+\end{flushright}
+\end{minipage}
+
+\begin{center}
+{\Large \bfseries \lecture}\\[0.6cm]
+{\Large \bfseries%
+\ifshowanswers%
+  \solutionsheettext{}%
+\else
+  \exercisesheettext{}%
+\fi{} \sheetnumber}\\[1cm]
+\end{center}
+}
+\AtEndDocument{%
+\ifexplicittype
+\else
+\par
+  \deadlinepre\takehometext
+\fi
+\ifthenelse{\equal{\homepage}{}}{}{
+\begin{center}
+\vfill{\small \homepagetext}
+\end{center}
+}
+}
+\fi
+\endinput
+%%
+%% End of file `agopt_ex.sty'.
