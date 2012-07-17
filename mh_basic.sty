@@ -13,6 +13,12 @@
 \DeclareOption{english}{
   \germanfalse
 }
+
+\newif\ifmyfonts
+\myfontstrue % default : set my fonts
+\DeclareOption{nofonts}{
+	\myfontsfalse
+}
 \ProcessOptions\relax
 \ifxetex
   \RequirePackage{amsfonts,amssymb}
@@ -21,9 +27,11 @@
   \RequirePackage{xunicode}
   \RequirePackage{polyglossia}
   \defaultfontfeatures{Mapping=tex-text} % damit -- und --- funktionieren
-  \setromanfont[Numbers=Proportional]{Linux Libertine O}
-  \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
-  \setmonofont{Inconsolata}
+  \ifmyfonts
+    \setromanfont[Numbers=Proportional]{Linux Libertine O}
+    \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
+    \setmonofont{Inconsolata}
+  \fi
   \ifgerman
 	  \setdefaultlanguage{german}
   \else
@@ -40,9 +48,10 @@
   \else
   	\usepackage[american]{babel}
   \fi
-
-  \RequirePackage[T1]{fontenc}
-  \RequirePackage{libertine}
+  \ifmyfonts
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage{libertine}
+  \fi
 %  \RequirePackage[colorlinks=false,plainpages=false]{hyperref}
   %\usepackage{euler}
 \fi
