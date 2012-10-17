@@ -16,7 +16,7 @@
 %% LaTeX version 2011/06/27 or later.
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \ProvidesPackage{agopt_ex}
-  [2012/02/10 v0.3.1 exercise sheets for optimization research group ]
+  [2012/10/17 v0.4 add Koblenz mode ]
 
 
 
@@ -33,6 +33,10 @@
 \autoshowanswerstrue
 \DeclareOption{solution}{\showanswerstrue\autoshowanswersfalse}
 \DeclareOption{nosolution}{\showanswersfalse\autoshowanswersfalse}
+\newif\ifkoblenz
+\koblenzfalse
+\DeclareOption{koblenz}{\koblenztrue}
+\DeclareOption{kaiserslautern}{\koblenzfalse}
 \newif\ifmodern
 \DeclareOption{modern}{\moderntrue}
 \DeclareOption{classic}{\modernfalse}
@@ -86,7 +90,7 @@
 \def\lecture{Default lecture name}
 \def\lectureshort{PraMa Optimierung}
 \def\sheetnumber{1}
-\def\deadline{24.12.1970}
+\def\deadline{}
 \def\issuedate{06.12.1970}
 \def\lecturer{Lecturer}
 \def\operator{Exercise Operator}
@@ -107,7 +111,7 @@
   \newcommand{\homepagetext}{Dieses \"Ubungsblatt sowie weitere %
   Informationen zur \"Ubung sind unter \url{\homepage} erh\"altlich.}
   \newcommand{\inclasstexttitle}{Pr\"asenz\"ubungen}
-  \newcommand{\inclasstext}{(Zur Bearbeitung in der \"Ubung am \inclassdate)}
+  \newcommand{\inclasstext}{Zur Bearbeitung in der \"Ubung am \inclassdate}
   \newcommand{\takehometexttitle}{Haus\"ubungen}
   \newcommand{\takehometext}{Bitte bis \deadline{} abgeben.}
   \newcommand{\deadlinepre}{\textbf{Abgabefrist: }}
@@ -125,7 +129,7 @@
   \def\exercisestext{Exercises}
   \newcommand{\homepagetext}{Download of exercises at \url{\homepage}}
   \newcommand{\inclasstexttitle}{In-Class Exercises}
-  \newcommand{\inclasstext}{(To be done in the tutorial on \inclassdate)}
+  \newcommand{\inclasstext}{To be done in the tutorial on \inclassdate}
   \newcommand{\takehometexttitle}{Turn-In Exercises}
   \newcommand{\takehometext}{Please hand in by \deadline{}}
   \newcommand{\deadlinepre}{\textbf{Deadline: }}
@@ -182,7 +186,7 @@
 }
 \hypersetup{%
   pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
-  pdfauthor={Optimization Research Group}, %
+  pdfauthor={\ifkoblenz Mathematisches Institut, Universität Koblenz\else Optimization Research Group, TU Kaiserslautern\fi}, %
   pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
 \newrefformat{ex}{\exercisetext~\ref{#1}}
 \newrefformat{solution}{\solutiontext~\ref{#1}}
@@ -193,21 +197,37 @@
 \cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
 \rfoot{\pagetext{} \thepage/\ztotpages}
 \lfoot{\lectureshort}
+\newcommand{\titledateline}{%
+    \ifthenelse{\equal{\deadline}{}}%
+        {\inclasstext}%
+        {\deadlinetext{} \deadline{}}%
+}
 \ifmodern
 \RequirePackage{tikz}
 \definecolor{tublau}{rgb}{0.125,0.34,0.68}
 \renewcommand{\maketitle}{
 \hrule\vspace{2mm}
-\begin{minipage}{0.55\textwidth}
-{\sffamily \lecture{} / \semester\\
+\ifkoblenz
+    \begin{minipage}{0.65\textwidth}
+\else
+     \begin{minipage}{0.55\textwidth}
+    \fi
+{\sffamily \lecture{}\;\textbullet\;\semester\\
 \LARGE \scshape  \exercisesheettext{} \sheetnumber %
 \ifshowanswers%
   {\Large{} (\withsolutiontext)}%
 \fi\\
-\small \upshape \itshape \rmfamily \deadlinetext{} \deadline{}}
+\small \upshape \itshape \rmfamily \titledateline}
 \end{minipage}
-\begin{minipage}{0.44\textwidth}
+\ifkoblenz
+     \begin{minipage}{0.34\textwidth}
+    \else
+        \begin{minipage}{0.44\textwidth}
+    \fi
 \begin{flushright}
+\ifkoblenz
+    \includegraphics[width=0.8\textwidth]{koblenzlogo}
+\else
 \begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
                     every edge/.append style={very thick},scale=.9]
  \node[fill=red,klumpen] (k1) at (0,0) {};
@@ -218,6 +238,7 @@
  \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
    {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
 \end{tikzpicture}
+\fi
 \end{flushright}
 \end{minipage}\vspace{2mm}\hrule
 \begin{center}\small
@@ -232,8 +253,13 @@
 \renewcommand{\maketitle}{
 \begin{minipage}{0.49\textwidth}
 \begin{flushleft}
-Technische Universit\"at Kaiserslautern\\
-Fachbereich Mathematik\\
+\ifkoblenz
+    Universit\"at Koblenz-Landau, Campus Koblenz\\
+    Mathematisches Institut\\
+\else
+     Technische Universit\"at Kaiserslautern\\
+     Fachbereich Mathematik\\
+    \fi
 \issuedate
 \end{flushleft}
 \end{minipage}

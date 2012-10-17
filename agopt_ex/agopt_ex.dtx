@@ -14,7 +14,7 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2011/06/27]
 %<package>\ProvidesPackage{agopt_ex}
-%<package>  [2012/02/10 v0.3.1 exercise sheets for optimization research group ]
+%<package>  [2012/10/17 v0.4 add Koblenz mode ]
 %
 %<*driver>
 \documentclass{ltxdoc}
@@ -51,6 +51,7 @@
 % \fi
 
 % \CheckSum{0}
+% \changes{v0.4}{2012/10/17}{add Koblenz mode}
 % \changes{v0.3.1}{2012/02/10}{Fixed modern layout, added URL to documentation}
 % \changes{v0.3}{2012/01/16}{A first complete proof-read, again lots of small changes}
 % \changes{v0.2.2}{2012/01/11}{Improve on AG logo}
@@ -67,14 +68,15 @@
 
 % \maketitle
 % \begin{abstract}
-%   The \pkg{agopt\_ex} package is an aid to generate exercise sheets for the Optimization Research Group, TU Kai\-sers\-lau\-tern.
+%   The \pkg{agopt\_ex} package is an aid to generate exercise sheets for the Optimization Research Group, TU Kai\-sers\-lau\-tern, or optionally the Mathematisches Institut der Universität Koblenz.
 % \end{abstract}
 %
 % The \pkg{agopt\_ex} package defines:
 % \begin{itemize}
 %   \item environments for exercises and solutions,
 %   \item two layout variants (|classic| and |modern|, respectively,
-%       the latter containig a colored AG logo); includes a nice footer and predefined macros for a ``in-class'' and ``take-home'' sections,
+%       the latter containig a colored logo); includes a nice footer and predefined macros for a ``in-class'' and ``take-home'' sections,
+%   \item two locations (Kaiserslautern and Koblenz),
 %   \item various ways to decide whether or not the solutions should be included in the output, including an \emph{auto-magic}$\textsuperscript{\textregistered}$ mechanism,
 %   \item a number of useful features and macros.
 % \end{itemize}
@@ -134,6 +136,18 @@
 \autoshowanswerstrue
 \DeclareOption{solution}{\showanswerstrue\autoshowanswersfalse}
 \DeclareOption{nosolution}{\showanswersfalse\autoshowanswersfalse}
+%    \end{macrocode}
+%  \end{macro}
+%  \end{macro}
+% \subsubsection*{Choose Location}
+%  \begin{macro}{kaiserslautern}
+%  \begin{macro}{koblenz}
+%  Selects the location, where Kaiserslautern is the default.
+%    \begin{macrocode}
+\newif\ifkoblenz
+\koblenzfalse
+\DeclareOption{koblenz}{\koblenztrue}
+\DeclareOption{kaiserslautern}{\koblenzfalse}
 %    \end{macrocode}
 %  \end{macro}
 %  \end{macro}
@@ -261,7 +275,7 @@
 \def\Homepage#1{\def\homepage{#1}}
 %    \end{macrocode}
 %  \end{macro}
-%  \begin{macro}{\Inclassdate}
+%  \begin{macro}{\InclassDate}
 %  This optional parameter defines the date for in-class exercises.
 %    \begin{macrocode}
 \def\InclassDate#1{\def\inclassdate{#1}}
@@ -272,7 +286,7 @@
 \def\lecture{Default lecture name}
 \def\lectureshort{PraMa Optimierung}
 \def\sheetnumber{1}
-\def\deadline{24.12.1970}
+\def\deadline{}
 \def\issuedate{06.12.1970}
 \def\lecturer{Lecturer}
 \def\operator{Exercise Operator}
@@ -301,7 +315,7 @@
   \newcommand{\homepagetext}{Dieses \"Ubungsblatt sowie weitere %
   Informationen zur \"Ubung sind unter \url{\homepage} erh\"altlich.}
   \newcommand{\inclasstexttitle}{Pr\"asenz\"ubungen}
-  \newcommand{\inclasstext}{(Zur Bearbeitung in der \"Ubung am \inclassdate)}
+  \newcommand{\inclasstext}{Zur Bearbeitung in der \"Ubung am \inclassdate}
   \newcommand{\takehometexttitle}{Haus\"ubungen}
   \newcommand{\takehometext}{Bitte bis \deadline{} abgeben.}
   \newcommand{\deadlinepre}{\textbf{Abgabefrist: }}
@@ -319,7 +333,7 @@
   \def\exercisestext{Exercises}
   \newcommand{\homepagetext}{Download of exercises at \url{\homepage}}
   \newcommand{\inclasstexttitle}{In-Class Exercises}
-  \newcommand{\inclasstext}{(To be done in the tutorial on \inclassdate)}
+  \newcommand{\inclasstext}{To be done in the tutorial on \inclassdate}
   \newcommand{\takehometexttitle}{Turn-In Exercises}
   \newcommand{\takehometext}{Please hand in by \deadline{}}
   \newcommand{\deadlinepre}{\textbf{Deadline: }}
@@ -481,7 +495,7 @@
 %    \begin{macrocode}
 \hypersetup{%
   pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
-  pdfauthor={Optimization Research Group}, %
+  pdfauthor={\ifkoblenz Mathematisches Institut, Universität Koblenz\else Optimization Research Group, TU Kaiserslautern\fi}, %
   pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
 %    \end{macrocode}
 %
@@ -518,85 +532,107 @@
 %
 % The modern layout uses \pkg{tikz} to draw the logo.
 %    \begin{macrocode}
+\newcommand{\titledateline}{%
+    \ifthenelse{\equal{\deadline}{}}%
+        {\inclasstext}%
+        {\deadlinetext{} \deadline{}}%
+}
 \ifmodern
-\RequirePackage{tikz}
-\definecolor{tublau}{rgb}{0.125,0.34,0.68}
-\renewcommand{\maketitle}{
-\hrule\vspace{2mm}
-\begin{minipage}{0.55\textwidth}
-{\sffamily \lecture{} / \semester\\
-\LARGE \scshape  \exercisesheettext{} \sheetnumber %
-\ifshowanswers%
-  {\Large{} (\withsolutiontext)}%
-\fi\\
-\small \upshape \itshape \rmfamily \deadlinetext{} \deadline{}}
-\end{minipage}
-\begin{minipage}{0.44\textwidth}
-\begin{flushright}
-\begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
-                    every edge/.append style={very thick},scale=.9]
- \node[fill=red,klumpen] (k1) at (0,0) {};
- \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
- \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
- \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
- \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
- \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
-   {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
-\end{tikzpicture}
-\end{flushright}
-\end{minipage}\vspace{2mm}\hrule
-\begin{center}\small
- \textbf{\lecturetext:} \lecturer\\
- \textbf{\exercisestext:} \operator
-\end{center}\vspace{-2mm}
-\ifthenelse{\equal{\homepage}{}}{}{
-{\small \homepagetext}
-}
-}
+	\RequirePackage{tikz}
+	\definecolor{tublau}{rgb}{0.125,0.34,0.68}
+	\renewcommand{\maketitle}{
+	\hrule\vspace{2mm}
+	\ifkoblenz
+	    \begin{minipage}{0.65\textwidth}
+	\else
+    	\begin{minipage}{0.55\textwidth}
+    \fi
+	{\sffamily \lecture{}\;\textbullet\;\semester\\
+	\LARGE \scshape  \exercisesheettext{} \sheetnumber %
+	\ifshowanswers%
+	  {\Large{} (\withsolutiontext)}%
+	\fi\\
+	\small \upshape \itshape \rmfamily \titledateline}
+	\end{minipage}
+	\ifkoblenz
+    	\begin{minipage}{0.34\textwidth}
+    \else
+        \begin{minipage}{0.44\textwidth}
+    \fi
+	\begin{flushright}
+	\ifkoblenz
+	    \includegraphics[width=0.8\textwidth]{koblenzlogo}
+	\else
+		\begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
+		                    every edge/.append style={very thick},scale=.9]
+		 \node[fill=red,klumpen] (k1) at (0,0) {};
+		 \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
+		 \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
+		 \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
+		 \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
+		 \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
+		   {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
+		\end{tikzpicture}
+	\fi
+	\end{flushright}
+	\end{minipage}\vspace{2mm}\hrule
+	\begin{center}\small
+	 \textbf{\lecturetext:} \lecturer\\
+	 \textbf{\exercisestext:} \operator
+	\end{center}\vspace{-2mm}
+	\ifthenelse{\equal{\homepage}{}}{}{
+	{\small \homepagetext}
+	}
+	}
 %    \end{macrocode}
 %
 % This is the implementation of the classic layout.
 %    \begin{macrocode}
 \else 
-\renewcommand{\maketitle}{
-\begin{minipage}{0.49\textwidth}
-\begin{flushleft}
-Technische Universit\"at Kaiserslautern\\
-Fachbereich Mathematik\\
-\issuedate
-\end{flushleft}
-\end{minipage}
-\begin{minipage}{0.49\textwidth}
-\begin{flushright}
-\lecturer\\
-\operator\\
-\semester
-\end{flushright}
-\end{minipage}
-
-\begin{center}
-{\Large \bfseries \lecture}\\[0.6cm]
-{\Large \bfseries%
-\ifshowanswers%
-  \solutionsheettext{}%
-\else
-  \exercisesheettext{}%
-\fi{} \sheetnumber}\\[1cm]
-\end{center}
-}
-% URL at end of document
-\AtEndDocument{%
-\ifexplicittype
-\else
-	\par
-  \deadlinepre\takehometext
-\fi
-\ifthenelse{\equal{\homepage}{}}{}{
+	\renewcommand{\maketitle}{
+	\begin{minipage}{0.49\textwidth}
+	\begin{flushleft}
+	\ifkoblenz
+	    Universit\"at Koblenz-Landau, Campus Koblenz\\
+	    Mathematisches Institut\\
+	\else
+    	Technische Universit\"at Kaiserslautern\\
+    	Fachbereich Mathematik\\
+    \fi
+	\issuedate
+	\end{flushleft}
+	\end{minipage}
+	\begin{minipage}{0.49\textwidth}
+	\begin{flushright}
+	\lecturer\\
+	\operator\\
+	\semester
+	\end{flushright}
+	\end{minipage}
+	
 	\begin{center}
-		\vfill{\small \homepagetext}
+	{\Large \bfseries \lecture}\\[0.6cm]
+	{\Large \bfseries%
+	\ifshowanswers%
+	  \solutionsheettext{}%
+	\else
+	  \exercisesheettext{}%
+	\fi{} \sheetnumber}\\[1cm]
 	\end{center}
 	}
-}
+	% URL at end of document
+	\AtEndDocument{%
+	\ifexplicittype
+	\else
+		\par
+	  \deadlinepre\takehometext
+	\fi
+	\ifthenelse{\equal{\homepage}{}}{}{
+		\begin{center}
+			\vfill{\small \homepagetext}
+		\end{center}
+		}
+	}
 \fi
 %    \end{macrocode}
 % \PrintChanges
