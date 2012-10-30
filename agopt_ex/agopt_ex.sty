@@ -157,10 +157,11 @@
  \showanswersfalse
 }
 \fi
-\newenvironment{solution}%
+\newenvironment{solution}[1][{}]%
 {%
   \ifshowanswers
-    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}:}
+    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}%
+    \ifthenelse{\equal{#1}{}}{}{ (#1 \pointstext)}:}
   \else
     \par\vspace*{0pt}%
     \setbox\z@\vbox\bgroup

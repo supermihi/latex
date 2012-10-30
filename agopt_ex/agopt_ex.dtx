@@ -14,7 +14,7 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2011/06/27]
 %<package>\ProvidesPackage{agopt_ex}
-%<package>  [2012/10/17 v0.4 add Koblenz mode ]
+%<package>  [2012/10/30 v0.4.1 optional points arg for solution environment]
 %
 %<*driver>
 \documentclass{ltxdoc}
@@ -51,6 +51,7 @@
 % \fi
 
 % \CheckSum{0}
+% \changes{v0.4.1}{2012/10/30}{optional points arg for solution environment}
 % \changes{v0.4}{2012/10/17}{add Koblenz mode}
 % \changes{v0.3.1}{2012/02/10}{Fixed modern layout, added URL to documentation}
 % \changes{v0.3}{2012/01/16}{A first complete proof-read, again lots of small changes}
@@ -411,22 +412,22 @@
 %
 % The |solution| environment is used as follows:
 %
-% \begin{verbatim}
-% \begin{solution}
-%   ...
-% \end{solution}
-% \end{verbatim}
+% \noindent|\begin{solution}| \oarg{points}\\
+% |  ...|\\
+% |\end{solution}|
+%
+% The optional \meta{points} parameter is typeset in the same way as the \meta{points} argument of the \meta{solution} environment. It may be used to denote the point split in case of subexercises.
 %
 % For example, the code
 % \begin{verbatim}
-% \begin{solution}
+% \begin{solution}[2+2]
 %   Base clause: Let $N=1$, then obviously $P=NP$. 
 % \end{solution}
 % \end{verbatim}
 %
 % will be output to (if solution output is active)
 %
-% \begin{solution}
+% \begin{solution}[2+2]
 %   Base clause: Let $N=1$, then obviously $P=NP$. 
 % \end{solution}
 %
@@ -445,10 +446,11 @@
  \showanswersfalse
 }
 \fi
-\newenvironment{solution}%
+\newenvironment{solution}[1][{}]%
 {%
   \ifshowanswers
-    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}:}
+    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}%
+    \ifthenelse{\equal{#1}{}}{}{ (#1 \pointstext)}:}
   \else
     \par\vspace*{0pt}%
     \setbox\z@\vbox\bgroup
