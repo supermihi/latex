@@ -8,3 +8,8 @@
 \tikzset{e/.style={sloped}} % edge
 \tikzset{dot/.style={fill,circle,inner sep=0mm,minimum size=1mm}}
 \tikzset{>=stealth} % nicer arrows
+\DeclareOption{coloredgraphs}{
+  \tikzset{v/.append style={draw=blue!40,thick,fill=blue!8}}
+  \tikzset{e/.append style={draw=blue!60,thick}}
+}
+\ProcessOptions\relax

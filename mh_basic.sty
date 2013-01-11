@@ -56,6 +56,15 @@
   %\usepackage{euler}
 \fi
 
+% common abbreviations
+\RequirePackage{xspace}
+\ifgerman
+  \newcommand{\zB}{\text{z.\,B.}\xspace}
+\else
+  \newcommand\st{\text{s.\,t.}\xspace}
+  \newcommand\ie{\text{i.\,e.}\xspace}
+  \newcommand\eg{\text{e.\,g.}\xspace}
+\fi
 % references (package prettyref)
 \RequirePackage{prettyref}
 \newrefformat{eq}{\textup{(\ref{#1})}}
