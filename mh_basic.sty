@@ -19,6 +19,13 @@
 \DeclareOption{nofonts}{
 	\myfontsfalse
 }
+
+\newif\ifloadbabel
+\loadbabeltrue
+\DeclareOption{nobabel}{
+  \loadbabelfalse
+}
+
 \ProcessOptions\relax
 \ifxetex
   \RequirePackage{amsfonts,amssymb}
@@ -32,21 +39,25 @@
     \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
     \setmonofont{Inconsolata}
   \fi
-  \ifgerman
-	  \setdefaultlanguage{german}
-  \else
-	   \setdefaultlanguage[variant=american]{english}
-  \fi
+  \ifloadbabel
+	  \ifgerman
+		  \setdefaultlanguage{german}
+	  \else
+		   \setdefaultlanguage[variant=american]{english}
+	  \fi
+	\fi
   \usepackage[xetex,colorlinks=false,plainpages=false]{hyperref}
   %\usepackage[math-style=TeX]{unicode-math}
   %\setmathfont{Asana-Math.otf}
 \else
   \RequirePackage[utf8]{inputenc}
   \usepackage{csquotes}
-  \ifgerman
-  	\usepackage[ngerman]{babel}
-  \else
-  	\usepackage[american]{babel}
+  \ifloadbabel
+    \ifgerman
+    	\usepackage[ngerman]{babel}
+    \else
+    	\usepackage[american]{babel}
+    \fi
   \fi
   \ifmyfonts
     \RequirePackage[T1]{fontenc}
