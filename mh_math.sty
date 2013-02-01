@@ -2,10 +2,26 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{mh_math}
 
-\RequirePackage{amsmath,amssymb}
+\newif\ifunimath
+\unimathfalse
+\DeclareOption{unimath}{
+  \unimathtrue
+}
+\ProcessOptions\relax
+
+\RequirePackage{ifxetex}
+\RequirePackage{amsfonts,amsmath,amssymb}
+\ifxetex
+  \ifunimath
+    \RequirePackage{unicode-math}
+    %\setmathfont{Asana-Math.otf}
+    %\setmathfont[range={\mathcal,\mathbfcal},StylisticSet=1]{XITS Math}
+  \else
+    \RequirePackage{euler}
+  \fi
+
 \RequirePackage{mathtools}
 \RequirePackage{xspace}
-
 % Commands für den Mathemodus
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}

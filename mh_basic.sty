@@ -26,12 +26,12 @@
   \loadbabelfalse
 }
 
+
+
 \ProcessOptions\relax
 \ifxetex
-  \RequirePackage{amsfonts,amssymb}
-  \RequirePackage{euler}
   \RequirePackage{xltxtra}
-  \RequirePackage{xunicode}
+  \RequirePackage{fontspec}
   \RequirePackage{polyglossia}
   \defaultfontfeatures{Mapping=tex-text} % damit -- und --- funktionieren
   \ifmyfonts
@@ -46,8 +46,6 @@
 		   \setdefaultlanguage[variant=american]{english}
 	  \fi
 	\fi
-  %\usepackage[math-style=TeX]{unicode-math}
-  %\setmathfont{Asana-Math.otf}
 \else
   \RequirePackage[utf8]{inputenc}
   \usepackage{csquotes}
@@ -62,7 +60,6 @@
     \RequirePackage[T1]{fontenc}
     \RequirePackage{libertine}
   \fi
-  %\usepackage{euler}
 \fi
 
 % common abbreviations
