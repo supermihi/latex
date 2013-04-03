@@ -29,33 +29,24 @@
 
 
 \ProcessOptions\relax
+\ifloadbabel
+  \ifgerman
+    \RequirePackage[ngerman]{babel}
+  \else
+    \RequirePackage[american]{babel}
+\fi
 \ifxetex
   \RequirePackage{xltxtra}
   \RequirePackage{fontspec}
-  \RequirePackage{polyglossia}
   \defaultfontfeatures{Mapping=tex-text} % damit -- und --- funktionieren
   \ifmyfonts
     \setromanfont[Numbers=Proportional]{Linux Libertine O}
     \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
     \setmonofont{Inconsolata}
   \fi
-  \ifloadbabel
-	  \ifgerman
-		  \setdefaultlanguage{german}
-	  \else
-		   \setdefaultlanguage[variant=american]{english}
-	  \fi
-	\fi
 \else
   \RequirePackage[utf8]{inputenc}
   \usepackage{csquotes}
-  \ifloadbabel
-    \ifgerman
-    	\usepackage[ngerman]{babel}
-    \else
-    	\usepackage[american]{babel}
-    \fi
-  \fi
   \ifmyfonts
     \RequirePackage[T1]{fontenc}
     \RequirePackage{libertine}
