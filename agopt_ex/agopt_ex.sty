@@ -16,7 +16,7 @@
 %% LaTeX version 2011/06/27 or later.
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \ProvidesPackage{agopt_ex}
-  [2012/10/17 v0.4 add Koblenz mode ]
+  [2013/04/03 v0.5 implement optional bare mode which loads only the environments]
 
 
 
@@ -27,6 +27,9 @@
 \DeclareOption{english}{
   \def\ublanguage{english}
 }
+\newif\ifbare
+\barefalse
+\DeclareOption{bare}{\baretrue}
 \newif\ifautoshowanswers
 \newif\ifshowanswers
 \showanswersfalse
@@ -42,40 +45,43 @@
 \DeclareOption{classic}{\modernfalse}
 \moderntrue % the default
 \ProcessOptions\relax
-\RequirePackage{ifxetex}
-\RequirePackage{ifthen}
-\ifxetex
-  \RequirePackage{amsfonts,amssymb}
-  \RequirePackage{euler}
-  \RequirePackage{xltxtra}
-  \RequirePackage{xunicode}
-  \RequirePackage{polyglossia}
-  \defaultfontfeatures{Mapping=tex-text} % needed for -- and --- to work
-  \setromanfont[Numbers=Proportional]{Linux Libertine O}
-  \setsansfont[Numbers=Proportional]{Linux Biolinum O}
-  \ifthenelse{\equal{\ublanguage}{german}}{
-  \setdefaultlanguage{german}
-  }{
-   \setdefaultlanguage[variant=american]{english}
-}
+\ifbare %
+  %
 \else
+  \RequirePackage{ifxetex}
+  \RequirePackage{ifthen}
   \ifthenelse{\equal{\ublanguage}{german}}{
-   \usepackage[ngerman]{babel}
+    \RequirePackage[ngerman]{babel}
   }{
-   \usepackage[american]{babel}
+    \RequirePackage[american]{babel}
   }
-  \RequirePackage{libertine}
-  \RequirePackage[T1]{fontenc}
+  \ifxetex
+    \RequirePackage{amsfonts,amssymb}
+    \RequirePackage{euler}
+    \RequirePackage{xltxtra}
+    \RequirePackage{xunicode}
+    \defaultfontfeatures{Mapping=tex-text} % needed for -- and --- to work
+    \setromanfont[Numbers=Proportional]{Linux Libertine O}
+    \setsansfont[Numbers=Proportional]{Linux Biolinum O}
+  \else
+    \RequirePackage{libertine}
+    \RequirePackage[T1]{fontenc}
 
-  \usepackage{euler}
+    \usepackage{euler}
+  \fi
 \fi
-\RequirePackage{amsmath}
-\RequirePackage{geometry}
-\RequirePackage{hyperref}
-\RequirePackage{fancyhdr}
-\RequirePackage{zref-totpages}
+\ifbare %
+  %
+\else
+  \RequirePackage{amsmath}
+  \RequirePackage{geometry}
+  \RequirePackage{hyperref}
+  \RequirePackage{fancyhdr}
+  \RequirePackage{zref-totpages}
+
+  \RequirePackage{url}
+\fi
 \RequirePackage{prettyref}
-\RequirePackage{url}
 \RequirePackage{xspace}
  \def\Lecture#1{\def\lecture{#1}}
 \def\LectureShort#1{\def\lectureshort{#1}}
@@ -173,127 +179,137 @@
     \egroup
   \fi
 }%
-\newif\ifexplicittype
-\explicittypefalse
-\newcommand{\inclass}{\par{\large
-\ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
-(\inclasstext)\par
-\explicittypetrue
-}
-\newcommand{\takehome}{\par{\large
-\ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
-(\takehometext)\par
-\explicittypetrue
-}
-\hypersetup{%
-  pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
-  pdfauthor={\ifkoblenz Mathematisches Institut, Universität Koblenz\else Optimization Research Group, TU Kaiserslautern\fi}, %
-  pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
+\ifbare\else
+  \newif\ifexplicittype
+  \explicittypefalse
+  \newcommand{\inclass}{\par{\large
+  \ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
+  (\inclasstext)\par
+  \explicittypetrue
+  }
+  \newcommand{\takehome}{\par{\large
+  \ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
+  (\takehometext)\par
+  \explicittypetrue
+  }
+\fi
+\ifbare\else
+  \hypersetup{%
+    pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
+    pdfauthor={\ifkoblenz Mathematisches Institut, Universität Koblenz\else Optimization Research Group, TU Kaiserslautern\fi}, %
+    pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
+\fi
 \newrefformat{ex}{\exercisetext~\ref{#1}}
 \newrefformat{solution}{\solutiontext~\ref{#1}}
-\pagestyle{fancy}
-\fancyhead{}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{.4pt}
-\cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
-\rfoot{\pagetext{} \thepage/\ztotpages}
-\lfoot{\lectureshort}
-\newcommand{\titledateline}{%
-    \ifthenelse{\equal{\deadline}{}}%
-        {\inclasstext}%
-        {\deadlinetext{} \deadline{}}%
-}
-\ifmodern
-\RequirePackage{tikz}
-\definecolor{tublau}{rgb}{0.125,0.34,0.68}
-\renewcommand{\maketitle}{
-\hrule\vspace{2mm}
-\ifkoblenz
-    \begin{minipage}{0.65\textwidth}
-\else
-     \begin{minipage}{0.55\textwidth}
-    \fi
-{\sffamily \lecture{}\;\textbullet\;\semester\\
-\LARGE \scshape  \exercisesheettext{} \sheetnumber %
-\ifshowanswers%
-  {\Large{} (\withsolutiontext)}%
-\fi\\
-\small \upshape \itshape \rmfamily \titledateline}
-\end{minipage}
-\ifkoblenz
-     \begin{minipage}{0.34\textwidth}
-    \else
-        \begin{minipage}{0.44\textwidth}
-    \fi
-\begin{flushright}
-\ifkoblenz
-    \includegraphics[width=0.8\textwidth]{koblenzlogo}
-\else
-\begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
-                    every edge/.append style={very thick},scale=.9]
- \node[fill=red,klumpen] (k1) at (0,0) {};
- \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
- \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
- \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
- \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
- \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
-   {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
-\end{tikzpicture}
+\ifbare\else
+  \pagestyle{fancy}
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{.4pt}
+  \cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
+  \rfoot{\pagetext{} \thepage/\ztotpages}
+  \lfoot{\lectureshort}
 \fi
-\end{flushright}
-\end{minipage}\vspace{2mm}\hrule
-\begin{center}\small
- \textbf{\lecturetext:} \lecturer\\
- \textbf{\exercisestext:} \operator
-\end{center}\vspace{-2mm}
-\ifthenelse{\equal{\homepage}{}}{}{
-{\small \homepagetext}
-}
-}
-\else
-\renewcommand{\maketitle}{
-\begin{minipage}{0.49\textwidth}
-\begin{flushleft}
-\ifkoblenz
-    Universit\"at Koblenz-Landau, Campus Koblenz\\
-    Mathematisches Institut\\
-\else
-     Technische Universit\"at Kaiserslautern\\
-     Fachbereich Mathematik\\
-    \fi
-\issuedate
-\end{flushleft}
-\end{minipage}
-\begin{minipage}{0.49\textwidth}
-\begin{flushright}
-\lecturer\\
-\operator\\
-\semester
-\end{flushright}
-\end{minipage}
+\ifbare\else
+  \newcommand{\titledateline}{%
+      \ifthenelse{\equal{\deadline}{}}%
+          {\inclasstext}%
+          {\deadlinetext{} \deadline{}}%
+  }
+  \ifmodern
+   \RequirePackage{tikz}
+   \definecolor{tublau}{rgb}{0.125,0.34,0.68}
+   \renewcommand{\maketitle}{
+   \hrule\vspace{2mm}
+   \ifkoblenz
+       \begin{minipage}{0.65\textwidth}
+   \else
+       \begin{minipage}{0.55\textwidth}
+      \fi
+   {\sffamily \lecture{}\;\textbullet\;\semester\\
+   \LARGE \scshape  \exercisesheettext{} \sheetnumber %
+   \ifshowanswers%
+     {\Large{} (\withsolutiontext)}%
+   \fi\\
+   \small \upshape \itshape \rmfamily \titledateline}
+   \end{minipage}
+   \ifkoblenz
+       \begin{minipage}{0.34\textwidth}
+      \else
+          \begin{minipage}{0.44\textwidth}
+      \fi
+   \begin{flushright}
+   \ifkoblenz
+       \includegraphics[width=0.8\textwidth]{koblenzlogo}
+   \else
+   \begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
+                       every edge/.append style={very thick},scale=.9]
+    \node[fill=red,klumpen] (k1) at (0,0) {};
+    \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
+    \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
+    \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
+    \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
+    \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
+      {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
+   \end{tikzpicture}
+   \fi
+   \end{flushright}
+   \end{minipage}\vspace{2mm}\hrule
+   \begin{center}\small
+    \textbf{\lecturetext:} \lecturer\\
+    \textbf{\exercisestext:} \operator
+   \end{center}\vspace{-2mm}
+   \ifthenelse{\equal{\homepage}{}}{}{
+   {\small \homepagetext}
+   }
+   }
 
-\begin{center}
-{\Large \bfseries \lecture}\\[0.6cm]
-{\Large \bfseries%
-\ifshowanswers%
-  \solutionsheettext{}%
-\else
-  \exercisesheettext{}%
-\fi{} \sheetnumber}\\[1cm]
-\end{center}
-}
-\AtEndDocument{%
-\ifexplicittype
-\else
-\par
-  \deadlinepre\takehometext
-\fi
-\ifthenelse{\equal{\homepage}{}}{}{
-\begin{center}
-\vfill{\small \homepagetext}
-\end{center}
-}
-}
+  \else
+   \renewcommand{\maketitle}{
+   \begin{minipage}{0.49\textwidth}
+   \begin{flushleft}
+   \ifkoblenz
+       Universit\"at Koblenz-Landau, Campus Koblenz\\
+       Mathematisches Institut\\
+   \else
+       Technische Universit\"at Kaiserslautern\\
+       Fachbereich Mathematik\\
+      \fi
+   \issuedate
+   \end{flushleft}
+   \end{minipage}
+   \begin{minipage}{0.49\textwidth}
+   \begin{flushright}
+   \lecturer\\
+   \operator\\
+   \semester
+   \end{flushright}
+   \end{minipage}
+
+   \begin{center}
+   {\Large \bfseries \lecture}\\[0.6cm]
+   {\Large \bfseries%
+   \ifshowanswers%
+     \solutionsheettext{}%
+   \else
+     \exercisesheettext{}%
+   \fi{} \sheetnumber}\\[1cm]
+   \end{center}
+   }
+   % URL at end of document
+   \AtEndDocument{%
+   \ifexplicittype
+   \else
+   \par
+     \deadlinepre\takehometext
+   \fi
+   \ifthenelse{\equal{\homepage}{}}{}{
+   \begin{center}
+   \vfill{\small \homepagetext}
+   \end{center}
+   }
+   }
+  \fi
 \fi
 \endinput
 %%
