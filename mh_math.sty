@@ -10,6 +10,7 @@
 \ProcessOptions\relax
 
 \RequirePackage{ifxetex}
+\RequirePackage{ifluatex}
 \RequirePackage{amsfonts,amsmath,amssymb}
 \ifxetex
   \ifunimath
@@ -19,6 +20,13 @@
   \else
     \RequirePackage{euler}
   \fi
+\else
+  \ifluatex
+    \ifunimath
+      \RequirePackage{unicode-math}
+    \fi
+  \fi
+\fi
 
 \RequirePackage{mathtools}
 \RequirePackage{xspace}
