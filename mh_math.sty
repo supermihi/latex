@@ -7,6 +7,11 @@
 \DeclareOption{unimath}{
   \unimathtrue
 }
+\newif\ifmyfonts
+\myfontstrue % default : set my fonts
+\DeclareOption{nofonts}{
+	\myfontsfalse
+}
 \ProcessOptions\relax
 
 \RequirePackage{ifxetex}
@@ -18,7 +23,9 @@
     %\setmathfont{Asana-Math.otf}
     %\setmathfont[range={\mathcal,\mathbfcal},StylisticSet=1]{XITS Math}
   \else
-    \RequirePackage{euler}
+    \ifmyfonts
+      \RequirePackage{euler}
+    \fi
   \fi
 \else
   \ifluatex
