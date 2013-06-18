@@ -1,12 +1,30 @@
-%% mh_basic -- basic tex setup (fonts, encoding, XeTeX support) by Michael Helmling.
+%% mh_basic -- basic tex setup file with XeTeX/LuaTeX support.
+%%
+%% Assumes UTF-8 encoding only. Options:
+%%
+%% - nofonts: Don't load my favorite fonts. If this is not given
+%%            sets Linux Libertine as roman, Linux Biolinum as
+%%            sans, and Inconsolata as monospaced font.
+%%
+%% - german:  Set everything up for german use. Affects the 
+%%            babel / polyglossia language and prettyref definitions.
+%%
+%% - nobabel: Don't load babel (or polyglossia).
+%%
+%% This package loads prettyref and sets a lot of useful refformats.
+%% 
+%% Copyright 2013 by Michael Helmling
+%% Newest version: github.com/supermihi/latex
+%% Feel free to use and modify to your wish!
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{mh_basic}
 
-\RequirePackage{ifxetex}
+\RequirePackage{iftex}
 \RequirePackage{ifthen}
 
 \newif\ifgerman
-\germanfalse % default: english texts
+\germanfalse
 \DeclareOption{german}{
   \germantrue
 }
@@ -15,7 +33,7 @@
 }
 
 \newif\ifmyfonts
-\myfontstrue % default : set my fonts
+\myfontstrue
 \DeclareOption{nofonts}{
 	\myfontsfalse
 }
@@ -26,35 +44,48 @@
   \loadbabelfalse
 }
 
-
-
 \ProcessOptions\relax
-\ifloadbabel
-  \ifgerman
-    \RequirePackage[ngerman]{babel}
-  \else
-    \RequirePackage[american]{babel}
-  \fi
-\fi
-\ifxetex
-  \RequirePackage{xltxtra}
-  \RequirePackage{fontspec}
-  \defaultfontfeatures{Mapping=tex-text} % damit -- und --- funktionieren
+
+\ifPDFTeX
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
   \ifmyfonts
-    \setromanfont[Numbers=Proportional]{Linux Libertine O}
-    \setsansfont[Numbers=Proportional]{Linux Biolinum O} %
-    \setmonofont{Inconsolata}
+    \RequirePackage{libertine}
+    \RequirePackage{inconsolata}
+  \else
+    \RequirePackage{lmodern}
+  \fi
+  \ifloadbabel
+    \RequirePackage[\ifgerman ngerman\else american\fi]{babel}
   \fi
 \else
-  \RequirePackage[utf8]{inputenc}
-  \usepackage{csquotes}
+  \RequirePackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
   \ifmyfonts
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage{libertine}
+    \setromanfont[Numbers=Proportional]{Linux Libertine O}
+    \setsansfont[Numbers=Proportional]{Linux Biolinum O}
+    \setmonofont{Inconsolata}
+  \fi
+  \RequirePackage{ifxetex}
+  \ifloadbabel
+    \ifxetex
+      \RequirePackage{polyglossia}
+      \ifgerman
+         \setmainlanguage[babelshorthands=true]{german}
+      \else
+         \setmainlanguage[variant=american]{english}
+      \fi
+    \else
+      % LuaLaTeX: Most Distributions don't yet contain a polyglossia version compatible with LuaLaTeX
+      \RequirePackage[\ifgerman ngerman\else american\fi]{babel}
+    \fi  
   \fi
 \fi
 
+\usepackage{csquotes}
+
 % common abbreviations
+\newcommand{\emphex}[1]{\emph{#1}\index{#1}}
 \RequirePackage{xspace}
 \ifgerman
   \newcommand{\zB}{\text{z.\,B.}\xspace}
@@ -64,7 +95,8 @@
   \newcommand\eg{\text{e.\,g.}\xspace}
   \newcommand\wrt{\text{wrt.}\xspace}
 \fi
-% references (package prettyref)
+
+% reference formats
 \RequirePackage{prettyref}
 \newrefformat{eq}{\textup{(\ref{#1})}}
 \newrefformat{def}{Definition~\ref{#1}}
