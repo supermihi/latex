@@ -6,7 +6,7 @@
 \usepackage{listings}
 \usepackage{url}
 \usepackage{xspace}
-
+\newcommand\st{\text{s.\,t.}\xspace}
 \renewcommand{\u}[1]{\ensuremath{\underline{#1}}} % für Vektoren in Hamacher-Schreibweise
 \hyphenation{equi-va-lent}
 %\usepackage{enumerate}
@@ -18,11 +18,19 @@
 \LectureShort{PraMa Optimierung}
 \Lecturer{Dr.\ Florentine Bunke, Jun.-Prof.\ Dr.\ Stefan Ruzika}
 \Operator{Michael Helmling, Florian Seipp}
-
+\lstset{literate=%
+    {Ö}{{\"O}}1
+    {Ä}{{\"A}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+    {ü}{{\"u}}1
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {~}{{\textasciitilde}}1
+}
 \sloppy
 \begin{document}
 \maketitle
-
 \begin{exercise}{4}
  Gegeben sei das folgende lineare Programm:
 \[\text{(LP)}\quad\begin{array}{rcrcrcrcrcr}
@@ -171,11 +179,11 @@ Nun zeigen wir (ohne Induktion), dass für kein $i$ sowohl $r_i=0$ als auch $s_i
 $\varepsilon = 1-\varepsilon$, was wegen $\varepsilon < \frac12$ ein Widerspruch ist. Für $i>1$ kann man unter der Annahme $s_i=r_i=0$ analog die dritte und vierte Gleichung für dieses $i$ zusammenfassen
 und erhält $1-\varepsilon x_{i-1} = \varepsilon x_{i-1}$ bzw. $\frac12 = \varepsilon x_{i-1}$, was wegen $\varepsilon < \frac12$ und $x_{i-1} < 1$ (was offensichtlich gilt) ein Widerspruch ist.
 Also sind alle $x_i$ und jeweils mindestens eines von $\{r_i,s_i\}$ echt größer als $0$. Da das LP $2n$ Nebenbedingungen hat, enthält jede Basis $2n$ Variablen, also können auch für kein $i$ sowohl 
-$r_i$ als auch $s_i$ in der Basis enthalten sein $\folgt$ jede Basis enthält alle $x_i$ und \emph{genau} eine der Variablen $\{r_i,s_i\}$ für jedes $i=1,\dotsc,n$. Das Problem ist nicht degeneriert: wir haben
+$r_i$ als auch $s_i$ in der Basis enthalten sein $\Leftrightarrow$ jede Basis enthält alle $x_i$ und \emph{genau} eine der Variablen $\{r_i,s_i\}$ für jedes $i=1,\dotsc,n$. Das Problem ist nicht degeneriert: wir haben
 gezeigt dass alle Basisvariablen $>0$ sein müssen.
-\item Sei $n \in L \folgt r^L_n > 0$ und $s^L_n = 0 \folgt x_n^L = 1-\underbrace{\varepsilon x_{n-1}^L}_{<\frac12} > \frac12$. (1)\\
-Sei $n \notin L' \folgt r_n^{L'} = 0$ und $s_n^{L'} > 0 \folgt x_n^{L'} = \underbrace{\varepsilon x_{n-1}^{L'}}_{<\frac12} < \frac12$. (2)\\
-$\folgt x_n^{L'} < x_n^{L}$.
+\item Sei $n \in L \Leftrightarrow r^L_n > 0$ und $s^L_n = 0 \Leftrightarrow x_n^L = 1-\underbrace{\varepsilon x_{n-1}^L}_{<\frac12} > \frac12$. (1)\\
+Sei $n \notin L' \Leftrightarrow r_n^{L'} = 0$ und $s_n^{L'} > 0 \Leftrightarrow x_n^{L'} = \underbrace{\varepsilon x_{n-1}^{L'}}_{<\frac12} < \frac12$. (2)\\
+$\Leftrightarrow x_n^{L'} < x_n^{L}$.
 
 Sei nun $L' = L\setminus \{n\}$. Dann ist
 \[x_n^{L'} \stackrel{\text{(2)}}{=} \varepsilon x_{n-1}^{L'} = \varepsilon x_{n-1}^L \stackrel{\text{(1)}}{=} 1-x_n^L\tk\]

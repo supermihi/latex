@@ -1,11 +1,10 @@
-\documentclass[11pt,english,a4paper,parskip=half-]{scrartcl}
+\documentclass[11pt,a4paper,parskip=half-]{scrartcl}
 
-\usepackage{mh_basic}
-\usepackage{mh_math}
+\usepackage[math,english]{mh_basic}
 \usepackage{mh_tikz}
 \usepackage{mh_theorems}
 
-\usepackage[classic]{agopt_ex}
+\usepackage[classic,english]{agopt_ex}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{a4wide}
@@ -29,17 +28,17 @@
 \maketitle
 
 \inclass
-\begin{exercise}[\algname{Sum-Max-SPP}]{}
+\begin{exercise}[\textsc{Sum-Max-SPP}]{}
 Let $G=(V,A)$ be a directed graph, $s, t \in V$ and denote by
 $\mathcal P^{s,t}$ the set of all $s$-$t$ paths in $G$, where a path
-$P \in A^{\abs P}$ is defined by its edges.
+$P \in A^{\abs{P}}$ is defined by its edges.
 Consider the following shortest path problem with one sum and $p-1$ bottleneck objectives:
 \begin{align*}
-\min \,&\left( \sum_{a \in P} c^{1}(a) , \ \max_{a \in P} c^{2}(a), \ \ldots , \ \max_{a \in P} c^{p}(a) \right) \qquad \qquad \tag{\algname{Sum-Max-Spp}}\\[1.2ex]
+\min \,&\left( \sum_{a \in P} c^{1}(a) , \ \max_{a \in P} c^{2}(a), \ \ldots , \ \max_{a \in P} c^{p}(a) \right) \qquad \qquad \tag{\textsc{Sum-Max-Spp}}\\[1.2ex]
 \text{s.\,t.}\quad & P \in \mathcal P^{s,t}.
 \end{align*}
 \begin{enumerate}
-	\item Find a good upper bound on the number of nondominated points for \algname{Sum-Max-Spp}.
+	\item Find a good upper bound on the number of nondominated points for \textsc{Sum-Max-Spp}.
         \item Find an algorithm to find a complete minimal set of efficient solutions. You do not have to give a rigorous proof of the correctness. \emph{Hint: Try to first find a solution for $p=2$, then generalize.}
         \item How can we solve the problem if there are bottleneck objectives only?
 \end{enumerate}
@@ -123,7 +122,7 @@ Consider the following shortest path problem with one sum and $p-1$ bottleneck o
 	which is a contradiction to $\hat P$ dominating $P$.
 	
 	\item We claim that \prettyref{alg:summaxspp} computes a minimal efficient
-	set for \algname{Sum-Max-Spp}. Observe that the \textbf{for} loop
+	set for \textsc{Sum-Max-Spp}. Observe that the \textbf{for} loop
 	in \prettyref{line:forloop} traverses all possible configurations of the bottleneck costs. Thus,
 	by the argumentation of part~a), the total set of paths generated in
 	\prettyref{line:genpath} contains a minimal complete efficient set. It is 
@@ -138,7 +137,7 @@ Consider the following shortest path problem with one sum and $p-1$ bottleneck o
 	if such a path exists. Then the set \[ \mathcal P_{\mathtt{Alg}}\left\{P^*(\hat c):  
 	\mathcal P^{s,t}_{\hat c} \neq \emptyset,\; c^*(\hat c') > c^*(\hat c)\text{ for all }
 	\hat c' \leq \hat c,\; \hat c' \neq \hat c\right\}\]
-	is a minimal complete set of efficient solutions for \algname{Sum-Max-Spp}.
+	is a minimal complete set of efficient solutions for \textsc{Sum-Max-Spp}.
 	\end{lemma}
 	\begin{proof}
 	Let $P \in \mathcal X_E$ be an efficient path with objective value
@@ -179,7 +178,7 @@ Consider the following shortest path problem with one sum and $p-1$ bottleneck o
 \begin{algorithm}[H]
 	\begin{algorithmic}[1]
 	\State\textbf{Input:} Graph $G=(V,A)$ with $p$ objective functions $c^1,\dotsc,c^p$.
-	\State\textbf{Output:} A minimal complete set $\mathcal S$ of efficient solutions for \algname{Sum-Max-Spp}.
+	\State\textbf{Output:} A minimal complete set $\mathcal S$ of efficient solutions for \textsc{Sum-Max-Spp}.
 	\ForAll{$j=2,\dotsc,p$}
 		\State Compute and $C^j$ and sort it such that $C^j_1 \leq \dotsi \leq C^j_{\abs{ C_j}}$
 	\EndFor
@@ -210,7 +209,7 @@ Consider the following shortest path problem with one sum and $p-1$ bottleneck o
 	\EndFor
 	\State	\Return $S$
 	\end{algorithmic}
-	\caption{Algorithm solving \algname{Sum-Max-Spp}}\label{alg:summaxspp}
+	\caption{Algorithm solving \textsc{Sum-Max-Spp}}\label{alg:summaxspp}
 	\end{algorithm}
 \end{solution}
 

@@ -6,29 +6,35 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{mh_math}
 
-\newif\ifunimath
-\unimathfalse
+\RequirePackage{etoolbox}
+
+\newtoggle{unimath}
 \DeclareOption{unimath}{
-  \unimathtrue
+  \toggletrue{unimath}
 }
-\newif\ifmyfonts
-\myfontstrue
+
+\providetoggle{mh_myfonts}
+\toggletrue{mh_myfonts}
 \DeclareOption{nofonts}{
-	\myfontsfalse
+  \togglefalse{mh_myfonts}
 }
+
 \ProcessOptions\relax
 
 \RequirePackage{iftex}
 \RequirePackage{amsfonts,amsmath,amssymb}
-\ifPDFTeX
-  \RequirePackage{eulervm}
-\else
-  \ifunimath
-    \RequirePackage{unicode-math}
-    \ifmyfonts
-       \setmathfont[StylisticSet=0]{XITS Math} 
-    \fi
-\fi
+\iftoggle{mh_myfonts}{
+  \ifPDFTeX
+    \RequirePackage{eulervm}
+  \else
+    \iftoggle{unimath}{
+      \RequirePackage{unicode-math}
+      \setmathfont[StylisticSet=0]{XITS Math} 
+    }{
+      \RequirePackage{eulervm}
+    }
+  \fi
+}{}
 
 \RequirePackage{mathtools}
 \RequirePackage{xspace}
@@ -38,7 +44,7 @@
 \newcommand{\Q}{\mathbb{Q}} % fractions
 \newcommand{\N}{\mathbb{N}} % integers
 \newcommand{\R}{\mathbb{R}} % reals
-\newcommand{\C}{\mathbb{C}} % complex numbers
+\def\C{\mathbb{C}} % complex numbers
 \newcommand{\F}{\mathbb{F}} % finite fields
 \renewcommand{\O}{\mathcal{O}} % Landau notation
 \newcommand{\E}{\mathbb{E}} % Expectation

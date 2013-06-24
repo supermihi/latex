@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+replacements = {
+    "uebung"   : "loesung",
+    "blatt"    : "loesung",
+    "exercise" : "solution",
+    "sheet"    : "solution",
+}
+
+import glob
+from subprocess import check_call
+from os.path import dirname, split
+for compiler in ("pdflatex", "lualatex", "xelatex"):
+    for texfile in glob.iglob("example_*/*.tex"):
+        jobname = split(texfile)[-1][:-4]
+        print( ("*" * 40 + "\n") * 3)
+        print("Compiling {} with {}".format(jobname, compiler))
+        check_call(["latexmk", "-C"], cwd=dirname(texfile))
+        check_call([compiler, jobname], cwd=dirname(texfile))
+        for buzz, repl in replacements.items():
+            pos = jobname.lower().find(buzz)
+            if pos != -1:
+                solname = jobname.replace(jobname[pos:pos+len(buzz)], repl.capitalize() if jobname[pos].isupper() else repl)
+                print("Compiling {} with {} and jobname={}".format(jobname, compiler, solname))
+                check_call([compiler, "-jobname={}".format(solname), jobname], cwd=dirname(texfile))

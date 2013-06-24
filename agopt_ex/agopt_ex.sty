@@ -16,72 +16,67 @@
 %% LaTeX version 2011/06/27 or later.
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \ProvidesPackage{agopt_ex}
-  [2013/05/14 v0.5.1 use TikZ version of the Koblenz logo]
+[2013/06/24 v0.6 use etoolbox instead of newif]
 
 
 
-\def\ublanguage{german}
-\DeclareOption{german}{
-  \def\ublanguage{german}
-}
-\DeclareOption{english}{
-  \def\ublanguage{english}
-}
-\newif\ifbare
-\barefalse
-\DeclareOption{bare}{\baretrue}
-\newif\ifautoshowanswers
-\newif\ifshowanswers
-\showanswersfalse
-\autoshowanswerstrue
-\DeclareOption{solution}{\showanswerstrue\autoshowanswersfalse}
-\DeclareOption{nosolution}{\showanswersfalse\autoshowanswersfalse}
-\newif\ifkoblenz
-\koblenzfalse
-\DeclareOption{koblenz}{\koblenztrue}
-\DeclareOption{kaiserslautern}{\koblenzfalse}
-\newif\ifmodern
-\DeclareOption{modern}{\moderntrue}
-\DeclareOption{classic}{\modernfalse}
-\moderntrue % the default
+\RequirePackage{etoolbox}
+\RequirePackage{ifthen}
+\newtoggle{german}
+\toggletrue{german}
+\DeclareOption{german}{\toggletrue{german}}
+\DeclareOption{english}{\togglefalse{german}}
+\newtoggle{bare}
+\togglefalse{bare}
+\DeclareOption{bare}{\toggletrue{bare}}
+\newtoggle{autoshowanswers}
+\toggletrue{autoshowanswers}
+\newtoggle{showanswers}
+
+\DeclareOption{solution}{\toggletrue{showanswers}\togglefalse{autoshowanswers}}
+\DeclareOption{nosolution}{\togglefalse{showanswers}\togglefalse{autoshowanswers}}
+\newtoggle{koblenz}
+\DeclareOption{koblenz}{\toggletrue{koblenz}}
+\DeclareOption{kaiserslautern}{\togglefalse{koblenz}}
+\newtoggle{modern}
+\toggletrue{modern} % modern is the default style
+\DeclareOption{modern}{\toggletrue{modern}}
+\DeclareOption{classic}{\togglefalse{modern}}
 \ProcessOptions\relax
-\ifbare %
-  %
-\else
-  \RequirePackage{ifxetex}
-  \RequirePackage{ifthen}
-  \ifthenelse{\equal{\ublanguage}{german}}{
-    \RequirePackage[ngerman]{babel}
-  }{
-    \RequirePackage[american]{babel}
-  }
-  \ifxetex
+\nottoggle{bare}{
+  \RequirePackage{iftex}
+  \ifPDFTeX
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage{libertine}
+    \RequirePackage{inconsolata}
+    \RequirePackage{eulervm}
+    \RequirePackage[\iftoggle{german}{ngerman}{american}]{babel}
+  \else % XeTeX or LuaTeX
     \RequirePackage{amsfonts,amssymb}
-    \RequirePackage{euler}
-    \RequirePackage{xltxtra}
-    \RequirePackage{xunicode}
-    \defaultfontfeatures{Mapping=tex-text} % needed for -- and --- to work
+    \RequirePackage{eulervm}
+    \RequirePackage{fontspec}
+    \defaultfontfeatures{Ligatures=TeX}
     \setromanfont[Numbers=Proportional]{Linux Libertine O}
     \setsansfont[Numbers=Proportional]{Linux Biolinum O}
-  \else
-    \RequirePackage{libertine}
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage{inconsolata}
-
-    \usepackage{euler}
+    \setmonofont{Inconsolata}
+    \RequirePackage{polyglossia}
+    \iftoggle{german}{
+      \setmainlanguage[babelshorthands=true]{german}
+    }{
+      \setmainlanguage[variant=american]{english}
+    }
   \fi
-\fi
-\ifbare %
-  %
-\else
+  \usepackage{csquotes}
+}{}
+\nottoggle{bare}{
   \RequirePackage{amsmath}
   \RequirePackage{geometry}
   \RequirePackage{hyperref}
   \RequirePackage{fancyhdr}
   \RequirePackage{zref-totpages}
-
   \RequirePackage{url}
-\fi
+}{}
 \RequirePackage{prettyref}
 \RequirePackage{xspace}
  \def\Lecture#1{\def\lecture{#1}}
@@ -103,10 +98,10 @@
 \def\operator{Exercise Operator}
 \def\semester{Semester}
 \def\homepage{}
-\ifthenelse{\equal{\ublanguage}{german}}{
+\iftoggle{german}{
   \def\solutiontext{L\"osung}
   \def\exercisetext{Aufgabe}
-  \newcommand{\exercisesheettext}{\"Ubungsblatt}
+  \newcommand{\exercisesheettext}{Übungsblatt}
   \def\withsolutiontext{mit L\"osung}
   \def\pagetext{Seite}
   \def\pointstext{Punkte}
@@ -156,196 +151,193 @@
 \setlist[enumerate,1]{label=\alph*)}
 \setlist[enumerate,2]{label=\arabic*.}
 
-\ifautoshowanswers
-\RequirePackage{xstring}
-\IfSubStr*{\jobname}{\solutionfilename}{
- \showanswerstrue
-}{
- \showanswersfalse
-}
-\fi
+\iftoggle{autoshowanswers}{
+  \RequirePackage{xstring}
+  \IfSubStr*{\jobname}{\solutionfilename}{
+   \toggletrue{showanswers}
+  }{
+   \togglefalse{showanswers}
+  }
+}{}
 \newenvironment{solution}[1][{}]%
 {%
-  \ifshowanswers
+  \iftoggle{showanswers}{
     \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}%
     \ifthenelse{\equal{#1}{}}{}{ (#1 \pointstext)}:}
-  \else
+  }{
     \par\vspace*{0pt}%
     \setbox\z@\vbox\bgroup
-  \fi
+  }
 }{%
-  \ifshowanswers
-    %
-  \else
+  \nottoggle{showanswers}{
     \egroup
-  \fi
+  }{}
 }%
-\ifbare\else
-  \newif\ifexplicittype
-  \explicittypefalse
+\nottoggle{bare}{
+  \newtoggle{explicittype}
   \newcommand{\inclass}{\par{\large
-  \ifmodern\textsc{\inclasstexttitle}\else\MakeUppercase{\inclasstexttitle}\fi}\\
-  (\inclasstext)\par
-  \explicittypetrue
+    \iftoggle{modern}{\textsc{\inclasstexttitle}}{\MakeUppercase{\inclasstexttitle}}}\\
+    (\inclasstext)\par
+    \toggletrue{explicittype}
   }
   \newcommand{\takehome}{\par{\large
-  \ifmodern\textsc{\takehometexttitle}\else\MakeUppercase{\takehometexttitle}\fi}\\
-  (\takehometext)\par
-  \explicittypetrue
+    \iftoggle{modern}{\textsc{\takehometexttitle}}{\MakeUppercase{\takehometexttitle}}}\\
+    (\takehometext)\par
+    \toggletrue{explicittype}
   }
-\fi
-\ifbare\else
+}{}
+\nottoggle{bare}{
   \hypersetup{%
     pdftitle={\lecture, \exercisesheettext{} \sheetnumber}, %
-    pdfauthor={\ifkoblenz Mathematisches Institut, Universität Koblenz\else Optimization Research Group, TU Kaiserslautern\fi}, %
-    pdfcreator={\ifxetex XeLaTeX \else LaTeX2e \fi}}
-\fi
+    pdfauthor={\iftoggle{koblenz}{Mathematisches Institut, Universität Koblenz}{Optimization Research Group, TU Kaiserslautern}}, %
+    pdfcreator={\ifPDFTeX pdfTeX\else\ifLuaTeX LuaTeX\else XeLaTeX\fi\fi}
+  }
+}{}
 \newrefformat{ex}{\exercisetext~\ref{#1}}
 \newrefformat{solution}{\solutiontext~\ref{#1}}
-\ifbare\else
+\nottoggle{bare}{
   \pagestyle{fancy}
   \fancyhead{}
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{.4pt}
-  \cfoot{\ifshowanswers\solutionsheettext{}\else\exercisesheettext{}\fi{} \sheetnumber}
+  \cfoot{\iftoggle{showanswers}{\solutionsheettext}{\exercisesheettext} \sheetnumber}
   \rfoot{\pagetext{} \thepage/\ztotpages}
   \lfoot{\lectureshort}
-\fi
-\ifbare\else
+}{}
+\nottoggle{bare}{
   \newcommand{\titledateline}{%
-      \ifthenelse{\equal{\deadline}{}}%
-          {\inclasstext}%
-          {\deadlinetext{} \deadline{}}%
+    \ifthenelse{\equal{\deadline}{}}%
+      {\inclasstext}%
+      {\deadlinetext{} \deadline{}}%
   }
-  \ifmodern
-   \RequirePackage{tikz}
-   \definecolor{tublau}{rgb}{0.125,0.34,0.68}
-   \renewcommand{\maketitle}{
-   \hrule\vspace{2mm}
-   \ifkoblenz
-       \begin{minipage}{0.65\textwidth}
-   \else
-       \begin{minipage}{0.55\textwidth}
-      \fi
-   {\sffamily \lecture{}\;\textbullet\;\semester\\
-   \LARGE \scshape  \exercisesheettext{} \sheetnumber %
-   \ifshowanswers%
-     {\Large{} (\withsolutiontext)}%
-   \fi\\
-   \small \upshape \itshape \rmfamily \titledateline}
-   \end{minipage}
-   \ifkoblenz
-       \begin{minipage}{0.34\textwidth}
-      \else
-          \begin{minipage}{0.44\textwidth}
-      \fi
-   \begin{flushright}
-   \ifkoblenz
-       \definecolor{koblue}{RGB}{29,78,148}
-       \begin{tikzpicture}[y=-0.4pt, x=0.4pt]
-       \begin{scope}[cm={{1.25,0.0,0.0,-1.25,(0.0,57.5)}}]
-         \path[draw=koblue,line join=miter,line cap=butt,miter limit=3.86,line width=1.355pt] (52.2523,44.1371) -- (36.2594,44.1371) -- (27.3711,20.7531) .. controls (25.6469,16.2371) and (23.7480,14.3812) .. (20.7582,14.3812) .. controls (18.3523,14.3812) and (17.2152,15.8039) .. (17.7930,18.0930) .. controls (17.9645,18.7738) and (18.4062,20.0102) .. (18.8652,21.3098) -- (27.5484,44.1371) -- (11.6195,44.1371) -- (2.5723,20.3820) .. controls (2.1773,19.3305) and (1.8629,18.3402) .. (1.5352,17.0414) .. controls (0.3184,12.2160) and (0.9707,8.8754) .. (3.6957,6.2770) .. controls (6.7977,3.3695) and (11.6090,1.8234) .. (17.8508,1.8234) .. controls (24.0270,1.8234) and (29.2270,3.3695) .. (33.7609,6.6488) .. controls (38.4379,9.9894) and (40.2465,12.7730) .. (43.5047,21.3098) -- (52.2523,44.1371) -- cycle;
-         \path[fill=koblue,nonzero rule] (9.7570,26.2781) -- (25.4219,26.2781) -- (24.6152,23.8500) -- (8.9500,23.8500) -- (9.7570,26.2781) -- cycle(11.3711,31.1344) -- (27.0359,31.1344) -- (26.2289,28.7066) -- (10.5641,28.7066) -- (11.3711,31.1344) -- cycle(12.9848,35.9906) -- (28.6500,35.9906) -- (27.8430,33.5629) -- (12.1777,33.5629) -- (12.9848,35.9906) -- cycle(14.6207,40.9121) -- (30.2855,40.9121) -- (29.4570,38.4188) -- (13.7922,38.4188) -- (14.6207,40.9121);
-         \path[fill=koblue,nonzero rule] (34.1387,26.2781) -- (49.8039,26.2781) -- (48.9969,23.8500) -- (33.3320,23.8500) -- (34.1387,26.2781) -- cycle(35.7531,31.1344) -- (51.4180,31.1344) -- (50.6109,28.7066) -- (34.9457,28.7066) -- (35.7531,31.1344) -- cycle(37.3668,35.9906) -- (53.0316,35.9906) -- (52.2250,33.5629) -- (36.5594,33.5629) -- (37.3668,35.9906) -- cycle(39.0023,40.9121) -- (54.6676,40.9121) -- (53.8391,38.4188) -- (38.1738,38.4188) -- (39.0023,40.9121);
-         \path[fill,nonzero rule] (71.3902,12.8836) -- (71.3902,20.6355) -- (69.3742,20.6355) -- (69.3742,2.5394) -- (71.3902,2.5394) -- (71.3902,10.3395) -- (71.8941,10.8434) -- (79.3102,2.5394) -- (82.0941,2.5394) -- (73.3102,12.2117) -- (81.8055,20.6355) -- (79.0941,20.6355) -- (71.3902,12.8836);
-         \path[fill,even odd rule] (91.1125,20.9477) .. controls (85.9523,20.9477) and (81.6797,16.7477) .. (81.6797,11.5641) .. controls (81.6797,6.3555) and (85.9523,2.2277) .. (91.1125,2.2277) .. controls (96.2719,2.2277) and (100.5450,6.3555) .. (100.5450,11.5641) .. controls (100.5450,16.7477) and (96.2719,20.9477) .. (91.1125,20.9477) -- cycle(91.1125,19.0754) .. controls (95.2641,19.0754) and (98.5281,15.6918) .. (98.5281,11.5879) .. controls (98.5281,7.5078) and (95.2164,4.0996) .. (91.1125,4.0996) .. controls (87.0078,4.0996) and (83.6957,7.5078) .. (83.6957,11.5879) .. controls (83.6957,15.6918) and (86.9602,19.0754) .. (91.1125,19.0754);
-         \path[fill,even odd rule] (105.2860,10.9398) -- (107.0380,10.9398) .. controls (109.2460,10.9398) and (111.9340,10.5312) .. (111.9340,7.7238) .. controls (111.9340,4.9637) and (109.5580,4.4117) .. (107.3020,4.4117) -- (105.2860,4.4117) -- (105.2860,10.9398) -- cycle(103.2700,2.5395) -- (107.4700,2.5395) .. controls (111.0460,2.5395) and (113.9500,3.9797) .. (113.9500,7.5801) .. controls (113.9500,9.7398) and (112.6780,11.6836) .. (110.5180,12.2117) .. controls (111.7420,13.0273) and (112.2930,14.2758) .. (112.2930,15.7398) .. controls (112.2930,19.4355) and (109.5340,20.6355) .. (106.2460,20.6355) -- (103.2700,20.6355) -- (103.2700,2.5394) -- cycle(105.2860,18.7637) -- (106.0780,18.7637) .. controls (108.5500,18.7637) and (110.2780,18.4758) .. (110.2780,15.7398) .. controls (110.2780,12.9316) and (108.3340,12.6676) .. (106.0540,12.6676) -- (105.2860,12.6676) -- (105.2860,18.7637);
-         \path[fill,nonzero rule] (118.9120,20.6355) -- (116.8960,20.6355) -- (116.8960,2.5394) -- (123.9040,2.5394) -- (123.9040,4.4117) -- (118.9120,4.4117) -- (118.9120,20.6355);
-         \path[fill,nonzero rule] (125.8960,2.5394) -- (135.2800,2.5394) -- (135.2800,4.4117) -- (127.9120,4.4117) -- (127.9120,11.5156) -- (135.0640,11.5156) -- (135.0640,13.3875) -- (127.9120,13.3875) -- (127.9120,18.7637) -- (135.2800,18.7637) -- (135.2800,20.6355) -- (125.8960,20.6355) -- (125.8960,2.5394);
-         \path[fill,nonzero rule] (138.8260,2.5394) -- (140.8420,2.5394) -- (140.8420,16.4836) -- (154.9540,1.7238) -- (154.9540,20.6355) -- (152.9380,20.6355) -- (152.9380,6.6195) -- (138.8260,21.4035) -- (138.8260,2.5395);
-         \path[fill,nonzero rule] (160.5690,4.4117) -- (170.4570,20.6355) -- (158.4800,20.6355) -- (158.4800,18.7637) -- (167.0970,18.7637) -- (157.2330,2.5394) -- (170.1930,2.5394) -- (170.1930,4.4117) -- (160.5690,4.4117);
-         \path[fill,nonzero rule] (179.4550,12.8383) .. controls (178.7110,12.8383) and (178.1110,12.2383) .. (178.1110,11.5184) .. controls (178.1110,10.7746) and (178.7110,10.1504) .. (179.4550,10.1504) .. controls (180.1980,10.1504) and (180.7990,10.7746) .. (180.7990,11.5184) .. controls (180.7990,12.2383) and (180.1980,12.8383) .. (179.4550,12.8383);
-         \path[fill,nonzero rule] (191.7840,20.6355) -- (189.7680,20.6355) -- (189.7680,2.5394) -- (196.7760,2.5394) -- (196.7760,4.4117) -- (191.7840,4.4117) -- (191.7840,20.6355);
-         \path[fill,even odd rule] (209.6880,7.6758) -- (211.8240,2.5394) -- (214.0550,2.5394) -- (205.9200,21.4996) -- (197.5670,2.5394) -- (199.7760,2.5394) -- (201.9590,7.6758) -- (209.6880,7.6758) -- cycle(208.8950,9.5480) -- (202.7760,9.5480) -- (205.8710,16.7957) -- (208.8950,9.5480);
-         \path[fill,nonzero rule] (216.1410,2.5394) -- (218.1570,2.5394) -- (218.1570,16.4836) -- (232.2700,1.7238) -- (232.2700,20.6355) -- (230.2540,20.6355) -- (230.2540,6.6195) -- (216.1410,21.4035) -- (216.1410,2.5395);
-         \path[fill,even odd rule] (236.0370,2.5394) -- (239.3960,2.5394) .. controls (242.2290,2.5394) and (244.3880,2.8996) .. (246.5490,4.8195) .. controls (248.5410,6.5957) and (249.5000,8.9238) .. (249.5000,11.5641) .. controls (249.5000,14.2520) and (248.5640,16.6758) .. (246.5000,18.4516) .. controls (244.3640,20.2758) and (242.1560,20.6355) .. (239.4450,20.6355) -- (236.0370,20.6355) -- (236.0370,2.5394) -- cycle(238.0530,4.4117) -- (238.0530,18.7637) -- (239.5160,18.7637) .. controls (241.6520,18.7637) and (243.4770,18.4758) .. (245.1320,17.0117) .. controls (246.6920,15.6438) and (247.4840,13.6516) .. (247.4840,11.5879) .. controls (247.4840,9.5719) and (246.7160,7.6758) .. (245.2290,6.2836) .. controls (243.5720,4.7238) and (241.7250,4.4117) .. (239.5160,4.4117) -- (238.0530,4.4117);
-         \path[fill,even odd rule] (262.2620,7.6758) -- (264.3980,2.5394) -- (266.6290,2.5394) -- (258.4940,21.4996) -- (250.1410,2.5394) -- (252.3500,2.5394) -- (254.5340,7.6758) -- (262.2620,7.6758) -- cycle(261.4700,9.5480) -- (255.3500,9.5480) -- (258.4460,16.7957) -- (261.4700,9.5480);
-         \path[fill,nonzero rule] (269.8440,20.6355) -- (267.8280,20.6355) -- (267.8280,9.3074) .. controls (267.8280,7.2438) and (268.0200,5.5879) .. (269.6040,4.0754) .. controls (270.8280,2.8758) and (272.5800,2.2277) .. (274.2840,2.2277) .. controls (276.1080,2.2277) and (277.9080,2.9477) .. (279.1560,4.2914) .. controls (280.5960,5.7797) and (280.7390,7.3395) .. (280.7390,9.3074) -- (280.7390,20.6355) -- (278.7230,20.6355) -- (278.7230,9.8594) .. controls (278.7230,8.4437) and (278.7960,6.8594) .. (277.8360,5.7078) .. controls (276.9960,4.6996) and (275.5800,4.0996) .. (274.2840,4.0996) .. controls (272.9630,4.0996) and (271.4280,4.7238) .. (270.6350,5.8273) .. controls (269.7960,6.9797) and (269.8440,8.5156) .. (269.8440,9.8594) -- (269.8440,20.6355);
-         \path[fill,nonzero rule] (71.3422,44.6355) -- (69.3262,44.6355) -- (69.3262,33.3074) .. controls (69.3262,31.2438) and (69.5180,29.5879) .. (71.1020,28.0754) .. controls (72.3262,26.8758) and (74.0781,26.2277) .. (75.7820,26.2277) .. controls (77.6059,26.2277) and (79.4062,26.9477) .. (80.6543,28.2914) .. controls (82.0941,29.7797) and (82.2383,31.3395) .. (82.2383,33.3074) -- (82.2383,44.6355) -- (80.2223,44.6355) -- (80.2223,33.8594) .. controls (80.2223,32.4438) and (80.2945,30.8594) .. (79.3340,29.7078) .. controls (78.4941,28.6996) and (77.0781,28.1000) .. (75.7820,28.1000) .. controls (74.4617,28.1000) and (72.9258,28.7238) .. (72.1336,29.8273) .. controls (71.2945,30.9797) and (71.3422,32.5156) .. (71.3422,33.8594) -- (71.3422,44.6355);
-         \path[fill,nonzero rule] (93.4863,26.5395) -- (95.5023,26.5395) -- (95.5023,40.4836) -- (109.6140,25.7238) -- (109.6140,44.6355) -- (107.5980,44.6355) -- (107.5980,30.6195) -- (93.4863,45.4035) -- (93.4863,26.5395);
-         \path[fill,nonzero rule] (120.9890,26.5395) -- (123.0054,26.5395) -- (123.0054,44.6356) -- (120.9890,44.6356) -- (120.9890,26.5395) -- cycle;
-         \path[fill,nonzero rule] (134.7300,44.6355) -- (132.5460,44.6355) -- (139.8900,25.4598) -- (147.2340,44.6355) -- (145.0500,44.6355) -- (139.8900,30.8355) -- (134.7300,44.6355);
-         \path[fill,nonzero rule] (156.7520,26.5395) -- (166.1360,26.5395) -- (166.1360,28.4117) -- (158.7690,28.4117) -- (158.7690,35.5156) -- (165.9200,35.5156) -- (165.9200,37.3875) -- (158.7690,37.3875) -- (158.7690,42.7637) -- (166.1360,42.7637) -- (166.1360,44.6355) -- (156.7520,44.6355) -- (156.7520,26.5395);
-         \path[fill,even odd rule] (179.1380,42.7637) -- (179.7380,42.7637) .. controls (182.1620,42.7637) and (184.3460,42.4758) .. (184.3460,39.4996) .. controls (184.3460,36.6918) and (182.0430,36.2598) .. (179.7620,36.2598) -- (179.1380,36.2598) -- (179.1380,42.7637) -- cycle(179.1380,34.4836) -- (179.6420,34.4836) -- (185.1140,26.5395) -- (187.5860,26.5395) -- (181.8260,34.6516) .. controls (184.6100,34.8918) and (186.3620,36.8594) .. (186.3620,39.6438) .. controls (186.3620,43.7238) and (183.1700,44.6355) .. (179.7380,44.6355) -- (177.1220,44.6355) -- (177.1220,26.5395) -- (179.1380,26.5395) -- (179.1380,34.4836);
-         \path[fill,nonzero rule] (207.5020,42.1395) .. controls (206.5420,43.9156) and (204.8380,44.9477) .. (202.8220,44.9477) .. controls (200.1340,44.9477) and (197.7580,43.1477) .. (197.7580,40.3395) .. controls (197.7580,37.7477) and (199.5820,36.6676) .. (201.6940,35.7078) -- (202.7980,35.2277) .. controls (204.4780,34.4598) and (206.1340,33.7398) .. (206.1340,31.6277) .. controls (206.1340,29.5879) and (204.3580,28.1000) .. (202.4140,28.1000) .. controls (200.4700,28.1000) and (199.0540,29.6117) .. (198.7900,31.4598) -- (196.8220,30.9078) .. controls (197.3980,28.1000) and (199.5580,26.2277) .. (202.4620,26.2277) .. controls (205.6060,26.2277) and (208.1500,28.6516) .. (208.1500,31.8195) .. controls (208.1500,34.6996) and (206.1580,35.8758) .. (203.8050,36.9078) -- (202.6060,37.4355) .. controls (201.3820,37.9879) and (199.7740,38.7078) .. (199.7740,40.2680) .. controls (199.7740,41.9238) and (201.1660,43.0754) .. (202.7740,43.0754) .. controls (204.3100,43.0754) and (205.1740,42.3555) .. (205.8940,41.1078) -- (207.5020,42.1395);
-         \path[fill,nonzero rule] (218.7000,26.5395) -- (220.7160,26.5395) -- (220.7160,44.6356) -- (218.7000,44.6356) -- (218.7000,26.5395) -- cycle;
-         \path[fill,nonzero rule] (236.7370,42.7637) -- (241.1530,42.7637) -- (241.1530,44.6355) -- (230.3520,44.6355) -- (230.3520,42.7637) -- (234.7210,42.7637) -- (234.7210,26.5395) -- (236.7370,26.5395) -- (236.7370,42.7637);
-         \path[fill,even odd rule] (259.2930,31.6758) -- (261.4300,26.5395) -- (263.6610,26.5395) -- (255.5250,45.4996) -- (247.1730,26.5395) -- (249.3810,26.5395) -- (251.5660,31.6758) -- (259.2930,31.6758) -- cycle(258.5010,33.5480) -- (252.3810,33.5480) -- (255.4770,40.7957) -- (258.5010,33.5480);
-         \path[fill,nonzero rule] (276.0670,42.7637) -- (280.4840,42.7637) -- (280.4840,44.6355) -- (269.6840,44.6355) -- (269.6840,42.7637) -- (274.0520,42.7637) -- (274.0520,26.5395) -- (276.0670,26.5395) -- (276.0670,42.7637);
-         \path[fill,nonzero rule] (250.6180,44.7105) .. controls (249.8740,44.7105) and (249.2740,44.1105) .. (249.2740,43.3906) .. controls (249.2740,42.6465) and (249.8740,42.0227) .. (250.6180,42.0227) .. controls (251.3620,42.0227) and (251.9620,42.6465) .. (251.9620,43.3906) .. controls (251.9620,44.1105) and (251.3620,44.7105) .. (250.6180,44.7105);
-         \path[fill,nonzero rule] (260.4040,44.7105) .. controls (259.6600,44.7105) and (259.0590,44.1105) .. (259.0590,43.3906) .. controls (259.0590,42.6465) and (259.6600,42.0227) .. (260.4040,42.0227) .. controls (261.1480,42.0227) and (261.7480,42.6465) .. (261.7480,43.3906) .. controls (261.7480,44.1105) and (261.1480,44.7105) .. (260.4040,44.7105);
-       \end{scope}
-       \end{tikzpicture}
-   \else
-   \begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
-                       every edge/.append style={very thick},scale=.9]
-    \node[fill=red,klumpen] (k1) at (0,0) {};
-    \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
-    \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
-    \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
-    \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
-    \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
-      {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
-   \end{tikzpicture}
-   \fi
-   \end{flushright}
-   \end{minipage}\vspace{2mm}\hrule
-   \begin{center}\small
-    \textbf{\lecturetext:} \lecturer\\
-    \textbf{\exercisestext:} \operator
-   \end{center}\vspace{-2mm}
-   \ifthenelse{\equal{\homepage}{}}{}{
-   {\small \homepagetext}
-   }
-   }
+  \iftoggle{modern}{
+    \RequirePackage{tikz}
+    \definecolor{tublau}{rgb}{0.125,0.34,0.68}
+    \renewcommand{\maketitle}{
+      \hrule\vspace{2mm}
+      \iftoggle{koblenz}{
+        \begin{minipage}{0.65\textwidth}
+      }{
+        \begin{minipage}{0.55\textwidth}
+      }
+      {\sffamily \lecture{}\;\textbullet\;\semester\\
+      \LARGE \scshape  \exercisesheettext{} \sheetnumber %
+      \iftoggle{showanswers}{%
+        {\Large{} (\withsolutiontext)}%
+      }{}\\
+      \small \upshape \itshape \rmfamily \titledateline}
+      \end{minipage}
+      \iftoggle{koblenz}{
+        \begin{minipage}{0.34\textwidth}
+      }{
+        \begin{minipage}{0.44\textwidth}
+      }
+      \begin{flushright}
+      \iftoggle{koblenz}{
+        \definecolor{koblue}{RGB}{29,78,148}
+        \begin{tikzpicture}[y=-0.4pt, x=0.4pt]
+        \begin{scope}[cm={{1.25,0.0,0.0,-1.25,(0.0,57.5)}}]
+          \path[draw=koblue,line join=miter,line cap=butt,miter limit=3.86,line width=1.355pt] (52.2523,44.1371) -- (36.2594,44.1371) -- (27.3711,20.7531) .. controls (25.6469,16.2371) and (23.7480,14.3812) .. (20.7582,14.3812) .. controls (18.3523,14.3812) and (17.2152,15.8039) .. (17.7930,18.0930) .. controls (17.9645,18.7738) and (18.4062,20.0102) .. (18.8652,21.3098) -- (27.5484,44.1371) -- (11.6195,44.1371) -- (2.5723,20.3820) .. controls (2.1773,19.3305) and (1.8629,18.3402) .. (1.5352,17.0414) .. controls (0.3184,12.2160) and (0.9707,8.8754) .. (3.6957,6.2770) .. controls (6.7977,3.3695) and (11.6090,1.8234) .. (17.8508,1.8234) .. controls (24.0270,1.8234) and (29.2270,3.3695) .. (33.7609,6.6488) .. controls (38.4379,9.9894) and (40.2465,12.7730) .. (43.5047,21.3098) -- (52.2523,44.1371) -- cycle;
+          \path[fill=koblue,nonzero rule] (9.7570,26.2781) -- (25.4219,26.2781) -- (24.6152,23.8500) -- (8.9500,23.8500) -- (9.7570,26.2781) -- cycle(11.3711,31.1344) -- (27.0359,31.1344) -- (26.2289,28.7066) -- (10.5641,28.7066) -- (11.3711,31.1344) -- cycle(12.9848,35.9906) -- (28.6500,35.9906) -- (27.8430,33.5629) -- (12.1777,33.5629) -- (12.9848,35.9906) -- cycle(14.6207,40.9121) -- (30.2855,40.9121) -- (29.4570,38.4188) -- (13.7922,38.4188) -- (14.6207,40.9121);
+          \path[fill=koblue,nonzero rule] (34.1387,26.2781) -- (49.8039,26.2781) -- (48.9969,23.8500) -- (33.3320,23.8500) -- (34.1387,26.2781) -- cycle(35.7531,31.1344) -- (51.4180,31.1344) -- (50.6109,28.7066) -- (34.9457,28.7066) -- (35.7531,31.1344) -- cycle(37.3668,35.9906) -- (53.0316,35.9906) -- (52.2250,33.5629) -- (36.5594,33.5629) -- (37.3668,35.9906) -- cycle(39.0023,40.9121) -- (54.6676,40.9121) -- (53.8391,38.4188) -- (38.1738,38.4188) -- (39.0023,40.9121);
+          \path[fill,nonzero rule] (71.3902,12.8836) -- (71.3902,20.6355) -- (69.3742,20.6355) -- (69.3742,2.5394) -- (71.3902,2.5394) -- (71.3902,10.3395) -- (71.8941,10.8434) -- (79.3102,2.5394) -- (82.0941,2.5394) -- (73.3102,12.2117) -- (81.8055,20.6355) -- (79.0941,20.6355) -- (71.3902,12.8836);
+          \path[fill,even odd rule] (91.1125,20.9477) .. controls (85.9523,20.9477) and (81.6797,16.7477) .. (81.6797,11.5641) .. controls (81.6797,6.3555) and (85.9523,2.2277) .. (91.1125,2.2277) .. controls (96.2719,2.2277) and (100.5450,6.3555) .. (100.5450,11.5641) .. controls (100.5450,16.7477) and (96.2719,20.9477) .. (91.1125,20.9477) -- cycle(91.1125,19.0754) .. controls (95.2641,19.0754) and (98.5281,15.6918) .. (98.5281,11.5879) .. controls (98.5281,7.5078) and (95.2164,4.0996) .. (91.1125,4.0996) .. controls (87.0078,4.0996) and (83.6957,7.5078) .. (83.6957,11.5879) .. controls (83.6957,15.6918) and (86.9602,19.0754) .. (91.1125,19.0754);
+          \path[fill,even odd rule] (105.2860,10.9398) -- (107.0380,10.9398) .. controls (109.2460,10.9398) and (111.9340,10.5312) .. (111.9340,7.7238) .. controls (111.9340,4.9637) and (109.5580,4.4117) .. (107.3020,4.4117) -- (105.2860,4.4117) -- (105.2860,10.9398) -- cycle(103.2700,2.5395) -- (107.4700,2.5395) .. controls (111.0460,2.5395) and (113.9500,3.9797) .. (113.9500,7.5801) .. controls (113.9500,9.7398) and (112.6780,11.6836) .. (110.5180,12.2117) .. controls (111.7420,13.0273) and (112.2930,14.2758) .. (112.2930,15.7398) .. controls (112.2930,19.4355) and (109.5340,20.6355) .. (106.2460,20.6355) -- (103.2700,20.6355) -- (103.2700,2.5394) -- cycle(105.2860,18.7637) -- (106.0780,18.7637) .. controls (108.5500,18.7637) and (110.2780,18.4758) .. (110.2780,15.7398) .. controls (110.2780,12.9316) and (108.3340,12.6676) .. (106.0540,12.6676) -- (105.2860,12.6676) -- (105.2860,18.7637);
+          \path[fill,nonzero rule] (118.9120,20.6355) -- (116.8960,20.6355) -- (116.8960,2.5394) -- (123.9040,2.5394) -- (123.9040,4.4117) -- (118.9120,4.4117) -- (118.9120,20.6355);
+          \path[fill,nonzero rule] (125.8960,2.5394) -- (135.2800,2.5394) -- (135.2800,4.4117) -- (127.9120,4.4117) -- (127.9120,11.5156) -- (135.0640,11.5156) -- (135.0640,13.3875) -- (127.9120,13.3875) -- (127.9120,18.7637) -- (135.2800,18.7637) -- (135.2800,20.6355) -- (125.8960,20.6355) -- (125.8960,2.5394);
+          \path[fill,nonzero rule] (138.8260,2.5394) -- (140.8420,2.5394) -- (140.8420,16.4836) -- (154.9540,1.7238) -- (154.9540,20.6355) -- (152.9380,20.6355) -- (152.9380,6.6195) -- (138.8260,21.4035) -- (138.8260,2.5395);
+          \path[fill,nonzero rule] (160.5690,4.4117) -- (170.4570,20.6355) -- (158.4800,20.6355) -- (158.4800,18.7637) -- (167.0970,18.7637) -- (157.2330,2.5394) -- (170.1930,2.5394) -- (170.1930,4.4117) -- (160.5690,4.4117);
+          \path[fill,nonzero rule] (179.4550,12.8383) .. controls (178.7110,12.8383) and (178.1110,12.2383) .. (178.1110,11.5184) .. controls (178.1110,10.7746) and (178.7110,10.1504) .. (179.4550,10.1504) .. controls (180.1980,10.1504) and (180.7990,10.7746) .. (180.7990,11.5184) .. controls (180.7990,12.2383) and (180.1980,12.8383) .. (179.4550,12.8383);
+          \path[fill,nonzero rule] (191.7840,20.6355) -- (189.7680,20.6355) -- (189.7680,2.5394) -- (196.7760,2.5394) -- (196.7760,4.4117) -- (191.7840,4.4117) -- (191.7840,20.6355);
+          \path[fill,even odd rule] (209.6880,7.6758) -- (211.8240,2.5394) -- (214.0550,2.5394) -- (205.9200,21.4996) -- (197.5670,2.5394) -- (199.7760,2.5394) -- (201.9590,7.6758) -- (209.6880,7.6758) -- cycle(208.8950,9.5480) -- (202.7760,9.5480) -- (205.8710,16.7957) -- (208.8950,9.5480);
+          \path[fill,nonzero rule] (216.1410,2.5394) -- (218.1570,2.5394) -- (218.1570,16.4836) -- (232.2700,1.7238) -- (232.2700,20.6355) -- (230.2540,20.6355) -- (230.2540,6.6195) -- (216.1410,21.4035) -- (216.1410,2.5395);
+          \path[fill,even odd rule] (236.0370,2.5394) -- (239.3960,2.5394) .. controls (242.2290,2.5394) and (244.3880,2.8996) .. (246.5490,4.8195) .. controls (248.5410,6.5957) and (249.5000,8.9238) .. (249.5000,11.5641) .. controls (249.5000,14.2520) and (248.5640,16.6758) .. (246.5000,18.4516) .. controls (244.3640,20.2758) and (242.1560,20.6355) .. (239.4450,20.6355) -- (236.0370,20.6355) -- (236.0370,2.5394) -- cycle(238.0530,4.4117) -- (238.0530,18.7637) -- (239.5160,18.7637) .. controls (241.6520,18.7637) and (243.4770,18.4758) .. (245.1320,17.0117) .. controls (246.6920,15.6438) and (247.4840,13.6516) .. (247.4840,11.5879) .. controls (247.4840,9.5719) and (246.7160,7.6758) .. (245.2290,6.2836) .. controls (243.5720,4.7238) and (241.7250,4.4117) .. (239.5160,4.4117) -- (238.0530,4.4117);
+          \path[fill,even odd rule] (262.2620,7.6758) -- (264.3980,2.5394) -- (266.6290,2.5394) -- (258.4940,21.4996) -- (250.1410,2.5394) -- (252.3500,2.5394) -- (254.5340,7.6758) -- (262.2620,7.6758) -- cycle(261.4700,9.5480) -- (255.3500,9.5480) -- (258.4460,16.7957) -- (261.4700,9.5480);
+          \path[fill,nonzero rule] (269.8440,20.6355) -- (267.8280,20.6355) -- (267.8280,9.3074) .. controls (267.8280,7.2438) and (268.0200,5.5879) .. (269.6040,4.0754) .. controls (270.8280,2.8758) and (272.5800,2.2277) .. (274.2840,2.2277) .. controls (276.1080,2.2277) and (277.9080,2.9477) .. (279.1560,4.2914) .. controls (280.5960,5.7797) and (280.7390,7.3395) .. (280.7390,9.3074) -- (280.7390,20.6355) -- (278.7230,20.6355) -- (278.7230,9.8594) .. controls (278.7230,8.4437) and (278.7960,6.8594) .. (277.8360,5.7078) .. controls (276.9960,4.6996) and (275.5800,4.0996) .. (274.2840,4.0996) .. controls (272.9630,4.0996) and (271.4280,4.7238) .. (270.6350,5.8273) .. controls (269.7960,6.9797) and (269.8440,8.5156) .. (269.8440,9.8594) -- (269.8440,20.6355);
+          \path[fill,nonzero rule] (71.3422,44.6355) -- (69.3262,44.6355) -- (69.3262,33.3074) .. controls (69.3262,31.2438) and (69.5180,29.5879) .. (71.1020,28.0754) .. controls (72.3262,26.8758) and (74.0781,26.2277) .. (75.7820,26.2277) .. controls (77.6059,26.2277) and (79.4062,26.9477) .. (80.6543,28.2914) .. controls (82.0941,29.7797) and (82.2383,31.3395) .. (82.2383,33.3074) -- (82.2383,44.6355) -- (80.2223,44.6355) -- (80.2223,33.8594) .. controls (80.2223,32.4438) and (80.2945,30.8594) .. (79.3340,29.7078) .. controls (78.4941,28.6996) and (77.0781,28.1000) .. (75.7820,28.1000) .. controls (74.4617,28.1000) and (72.9258,28.7238) .. (72.1336,29.8273) .. controls (71.2945,30.9797) and (71.3422,32.5156) .. (71.3422,33.8594) -- (71.3422,44.6355);
+          \path[fill,nonzero rule] (93.4863,26.5395) -- (95.5023,26.5395) -- (95.5023,40.4836) -- (109.6140,25.7238) -- (109.6140,44.6355) -- (107.5980,44.6355) -- (107.5980,30.6195) -- (93.4863,45.4035) -- (93.4863,26.5395);
+          \path[fill,nonzero rule] (120.9890,26.5395) -- (123.0054,26.5395) -- (123.0054,44.6356) -- (120.9890,44.6356) -- (120.9890,26.5395) -- cycle;
+          \path[fill,nonzero rule] (134.7300,44.6355) -- (132.5460,44.6355) -- (139.8900,25.4598) -- (147.2340,44.6355) -- (145.0500,44.6355) -- (139.8900,30.8355) -- (134.7300,44.6355);
+          \path[fill,nonzero rule] (156.7520,26.5395) -- (166.1360,26.5395) -- (166.1360,28.4117) -- (158.7690,28.4117) -- (158.7690,35.5156) -- (165.9200,35.5156) -- (165.9200,37.3875) -- (158.7690,37.3875) -- (158.7690,42.7637) -- (166.1360,42.7637) -- (166.1360,44.6355) -- (156.7520,44.6355) -- (156.7520,26.5395);
+          \path[fill,even odd rule] (179.1380,42.7637) -- (179.7380,42.7637) .. controls (182.1620,42.7637) and (184.3460,42.4758) .. (184.3460,39.4996) .. controls (184.3460,36.6918) and (182.0430,36.2598) .. (179.7620,36.2598) -- (179.1380,36.2598) -- (179.1380,42.7637) -- cycle(179.1380,34.4836) -- (179.6420,34.4836) -- (185.1140,26.5395) -- (187.5860,26.5395) -- (181.8260,34.6516) .. controls (184.6100,34.8918) and (186.3620,36.8594) .. (186.3620,39.6438) .. controls (186.3620,43.7238) and (183.1700,44.6355) .. (179.7380,44.6355) -- (177.1220,44.6355) -- (177.1220,26.5395) -- (179.1380,26.5395) -- (179.1380,34.4836);
+          \path[fill,nonzero rule] (207.5020,42.1395) .. controls (206.5420,43.9156) and (204.8380,44.9477) .. (202.8220,44.9477) .. controls (200.1340,44.9477) and (197.7580,43.1477) .. (197.7580,40.3395) .. controls (197.7580,37.7477) and (199.5820,36.6676) .. (201.6940,35.7078) -- (202.7980,35.2277) .. controls (204.4780,34.4598) and (206.1340,33.7398) .. (206.1340,31.6277) .. controls (206.1340,29.5879) and (204.3580,28.1000) .. (202.4140,28.1000) .. controls (200.4700,28.1000) and (199.0540,29.6117) .. (198.7900,31.4598) -- (196.8220,30.9078) .. controls (197.3980,28.1000) and (199.5580,26.2277) .. (202.4620,26.2277) .. controls (205.6060,26.2277) and (208.1500,28.6516) .. (208.1500,31.8195) .. controls (208.1500,34.6996) and (206.1580,35.8758) .. (203.8050,36.9078) -- (202.6060,37.4355) .. controls (201.3820,37.9879) and (199.7740,38.7078) .. (199.7740,40.2680) .. controls (199.7740,41.9238) and (201.1660,43.0754) .. (202.7740,43.0754) .. controls (204.3100,43.0754) and (205.1740,42.3555) .. (205.8940,41.1078) -- (207.5020,42.1395);
+          \path[fill,nonzero rule] (218.7000,26.5395) -- (220.7160,26.5395) -- (220.7160,44.6356) -- (218.7000,44.6356) -- (218.7000,26.5395) -- cycle;
+          \path[fill,nonzero rule] (236.7370,42.7637) -- (241.1530,42.7637) -- (241.1530,44.6355) -- (230.3520,44.6355) -- (230.3520,42.7637) -- (234.7210,42.7637) -- (234.7210,26.5395) -- (236.7370,26.5395) -- (236.7370,42.7637);
+          \path[fill,even odd rule] (259.2930,31.6758) -- (261.4300,26.5395) -- (263.6610,26.5395) -- (255.5250,45.4996) -- (247.1730,26.5395) -- (249.3810,26.5395) -- (251.5660,31.6758) -- (259.2930,31.6758) -- cycle(258.5010,33.5480) -- (252.3810,33.5480) -- (255.4770,40.7957) -- (258.5010,33.5480);
+          \path[fill,nonzero rule] (276.0670,42.7637) -- (280.4840,42.7637) -- (280.4840,44.6355) -- (269.6840,44.6355) -- (269.6840,42.7637) -- (274.0520,42.7637) -- (274.0520,26.5395) -- (276.0670,26.5395) -- (276.0670,42.7637);
+          \path[fill,nonzero rule] (250.6180,44.7105) .. controls (249.8740,44.7105) and (249.2740,44.1105) .. (249.2740,43.3906) .. controls (249.2740,42.6465) and (249.8740,42.0227) .. (250.6180,42.0227) .. controls (251.3620,42.0227) and (251.9620,42.6465) .. (251.9620,43.3906) .. controls (251.9620,44.1105) and (251.3620,44.7105) .. (250.6180,44.7105);
+          \path[fill,nonzero rule] (260.4040,44.7105) .. controls (259.6600,44.7105) and (259.0590,44.1105) .. (259.0590,43.3906) .. controls (259.0590,42.6465) and (259.6600,42.0227) .. (260.4040,42.0227) .. controls (261.1480,42.0227) and (261.7480,42.6465) .. (261.7480,43.3906) .. controls (261.7480,44.1105) and (261.1480,44.7105) .. (260.4040,44.7105);
+        \end{scope}
+        \end{tikzpicture}
+      }{
+        \begin{tikzpicture}[klumpen/.style={minimum size=4mm,rectangle},
+                            every edge/.append style={very thick},scale=.9]
+          \node[fill=red,klumpen] (k1) at (0,0) {};
+          \node[fill=tublau,klumpen] (k2) at (2,0) {} edge (k1);
+          \node[fill=tublau,klumpen] (k3) at (2,-1) {} edge(k2);
+          \node[fill=red,klumpen] (k4) at (5,-1) {} edge(k3);
+          \node[font={\sffamily\bfseries\fontsize{15}{16}\selectfont}] at (1,-.5) {OPT};
+          \node[font={\sffamily\fontsize{8}{7}\selectfont},anchor=west] at (2.3,-.5)
+            {\begin{minipage}{2.6cm}Optimization\\Research Group\end{minipage}};
+        \end{tikzpicture}
+      }
+      \end{flushright}
+      \end{minipage}\vspace{2mm}\hrule
+      \begin{center}\small
+        \textbf{\lecturetext:} \lecturer\\
+        \textbf{\exercisestext:} \operator
+      \end{center}\vspace{-2mm}
+      \ifthenelse{\equal{\homepage}{}}{}{
+        {\small \homepagetext}
+      }
+    }
 
-  \else
-   \renewcommand{\maketitle}{
-   \begin{minipage}{0.49\textwidth}
-   \begin{flushleft}
-   \ifkoblenz
-       Universit\"at Koblenz-Landau, Campus Koblenz\\
-       Mathematisches Institut\\
-   \else
-       Technische Universit\"at Kaiserslautern\\
-       Fachbereich Mathematik\\
-      \fi
-   \issuedate
-   \end{flushleft}
-   \end{minipage}
-   \begin{minipage}{0.49\textwidth}
-   \begin{flushright}
-   \lecturer\\
-   \operator\\
-   \semester
-   \end{flushright}
-   \end{minipage}
+  }{
+    \renewcommand{\maketitle}{
+      \begin{minipage}{0.49\textwidth}
+        \begin{flushleft}
+          \iftoggle{koblenz}{
+            Universität Koblenz-Landau, Campus Koblenz\\
+            Mathematisches Institut\\
+          }{
+            Technische Universität Kaiserslautern\\
+             Fachbereich Mathematik\\
+          }
+          \issuedate
+        \end{flushleft}
+      \end{minipage}
+      \begin{minipage}{0.49\textwidth}
+        \begin{flushright}
+          \lecturer\\
+          \operator\\
+          \semester
+        \end{flushright}
+      \end{minipage}
 
-   \begin{center}
-   {\Large \bfseries \lecture}\\[0.6cm]
-   {\Large \bfseries%
-   \ifshowanswers%
-     \solutionsheettext{}%
-   \else
-     \exercisesheettext{}%
-   \fi{} \sheetnumber}\\[1cm]
-   \end{center}
-   }
-   % URL at end of document
-   \AtEndDocument{%
-   \ifexplicittype
-   \else
-   \par
-     \deadlinepre\takehometext
-   \fi
-   \ifthenelse{\equal{\homepage}{}}{}{
-   \begin{center}
-   \vfill{\small \homepagetext}
-   \end{center}
-   }
-   }
-  \fi
-\fi
+      \begin{center}
+      {\Large \bfseries \lecture}\\[0.6cm]
+      {\Large \bfseries%
+      \iftoggle{showanswers}{%
+        \solutionsheettext{}%
+      }{%
+        \exercisesheettext{}%
+      } \sheetnumber}\\[1cm]
+      \end{center}
+    }
+    % URL at end of document
+    \AtEndDocument{%
+      \nottoggle{explicittype}{
+        \par
+        \deadlinepre\takehometext
+      }{}
+      \ifthenelse{\equal{\homepage}{}}{}{
+        \begin{center}
+          \vfill{\small \homepagetext}
+        \end{center}
+      }
+    }
+  }
+}{}
 \endinput
 %%
 %% End of file `agopt_ex.sty'.

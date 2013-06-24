@@ -1,6 +1,8 @@
 %% mh_basic -- basic tex setup file with XeTeX/LuaTeX support.
 %%
-%% Assumes UTF-8 encoding only. Options:
+%% Supports UTF-8 input encoding. Options:
+%%
+%% - math:    Load mh_math. This is a convenience option.
 %%
 %% - nofonts: Don't load my favorite fonts. If this is not given
 %%            sets Linux Libertine as roman, Linux Biolinum as
@@ -15,71 +17,74 @@
 %% 
 %% Copyright 2013 by Michael Helmling
 %% Newest version: github.com/supermihi/latex
+%%
 %% Feel free to use and modify to your wish!
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{mh_basic}
 
+
+\RequirePackage{etoolbox}
 \RequirePackage{iftex}
-\RequirePackage{ifthen}
 
-\newif\ifgerman
-\germanfalse
+\newtoggle{mh_german}
 \DeclareOption{german}{
-  \germantrue
+  \toggletrue{mh_german}
 }
+
 \DeclareOption{english}{
-  \germanfalse
+  \togglefalse{mh_german}
 }
 
-\newif\ifmyfonts
-\myfontstrue
+\newtoggle{myfonts}
+\toggletrue{myfonts}
 \DeclareOption{nofonts}{
-	\myfontsfalse
+	\togglefalse{myfonts}
 }
 
-\newif\ifloadbabel
-\loadbabeltrue
+\newtoggle{loadbabel}
+\toggletrue{loadbabel}
 \DeclareOption{nobabel}{
-  \loadbabelfalse
+  \togglefalse{loadbabel}
+}
+
+\newtoggle{math}
+\DeclareOption{math}{
+    \toggletrue{math}
 }
 
 \ProcessOptions\relax
 
+\iftoggle{math}{\RequirePackage{mh_math}}{}
+
 \ifPDFTeX
   \RequirePackage[utf8]{inputenc}
   \RequirePackage[T1]{fontenc}
-  \ifmyfonts
+  \iftoggle{myfonts}{
     \RequirePackage{libertine}
     \RequirePackage{inconsolata}
-  \else
+  }{
     \RequirePackage{lmodern}
-  \fi
-  \ifloadbabel
-    \RequirePackage[\ifgerman ngerman\else american\fi]{babel}
-  \fi
+  }
+  \iftoggle{loadbabel}{
+    \RequirePackage[\iftoggle{mh_german}{ngerman}{american}]{babel}
+  }{}
 \else
   \RequirePackage{fontspec}
   \defaultfontfeatures{Ligatures=TeX}
-  \ifmyfonts
+  \iftoggle{myfonts}{
     \setromanfont[Numbers=Proportional]{Linux Libertine O}
     \setsansfont[Numbers=Proportional]{Linux Biolinum O}
     \setmonofont{Inconsolata}
-  \fi
-  \RequirePackage{ifxetex}
-  \ifloadbabel
-    \ifxetex
-      \RequirePackage{polyglossia}
-      \ifgerman
-         \setmainlanguage[babelshorthands=true]{german}
-      \else
-         \setmainlanguage[variant=american]{english}
-      \fi
-    \else
-      % LuaLaTeX: Most Distributions don't yet contain a polyglossia version compatible with LuaLaTeX
-      \RequirePackage[\ifgerman ngerman\else american\fi]{babel}
-    \fi  
-  \fi
+  }{}
+  \iftoggle{loadbabel}{
+    \RequirePackage{polyglossia}
+    \iftoggle{mh_german}{
+      \setmainlanguage[babelshorthands=true]{german}
+    }{
+      \setmainlanguage[variant=american]{english}
+    }
+  }{}
 \fi
 
 \usepackage{csquotes}
@@ -87,42 +92,42 @@
 % common abbreviations
 \newcommand{\emphex}[1]{\emph{#1}\index{#1}}
 \RequirePackage{xspace}
-\ifgerman
+\iftoggle{mh_german}{
   \newcommand{\zB}{\text{z.\,B.}\xspace}
-\else
+}{
   \newcommand\st{\text{s.\,t.}\xspace}
   \newcommand\ie{\text{i.\,e.}\xspace}
   \newcommand\eg{\text{e.\,g.}\xspace}
   \newcommand\wrt{\text{wrt.}\xspace}
-\fi
+}
 
 % reference formats
 \RequirePackage{prettyref}
 \newrefformat{eq}{\textup{(\ref{#1})}}
 \newrefformat{def}{Definition~\ref{#1}}
 \newrefformat{lemma}{Lemma~\ref{#1}}
-\ifgerman
- 	\newrefformat{alg}{Algorithmus~\ref{#1}}
- 	\newrefformat{fig}{Abbildung~\ref{#1}}
- 	\newrefformat{rem}{Bemerkung~\ref{#1}}
- 	\newrefformat{example}{Beispiel~\ref{#1}}
- 	\newrefformat{chapter}{Kapitel~\ref{#1}}
- 	\newrefformat{sec}{Abschnitt~\ref{#1}}
- 	\newrefformat{thm}{Satz~\ref{#1}}
- 	\newrefformat{obs}{Beobachtung~\ref{#1}}
- 	\newrefformat{cor}{Korollar~\ref{#1}}
- 	\newrefformat{line}{Zeile~\ref{#1}}
- 	\newrefformat{table}{Tabelle~\ref{#1}}
-\else
-	\newrefformat{alg}{Algorithm~\ref{#1}}
-	\newrefformat{fig}{Figure~\ref{#1}}
-	\newrefformat{rem}{Remark~\ref{#1}}
-	\newrefformat{example}{Example~\ref{#1}}
-	\newrefformat{chapter}{Chapter~\ref{#1}}
-	\newrefformat{sec}{Section~\ref{#1}}
-	\newrefformat{thm}{Theorem~\ref{#1}}
-	\newrefformat{obs}{Observation~\ref{#1}}
-	\newrefformat{cor}{Corollary~\ref{#1}}
-	\newrefformat{line}{Line~\ref{#1}}
-	\newrefformat{table}{Table~\ref{#1}}
-\fi
+\iftoggle{mh_german}{
+  \newrefformat{alg}{Algorithmus~\ref{#1}}
+  \newrefformat{fig}{Abbildung~\ref{#1}}
+  \newrefformat{rem}{Bemerkung~\ref{#1}}
+  \newrefformat{example}{Beispiel~\ref{#1}}
+  \newrefformat{chapter}{Kapitel~\ref{#1}}
+  \newrefformat{sec}{Abschnitt~\ref{#1}}
+  \newrefformat{thm}{Satz~\ref{#1}}
+  \newrefformat{obs}{Beobachtung~\ref{#1}}
+  \newrefformat{cor}{Korollar~\ref{#1}}
+  \newrefformat{line}{Zeile~\ref{#1}}
+  \newrefformat{table}{Tabelle~\ref{#1}}
+}{
+  \newrefformat{alg}{Algorithm~\ref{#1}}
+  \newrefformat{fig}{Figure~\ref{#1}}
+  \newrefformat{rem}{Remark~\ref{#1}}
+  \newrefformat{example}{Example~\ref{#1}}
+  \newrefformat{chapter}{Chapter~\ref{#1}}
+  \newrefformat{sec}{Section~\ref{#1}}
+  \newrefformat{thm}{Theorem~\ref{#1}}
+  \newrefformat{obs}{Observation~\ref{#1}}
+  \newrefformat{cor}{Corollary~\ref{#1}}
+  \newrefformat{line}{Line~\ref{#1}}
+  \newrefformat{table}{Table~\ref{#1}}
+}
