@@ -1,6 +1,7 @@
 The agopt_ex package
 
-The agopt_ex package is an aid to generate exercise sheets for the AG Optimization, TU Kaiserslautern.
+The agopt_ex package is an aid to generate exercise sheets for the AG Optimization, TU Kaiserslautern,
+or nowadays also the University of Koblenz.
 
 To create the package (.sty file), run:
 
