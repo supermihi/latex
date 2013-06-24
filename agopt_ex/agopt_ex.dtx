@@ -184,8 +184,8 @@
 %    \end{macrocode}
 % \subsection{Fonts}
 % The package configures \TeX{} to use fonts of the Linux Libertine \ifxetex\char"E040\fi{} family and the Euler math font. The implementation
-% differs for |(pdf)latex| and |xelatex|. For this package to work with |xelatex|, you need to have the Linux Libertine
-% and Linux Biolinum OpenType fonts installed.
+% differs for |(pdf)latex| and |lualatex| or |xelatex|. For this package to work with |xelatex| or |lualatex|, you need to have the Linux Libertine
+% and Linux Biolinum OpenType fonts installed (unless the |nofonts| option is specified).
 %    \begin{macrocode}
 \nottoggle{bare}{
   \RequirePackage{iftex}
