@@ -23,35 +23,24 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{mh_basic}
 
-
 \RequirePackage{etoolbox}
 \RequirePackage{iftex}
 
 \newtoggle{mh_german}
-\DeclareOption{german}{
-  \toggletrue{mh_german}
-}
+\DeclareOption{german}{\toggletrue{mh_german}}
 
-\DeclareOption{english}{
-  \togglefalse{mh_german}
-}
+\DeclareOption{english}{\togglefalse{mh_german}}
 
 \newtoggle{myfonts}
 \toggletrue{myfonts}
-\DeclareOption{nofonts}{
-	\togglefalse{myfonts}
-}
+\DeclareOption{nofonts}{\togglefalse{myfonts}}
 
 \newtoggle{loadbabel}
 \toggletrue{loadbabel}
-\DeclareOption{nobabel}{
-  \togglefalse{loadbabel}
-}
+\DeclareOption{nobabel}{\togglefalse{loadbabel}}
 
 \newtoggle{math}
-\DeclareOption{math}{
-    \toggletrue{math}
-}
+\DeclareOption{math}{\toggletrue{math}}
 
 \ProcessOptions\relax
 
@@ -87,7 +76,8 @@
   }{}
 \fi
 
-\usepackage{csquotes}
+\RequirePackage{csquotes} % provides \enquote{...}
+\RequirePackage[newcommands]{ragged2e} % improves center, flushright etc.
 
 % common abbreviations
 \newcommand{\emphex}[1]{\emph{#1}\index{#1}}
