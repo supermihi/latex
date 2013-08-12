@@ -23,12 +23,14 @@
 
 \RequirePackage{iftex}
 \RequirePackage{amsfonts,amsmath,amssymb}
+\iftoggle{unimath}{
+  \RequirePackage{unicode-math}
+}{}
 \iftoggle{mh_myfonts}{
   \ifPDFTeX
     \RequirePackage{eulervm}
   \else
     \iftoggle{unimath}{
-      \RequirePackage{unicode-math}
       \setmathfont[StylisticSet=0]{XITS Math} 
     }{
       \RequirePackage{eulervm}
