@@ -1,0 +1,66 @@
+\NeedsTeXFormat{LaTeX2e}[2011/06/27]
+\RequirePackage{expl3,xparse}
+\ProvidesExplPackage{mhex}{2013/09/26}{0.1}{Create Exercises}
+
+\RequirePackage{etoolbox}
+\RequirePackage{xspace}
+\RequirePackage[inline]{enumitem}
+\setlist[enumerate,1]{label=\alph*)}
+\setlist[enumerate,2]{label=\arabic*.}
+
+
+\DeclareOption{solution}{\toggletrue{showanswers}\togglefalse{autoshowanswers}}
+\DeclareOption{nosolution}{\togglefalse{showanswers}\togglefalse{autoshowanswers}}
+
+
+\cs_new:Nn \l_mhex_exheader:n {\par\vspace{2.5mm}\noindent{\bfseries #1}\par\vspace{1.5mm}}
+
+\newcounter{mhexercise}
+\defcounter{mhexercise}{0}
+\DeclareDocumentEnvironment
+  {exercise}
+  {o m}
+  {
+    \refstepcounter{mhexercise}
+    \l_mhex_exheader:n
+      {
+        \exercisetext{}~\l_mhex_sheetno.\arabic{mhexercise}
+        \IfNoValueTF{#1}{}{~--~#1}%
+        \ifstrempty{#2}{}{~(#2~\pointstext)}%
+      }
+  }
+  {\par\vspace{2mm}}
+
+%\DeclareDocumentEnvironment{subexercises}{o}
+
+
+\cs_new:Npn \Sheetnumber #1 {\tl_set:Nn \l_mhex_sheetno { #1 }}
+
+
+\tl_set:Nn \l_mhex_sheetno {17}
+\cs_new:Nn \mhex_loadgermancaptions: {
+  \tl_set:Nn \l_mhex_exercisetext { Übung }
+  \tl_set:Nn \l_mhex_solutiontext { Lösung }
+}
+\mhex_loadgermancaptions:
+\NewDocumentCommand\loadenglishcaptions{}{
+  \DeclareDocumentCommand\exercisetext{}{Exercise}
+  \DeclareDocumentCommand\solutiontext{}{Solution}  
+  \DeclareDocumentCommand\exercisesheettext{}{Exercise Sheet}
+  \DeclareDocumentCommand\solutionsheettext{}{Solution Sheet}
+  \DeclareDocumentCommand\withsolutiontext{}{including solutions}
+  \DeclareDocumentCommand\pagetext{}{Page}
+  \DeclareDocumentCommand\pointstext{}{points}
+  \DeclareDocumentCommand\deadlinetext{}{Due date:}
+  \DeclareDocumentCommand\solutionfilename{}{olution}
+  \DeclareDocumentCommand\lecturetext{}{Lecture}
+  \DeclareDocumentCommand\exercisestext{}{Exercises}
+  \DeclareDocumentCommand\homepagetext{}{Download of exercises at \url{\homepage}}
+  \DeclareDocumentCommand\inclasstexttitle{}{In-Class Exercises}
+  \DeclareDocumentCommand\inclasstext{}{To be done in the tutorial on \inclassdate}
+  \DeclareDocumentCommand\takehometexttitle{}{Turn-In Exercises}
+  \DeclareDocumentCommand\takehometext{}{Please hand in by \deadline{}}
+  \DeclareDocumentCommand\deadlinepre{}{\textbf{Deadline: }}
+}
+\ProcessOptions\relax
+\mhex_loadgermancaptions:
