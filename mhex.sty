@@ -1,3 +1,4 @@
+% !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,xparse}
 \ProvidesExplPackage{mhex}{2013/09/26}{0.1}{Create Exercises}
@@ -24,43 +25,34 @@
     \refstepcounter{mhexercise}
     \l_mhex_exheader:n
       {
-        \exercisetext{}~\l_mhex_sheetno.\arabic{mhexercise}
+        \l_mhex_exercisetext{}~\l_mhex_sheetno.\arabic{mhexercise}
         \IfNoValueTF{#1}{}{~--~#1}%
-        \ifstrempty{#2}{}{~(#2~\pointstext)}%
+        \ifstrempty{#2}{}{~(#2~\l_mhex_pointstext)}%
       }
   }
   {\par\vspace{2mm}}
 
 %\DeclareDocumentEnvironment{subexercises}{o}
 
+\keys_define:nn { mhex } {
+  Sheetnumber .tl_set:N = \l_mhex_sheetno
+}
 
-\cs_new:Npn \Sheetnumber #1 {\tl_set:Nn \l_mhex_sheetno { #1 }}
+\keys_set:nn { mhex } {
+  Sheetnumber = 
+}
+\cs_new:Npn \ExerciseSetup #1 {\keys_set:nn { mhex } { #1 }}
 
 
-\tl_set:Nn \l_mhex_sheetno {17}
+\cs_new:Nn \mhex_loadenglishcaptions: {
+  \tl_set:Nn \l_mhex_exercisetext { Exercise }
+  \tl_set:Nn \l_mhex_solutiontext { Solution }
+  \tl_set:Nn \l_mhex_pointstext   { points }
+}
 \cs_new:Nn \mhex_loadgermancaptions: {
-  \tl_set:Nn \l_mhex_exercisetext { Übung }
-  \tl_set:Nn \l_mhex_solutiontext { Lösung }
+  \tl_set:Nn \l_mhex_exercisetext { Ãœbung }
+  \tl_set:Nn \l_mhex_solutiontext { LÃ¶sung }
+  \tl_set:Nn \l_mhex_pointstext   { Punkte }
 }
 \mhex_loadgermancaptions:
-\NewDocumentCommand\loadenglishcaptions{}{
-  \DeclareDocumentCommand\exercisetext{}{Exercise}
-  \DeclareDocumentCommand\solutiontext{}{Solution}  
-  \DeclareDocumentCommand\exercisesheettext{}{Exercise Sheet}
-  \DeclareDocumentCommand\solutionsheettext{}{Solution Sheet}
-  \DeclareDocumentCommand\withsolutiontext{}{including solutions}
-  \DeclareDocumentCommand\pagetext{}{Page}
-  \DeclareDocumentCommand\pointstext{}{points}
-  \DeclareDocumentCommand\deadlinetext{}{Due date:}
-  \DeclareDocumentCommand\solutionfilename{}{olution}
-  \DeclareDocumentCommand\lecturetext{}{Lecture}
-  \DeclareDocumentCommand\exercisestext{}{Exercises}
-  \DeclareDocumentCommand\homepagetext{}{Download of exercises at \url{\homepage}}
-  \DeclareDocumentCommand\inclasstexttitle{}{In-Class Exercises}
-  \DeclareDocumentCommand\inclasstext{}{To be done in the tutorial on \inclassdate}
-  \DeclareDocumentCommand\takehometexttitle{}{Turn-In Exercises}
-  \DeclareDocumentCommand\takehometext{}{Please hand in by \deadline{}}
-  \DeclareDocumentCommand\deadlinepre{}{\textbf{Deadline: }}
-}
 \ProcessOptions\relax
-\mhex_loadgermancaptions:

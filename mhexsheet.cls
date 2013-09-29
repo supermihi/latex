@@ -1,3 +1,4 @@
+% !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys2e}
 \ProvidesExplClass{mhexsheet}{2013/09/26}{0.1}{Exercise Sheets by Michael Helmling}
@@ -38,6 +39,14 @@
   \tl_set:Nn \l_mhex_deadlinepretext   { Abgabefrist: }
 }
 
+\cs_new:Npn \Lecture     #1  {\tl_set:Nn \l_mhex_lecture     { #1 }}
+\cs_new:Npn \Semester    #1  {\tl_set:Nn \l_mhex_semester    { #1 }}
+\cs_new:Npn \Deadline    #1  {\tl_set:Nn \l_mhex_deadline    { #1 }}
+\cs_new:Npn \Lecturer    #1  {\tl_set:Nn \l_mhex_lecturer    { #1 }}
+\cs_new:Npn \Operator    #1  {\tl_set:Nn \l_mhex_operator    { #1 }}
+\cs_new:Npn \Homepage    #1  {\tl_set:Nn \l_mhex_homepage    { #1 }}
+\cs_new:Npn \Inclassdate #1  {\tl_set:Nn \l_mhex_inclassdate { #1 }}
+
 \keys_define:nn { mhexsheet } {
   language .choice:,
   language / german  .code:n = {
@@ -57,25 +66,53 @@
     language = english
   },
   
-  showanswers .bool_set:N = \l_mhex_showanswers,
+  showanswers .bool_set:N = \l_mhex_showanswers
 }
-\keys_set:nn {mhexsheet} {
+\keys_set:nn { mhexsheet } {
   language    = german,
   showanswers = false
 }
+
+\keys_define:nn { mhex } {
+  Lecture     .tl_set:N = \l_mhex_lecture,
+  Semester    .tl_set:N = \l_mhex_semester,
+  Deadline    .tl_set:N = \l_mhex_deadline,
+  Lecturer    .tl_set:N = \l_mhex_lecturer,
+  Operator    .tl_set:N = \l_mhex_operator,
+  Homepage    .tl_set:N = \l_mhex_homepage,
+  Inclassdate .tl_set:N = \l_mhex_inclassdate
+}
+\keys_set:nn { mhex } {
+	Lecture = No~Lecture~Given,
+	Semester = No~Semester~Given,
+	Deadline = No~Deadline~Given,
+	Lecturer = No~Lecturer~Given,
+	Operator = No~Operator~Given,
+	Homepage =,
+	Inclassdate = ,
+}
+
 \ProcessKeysOptions{mhexsheet}\relax
 
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
+
 \RequirePackage{mhex}
 \RequirePackage{iftex}
+
 \ifPDFTeX
   \RequirePackage[utf8]{inputenc}
   \RequirePackage[T1]{fontenc}
+  \RequirePackage{libertine}
+  \RequirePackage{inconsolata}
   \RequirePackage[\l_mhex_babel]{babel}
 \else
   \RequirePackage{amsfonts,amssymb}
   \RequirePackage{eulervm}
   \RequirePackage{fontspec}
+  \setromanfont{Linux Libertine O}
+  \setsansfont{Linux Biolinum O}
+  \setmonofont{Inconsolata}
+  \defaultfontfeatures{Ligatures=TeX}
   \RequirePackage{polyglossia}
   \ExplSyntaxOff
     \setmainlanguage{\mhexlang}
@@ -83,24 +120,6 @@
   \RequirePackage{hyperref}
 \fi
 
-
-
-
-\cs_new:Npn \Lecture     #1  {\tl_set:Nn \l_mhex_lecture     { #1 }}
-\cs_new:Npn \Semester    #1  {\tl_set:Nn \l_mhex_semester    { #1 }}
-\cs_new:Npn \Deadline    #1  {\tl_set:Nn \l_mhex_deadline    { #1 }}
-\cs_new:Npn \Lecturer    #1  {\tl_set:Nn \l_mhex_lecturer    { #1 }}
-\cs_new:Npn \Operator    #1  {\tl_set:Nn \l_mhex_operator    { #1 }}
-\cs_new:Npn \Homepage    #1  {\tl_set:Nn \l_mhex_homepage    { #1 }}
-\cs_new:Npn \Inclassdate #1  {\tl_set:Nn \l_mhex_inclassdate { #1 }}
-
-\tl_set:Nn \l_mhex_lecture  { No~Lecture }
-\tl_set:Nn \l_mhex_semester { WS~1999/00 }
-\tl_set:Nn \l_mhex_deadline { 19.09.1990 }
-\tl_set:Nn \l_mhex_lecturer { Jack~Edmonds }
-\tl_set:Nn \l_mhex_operator { Martin~Grötschel }
-\tl_set:Nn \l_mhex_homepage { www.mathe.de }
-\tl_set:Nn \l_mhex_inclassdate { 20.09.1990 }
 
 
 
@@ -130,7 +149,7 @@
       \textbf{\l_mhex_lecturetext :~} \l_mhex_lecturer\\
       \textbf{\l_mhex_exercisestext :~} \l_mhex_operator
     \end{center}\vspace{-2mm}
-    \ifstrempty{\l_mhex_homepage}{}{
+    \tl_if_empty:NTF \l_mhex_homepage {} {
       {\small \l_mhex_homepagetext}
     }
   }
