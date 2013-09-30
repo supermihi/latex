@@ -109,8 +109,8 @@
   \RequirePackage{amsfonts,amssymb}
   \RequirePackage{eulervm}
   \RequirePackage{fontspec}
-  \setromanfont{Linux Libertine O}
-  \setsansfont{Linux Biolinum O}
+  \setromanfont{Linux~Libertine~O}
+  \setsansfont{Linux~Biolinum~O}
   \setmonofont{Inconsolata}
   \defaultfontfeatures{Ligatures=TeX}
   \RequirePackage{polyglossia}
