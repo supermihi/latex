@@ -10,36 +10,67 @@
 \setlist[enumerate,2]{label=\arabic*.}
 
 
-\DeclareOption{solution}{\toggletrue{showanswers}\togglefalse{autoshowanswers}}
-\DeclareOption{nosolution}{\togglefalse{showanswers}\togglefalse{autoshowanswers}}
+\cs_new:Nn \l_mhex_exheader:n {
+  \par\vspace{2.5mm}
+  \noindent{\textbf{#1}}
+  \par\vspace{1.5mm}
+}
 
-
-\cs_new:Nn \l_mhex_exheader:n {\par\vspace{2.5mm}\noindent{\bfseries #1}\par\vspace{1.5mm}}
-
+\keys_define:nn { mhexerciseenv } {
+  points .tl_set:N = \l_mhex_curexpoints,
+  points .value_required:,
+  title  .tl_set:N = \l_mhex_curextitle,
+  title  .value_required: ,
+}
 \newcounter{mhexercise}
 \defcounter{mhexercise}{0}
 \DeclareDocumentEnvironment
   {exercise}
-  {o m}
+  {o}
   {
+    \keys_set:nn {mhexerciseenv} {points=,title=,}
+    \IfValueTF
+      {#1}
+      {\keys_set:nn {mhexerciseenv} {#1}}
+      { }
     \refstepcounter{mhexercise}
     \l_mhex_exheader:n
       {
-        \l_mhex_exercisetext{}~\l_mhex_sheetno.\arabic{mhexercise}
-        \IfNoValueTF{#1}{}{~--~#1}%
-        \ifstrempty{#2}{}{~(#2~\l_mhex_pointstext)}%
+        \l_mhex_exercisetext{}~
+        \tl_if_empty:NTF \l_mhex_sheetno     {} {\l_mhex_sheetno.}
+        \arabic{mhexercise}
+        \tl_if_empty:NTF \l_mhex_curextitle  {} {~\textendash{}~\l_mhex_curextitle}
+        \tl_if_empty:NTF \l_mhex_curexpoints {} {~(\l_mhex_curexpoints{}~\l_mhex_pointstext)}
       }
   }
   {\par\vspace{2mm}}
 
+\DeclareDocumentEnvironment
+  {solution}
+  {o}
+  {
+\newenvironment{solution}[1][{}]%
+{%
+  \iftoggle{showanswers}{
+    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}%
+    \ifthenelse{\equal{#1}{}}{}{ (#1 \pointstext)}:}
+  }{
+    \par\vspace*{0pt}%
+    \setbox\z@\vbox\bgroup
+  }
+}{%
+  \nottoggle{showanswers}{
+    \egroup
+  }{}
+}
 %\DeclareDocumentEnvironment{subexercises}{o}
 
 \keys_define:nn { mhex } {
-  Sheetnumber .tl_set:N = \l_mhex_sheetno
+  sheetnumber .tl_set:N = \l_mhex_sheetno
 }
 
 \keys_set:nn { mhex } {
-  Sheetnumber = 
+  sheetnumber = 1
 }
 \cs_new:Npn \ExerciseSetup #1 {\keys_set:nn { mhex } { #1 }}
 

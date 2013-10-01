@@ -4,10 +4,6 @@
 \ProvidesExplClass{mhexsheet}{2013/09/26}{0.1}{Exercise Sheets by Michael Helmling}
 \RequirePackage{etoolbox}
 
-%\DeclareOption*{
-%  \PassOptionsToClass{\CurrentOption}{scrartcl}%
-%}
-
 \cs_new:Nn \mhexsheet_loadenglishcaptions: {
   \tl_set:Nn \l_mhex_exercisesheettext { Exercise~Sheet }
   \tl_set:Nn \l_mhex_solutionsheettext { Solution~Sheet }
@@ -39,14 +35,6 @@
   \tl_set:Nn \l_mhex_deadlinepretext   { Abgabefrist: }
 }
 
-\cs_new:Npn \Lecture     #1  {\tl_set:Nn \l_mhex_lecture     { #1 }}
-\cs_new:Npn \Semester    #1  {\tl_set:Nn \l_mhex_semester    { #1 }}
-\cs_new:Npn \Deadline    #1  {\tl_set:Nn \l_mhex_deadline    { #1 }}
-\cs_new:Npn \Lecturer    #1  {\tl_set:Nn \l_mhex_lecturer    { #1 }}
-\cs_new:Npn \Operator    #1  {\tl_set:Nn \l_mhex_operator    { #1 }}
-\cs_new:Npn \Homepage    #1  {\tl_set:Nn \l_mhex_homepage    { #1 }}
-\cs_new:Npn \Inclassdate #1  {\tl_set:Nn \l_mhex_inclassdate { #1 }}
-
 \keys_define:nn { mhexsheet } {
   language .choice:,
   language / german  .code:n = {
@@ -74,25 +62,25 @@
 }
 
 \keys_define:nn { mhex } {
-  Lecture     .tl_set:N = \l_mhex_lecture,
-  Semester    .tl_set:N = \l_mhex_semester,
-  Deadline    .tl_set:N = \l_mhex_deadline,
-  Lecturer    .tl_set:N = \l_mhex_lecturer,
-  Operator    .tl_set:N = \l_mhex_operator,
-  Homepage    .tl_set:N = \l_mhex_homepage,
-  Inclassdate .tl_set:N = \l_mhex_inclassdate
+  lecture     .tl_set:N = \l_mhex_lecture,
+  semester    .tl_set:N = \l_mhex_semester,
+  deadline    .tl_set:N = \l_mhex_deadline,
+  lecturer    .tl_set:N = \l_mhex_lecturer,
+  operator    .tl_set:N = \l_mhex_operator,
+  homepage    .tl_set:N = \l_mhex_homepage,
+  inclassdate .tl_set:N = \l_mhex_inclassdate
 }
 \keys_set:nn { mhex } {
-	Lecture = No~Lecture~Given,
-	Semester = No~Semester~Given,
-	Deadline = No~Deadline~Given,
-	Lecturer = No~Lecturer~Given,
-	Operator = No~Operator~Given,
-	Homepage =,
-	Inclassdate = ,
+  lecture = No~Lecture~Given,
+  semester = No~Semester~Given,
+  deadline = No~Deadline~Given,
+  lecturer = No~Lecturer~Given,
+  operator = No~Operator~Given,
+  homepage =,
+  inclassdate =,
 }
 
-\ProcessKeysOptions{mhexsheet}\relax
+\ProcessKeysOptions{mhexsheet}
 
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
 
