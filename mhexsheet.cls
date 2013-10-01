@@ -120,24 +120,36 @@
   {
     \hrule
     \vspace{2mm}
+    
     \begin{minipage}{0.55\textwidth}
-    {\sffamily \l_mhex_lecture{}\enspace\textbullet\enspace\l_mhex_semester\\
-    \LARGE \scshape  \l_mhex_exercisesheettext{}~\l_mhex_sheetno
-    \bool_if:NTF \l_mhex_showanswers {%
-      {\Large{} (~\l_mhex_withsolutionstext)}%
-    }{}\\
-    \small \upshape \itshape \rmfamily \titledateline }
+      \textsf{\l_mhex_lecture \enspace \textbullet \enspace \l_mhex_semester} \\
+      \textsc{
+        \LARGE \l_mhex_exercisesheettext{}~\l_mhex_sheetno
+        \bool_if:NTF
+          \l_mhex_showanswers
+          { \Large{} (~\l_mhex_withsolutionstext) }
+          {  }
+      }\\
+      \normalsize\textit{\titledateline}
     \end{minipage}
+    
     \begin{minipage}{0.44\textwidth}
       \begin{flushright}
         LOGO
       \end{flushright}
-    \end{minipage}\vspace{2mm}\hrule
-    \begin{center}\small
-      \textbf{\l_mhex_lecturetext :~} \l_mhex_lecturer\\
+    \end{minipage}
+    
+    \vspace{2mm}
+    \hrule
+    
+    \begin{center}
+      \small
+      \textbf{\l_mhex_lecturetext :~}   \l_mhex_lecturer\\
       \textbf{\l_mhex_exercisestext :~} \l_mhex_operator
-    \end{center}\vspace{-2mm}
-    \tl_if_empty:NTF \l_mhex_homepage {} {
+    \end{center}
+    \vspace{-2mm}
+    \tl_if_empty:NTF
+      \l_mhex_homepage
+      {  }
       {\small \l_mhex_homepagetext}
-    }
   }

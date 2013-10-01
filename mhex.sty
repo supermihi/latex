@@ -48,21 +48,8 @@
 \DeclareDocumentEnvironment
   {solution}
   {o}
-  {
-\newenvironment{solution}[1][{}]%
-{%
-  \iftoggle{showanswers}{
-    \exheader{\solutiontext{} \sheetnumber.\arabic{exercise}%
-    \ifthenelse{\equal{#1}{}}{}{ (#1 \pointstext)}:}
-  }{
-    \par\vspace*{0pt}%
-    \setbox\z@\vbox\bgroup
-  }
-}{%
-  \nottoggle{showanswers}{
-    \egroup
-  }{}
-}
+  {}
+  {}
 %\DeclareDocumentEnvironment{subexercises}{o}
 
 \keys_define:nn { mhex } {
