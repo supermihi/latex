@@ -1,0 +1,151 @@
+% !TeX encoding = UTF-8
+\NeedsTeXFormat{LaTeX2e}[2011/06/27]
+\RequirePackage{expl3,xparse}
+\ProvidesExplPackage{unikoblenzlogo}{2013/10/01}{1}{Erste Version}
+\RequirePackage{tikz}
+
+\ExplSyntaxOff
+\newcommand\futuraU{
+  (269, 20.5)
+  -- (269, 8.5)
+  arc (180:360:5.5cm)
+  -- (280, 20.5)
+}
+\newcommand\futuraL{
+  (118, 20.5)
+  -- (118, 3.5)
+  -- (124, 3.5)
+}
+\newcommand\futuraN{
+  (139.5, 2.5)
+  -- (139.5, 18.3)
+  -- (154, 4.8)
+  -- (154, 20.5)
+}
+\newcommand\futuraA{
+  (209.6880,7.6758)
+  -- (211.8240,2.5394)
+  -- (214.0550,2.5394)
+  -- (205.9200,21.4996)
+  -- (197.5670,2.5394)
+  -- (199.7760,2.5394)
+  -- (201.9590,7.6758)
+  -- (209.6880,7.6758)
+  -- cycle
+  (208.8950,9.5480)
+  -- (202.7760,9.5480)
+  -- (205.8710,16.7957)
+  -- (208.8950,9.5480)
+}
+\newcommand\futuraE{
+  (135.5, 19.7)
+  -- (127, 19.7)
+  -- (127, 3.5)
+  -- (135.5, 3.5)
+  (127, 12.5)
+  -- (135.5, 12.5)
+}
+\newcommand\futuraB{
+  (230, 43.5)
+  -- (241, 43.5)
+  (235.5, 43.5)
+  -- (235.5, 26.6)
+  (104, 2.5)
+  -- (104, 19.7)
+  -- (107.5, 19.7)
+  arc (90:-90:3.85cm)
+  -- (104, 12.0)
+  (104, 3.5)
+  -- (108.5, 3.5)
+  arc (-90:90:4.25)
+  -- (104, 12.0)
+}
+\newcommand\futuraS{
+  (206.8, 41.2)
+  -- (206, 42.3)
+  arc (30:250:3.8cm)
+  -- (204.6, 35.5)
+  arc (65:-167:4.45cm)
+  -- (197.9, 31.9)
+}
+\newcommand\futuraT{
+  (230, 43.5)
+  -- (241, 43.5)
+  (235.5, 43.5)
+  -- (235.5, 26.6)
+}
+\newcommand\futuraD{
+  (240, 3.3)
+  -- (237, 3.3)
+  -- (237, 19.9)
+  -- (240, 19.9)
+  arc (90:-90:8.3)
+  -- cycle
+}
+
+\ExplSyntaxOn
+
+\DeclareDocumentCommand
+  {\unikoblenzlogo}
+  { o }
+  {
+  \begin{tikzpicture}[self/.style={line~width=1.1pt}]
+    \IfNoValueTF{#1}{}{\begin{pgflowlevelscope}{\pgftransformscale{#1}}}
+
+    \definecolor{koblue}{RGB}{29,78,148}
+    \path[draw=koblue,line~width=1.4pt]
+      (1.04,.88)
+      -- (.72,.88)
+      -- (.54,.42)
+      .. controls (.5,.32)  and (.47,.28) .. (.41,.28) 
+      .. controls (.37,.29) and (.34,.32) .. (.36,.36) 
+      .. controls (.36,.37) and (.37,.4)  .. (.38,.426)
+      -- (.56,.88)
+      -- (.24,.88)
+      -- (.05,.4)
+      .. controls (.044,.386) and (.04,.366) .. (.03, .34)
+      .. controls (0,.24) and (.02,.18) .. (.075,.126)
+      .. controls (.136,.068) and (.23,.036) .. (.36,.036)
+      .. controls (.48, .036) and (.584, .068) .. (.676, .132)
+      .. controls (.76, .2) and (.8, .26) .. (.87, .426)
+      -- cycle;
+    % Streifen im U
+    \foreach \x in {0cm, 4.86mm} {
+      \foreach \i [evaluate={\dx=\i*.39mm+\x;\dy=\i*.98mm}] in {0,1,2,3} {
+        \path[fill=koblue,xshift=\dx,yshift=\dy] (.188,.52) -- (.5,.52) -- (.486,.47) -- (.17, .47) -- cycle;
+      }
+    }
+    
+    % Schriftzug
+    \begin{scope}[scale=.02]
+      \draw[self,xshift=-198.5cm, yshift=24cm] \futuraU;
+      \draw[self,yshift=24cm,xshift=-45cm] \futuraN;
+      \draw[self] (122, 26.6) -- (122, 44.5);
+      \path[fill] (134.7300,44.6355) -- (132.5460,44.6355) -- (139.8900,25.4598) -- (147.2340,44.6355) -- (145.0500,44.6355) -- (139.8900,30.8355) -- (134.7300,44.6355);
+      \draw[self,xshift=31cm,yshift=24cm] \futuraE;
+      \path[fill] (179.1380,42.7637) -- (179.7380,42.7637) .. controls (182.1620,42.7637) and (184.3460,42.4758) .. (184.3460,39.4996) .. controls (184.3460,36.6918) and (182.0430,36.2598) .. (179.7620,36.2598) -- (179.1380,36.2598) -- (179.1380,42.7637) -- cycle(179.1380,34.4836) -- (179.6420,34.4836) -- (185.1140,26.5395) -- (187.5860,26.5395) -- (181.8260,34.6516) .. controls (184.6100,34.8918) and (186.3620,36.8594) .. (186.3620,39.6438) .. controls (186.3620,43.7238) and (183.1700,44.6355) .. (179.7380,44.6355) -- (177.1220,44.6355) -- (177.1220,26.5395) -- (179.1380,26.5395) -- (179.1380,34.4836);
+      \draw[self] \futuraS;
+      \draw[self] (219, 26.6) -- (219, 44.5);
+      \draw[self] \futuraT;
+      \path[fill,xshift=49.5cm,yshift=24cm] \futuraA;
+      \fill (260.5, 43.5) circle (1.3cm);
+      \fill (250.5, 43.5) circle (1.3cm);
+      \draw[self,xshift=39.5cm] \futuraT;
+      \path[fill] (71.39,12.8836) -- (71.3902,20.6355) -- (69.3742,20.6355) -- (69.3742,2.5394) -- (71.3902,2.5394) -- (71.3902,10.3395) -- (71.8941,10.8434) -- (79.3102,2.5394) -- (82.0941,2.5394) -- (73.3102,12.2117) -- (81.8055,20.6355) -- (79.0941,20.6355) -- (71.3902,12.8836);
+      \draw[self] (91.2,11.5) circle (85mm);
+      \draw[self] \futuraB;    
+      \draw[self] \futuraL;
+      \draw[self] \futuraE;
+      \draw[self] \futuraN;
+      \draw[self] (170, 3.5) -- (159, 3.5) -- (169, 19.7) -- (158, 19.7);
+      \fill (179.5,11.5) circle (14mm);
+      \draw[self,xshift=73cm] \futuraL;
+      \path[fill] \futuraA;
+      \draw[self,xshift=77.6cm] \futuraN;
+      \draw[self] \futuraD;
+      \path[fill,xshift=52.5cm] \futuraA;
+      \draw[self] \futuraU;
+    \end{scope}
+    \IfNoValueTF{#1}{}{\end{pgflowlevelscope}}
+  \end{tikzpicture}
+  }

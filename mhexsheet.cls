@@ -1,6 +1,6 @@
 % !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
-\RequirePackage{expl3,l3keys2e}
+\RequirePackage{expl3,l3keys,l3keys2e,l3skip}
 \ProvidesExplClass{mhexsheet}{2013/09/26}{0.1}{Exercise Sheets by Michael Helmling}
 \RequirePackage{etoolbox}
 
@@ -62,30 +62,35 @@
 }
 
 \keys_define:nn { mhex } {
-  lecture     .tl_set:N = \l_mhex_lecture,
-  semester    .tl_set:N = \l_mhex_semester,
-  deadline    .tl_set:N = \l_mhex_deadline,
-  lecturer    .tl_set:N = \l_mhex_lecturer,
-  operator    .tl_set:N = \l_mhex_operator,
-  homepage    .tl_set:N = \l_mhex_homepage,
-  inclassdate .tl_set:N = \l_mhex_inclassdate
+  lecture      .tl_set:N = \l_mhex_lecture,
+  lectureshort .tl_set:N = \l_mhex_lectureshort,
+  semester     .tl_set:N = \l_mhex_semester,
+  deadline     .tl_set:N = \l_mhex_deadline,
+  lecturer     .tl_set:N = \l_mhex_lecturer,
+  operator     .tl_set:N = \l_mhex_operator,
+  homepage     .tl_set:N = \l_mhex_homepage,
+  inclassdate  .tl_set:N = \l_mhex_inclassdate
 }
 \keys_set:nn { mhex } {
-  lecture = No~Lecture~Given,
-  semester = No~Semester~Given,
-  deadline = No~Deadline~Given,
-  lecturer = No~Lecturer~Given,
-  operator = No~Operator~Given,
-  homepage =,
-  inclassdate =,
+  lecture      = No~Lecture~Given,
+  lectureshort = No~Lecture,
+  semester     = No~Semester~Given,
+  deadline     = No~Deadline~Given,
+  lecturer     = No~Lecturer~Given,
+  operator     = No~Operator~Given,
+  homepage     =,
+  inclassdate  =,
 }
 
 \ProcessKeysOptions{mhexsheet}
 
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
 
+
 \RequirePackage{mhex}
 \RequirePackage{iftex}
+\RequirePackage{unikoblenzlogo}
+\RequirePackage{amsfonts,amssymb}
 
 \ifPDFTeX
   \RequirePackage[utf8]{inputenc}
@@ -94,7 +99,6 @@
   \RequirePackage{inconsolata}
   \RequirePackage[\l_mhex_babel]{babel}
 \else
-  \RequirePackage{amsfonts,amssymb}
   \RequirePackage{eulervm}
   \RequirePackage{fontspec}
   \setromanfont{Linux~Libertine~O}
@@ -107,9 +111,10 @@
   \ExplSyntaxOn
   \RequirePackage{hyperref}
 \fi
+\RequirePackage{fancyhdr}
+\RequirePackage{zref-totpages}
 
-
-
+% TITLE STUFF
 
 \newcommand\titledateline{
   \ifstrempty{ \l_mhex_deadline }
@@ -120,8 +125,7 @@
   {
     \hrule
     \vspace{2mm}
-    
-    \begin{minipage}{0.55\textwidth}
+    \begin{minipage}{\dim_eval:n {\textwidth - 5.8cm}}
       \textsf{\l_mhex_lecture \enspace \textbullet \enspace \l_mhex_semester} \\
       \textsc{
         \LARGE \l_mhex_exercisesheettext{}~\l_mhex_sheetno
@@ -133,9 +137,9 @@
       \normalsize\textit{\titledateline}
     \end{minipage}
     
-    \begin{minipage}{0.44\textwidth}
+    \begin{minipage}{5.8cm}
       \begin{flushright}
-        LOGO
+        \unikoblenzlogo
       \end{flushright}
     \end{minipage}
     
@@ -153,3 +157,19 @@
       {  }
       {\small \l_mhex_homepagetext}
   }
+
+% HEADER and FOOTER SETUP
+
+\pagestyle{fancy}
+\fancyhead{}
+\renewcommand\headrulewidth{0pt}
+\renewcommand\footrulewidth{.4pt}
+\cfoot{
+  \bool_if:NTF
+    \l_mhex_solution
+    \l_mhex_solutionsheettext
+    \l_mhex_exercisesheettext
+  \l_mhex_sheetno
+}
+\rfoot{\l_mhex_pagetext{}~\thepage/\ztotpages}
+\lfoot{\l_mhex_lectureshort}

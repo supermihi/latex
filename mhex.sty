@@ -53,24 +53,49 @@
 %\DeclareDocumentEnvironment{subexercises}{o}
 
 \keys_define:nn { mhex } {
-  sheetnumber .tl_set:N = \l_mhex_sheetno
+  sheetnumber .tl_set:N = \l_mhex_sheetno,
+  solution .choice:,
+  solution / yes  .code:n    = {\bool_set_true:N  \l_mhex_solution
+                                \bool_set_false:N \l_mhex_solution_auto},
+  solution / no   .code:n    = {\bool_set_false:N \l_mhex_solution
+                                \bool_set_false:N \l_mhex_solution_auto},
+  solution / auto .code:n    = {\bool_set_true:N  \l_mhex_solution_auto},
+  solution        .default:n = yes,
 }
 
 \keys_set:nn { mhex } {
-  sheetnumber = 1
+  sheetnumber = 1,
+  solution    = auto,
 }
-\cs_new:Npn \ExerciseSetup #1 {\keys_set:nn { mhex } { #1 }}
+\bool_new:N \l_mhex_solution
+
+\cs_new:Npn \ExerciseSetup #1 {
+  \keys_set:nn { mhex } { #1 }
+  \bool_if:NTF
+    \l_mhex_solution_auto
+    {
+      \PackageWarning{mhex}{\l_mhex_solutionfilename}
+      \tl_if_in:nnTF
+        {\jobname}
+        {\l_mhex_solutionfilename}
+        {\bool_set_true:N  \l_mhex_solution}
+        {\bool_set_false:N \l_mhex_solution}
+    }
+    {\PackageWarning{mhex}{\l_mhex_solution_option}}
+}
 
 
 \cs_new:Nn \mhex_loadenglishcaptions: {
   \tl_set:Nn \l_mhex_exercisetext { Exercise }
   \tl_set:Nn \l_mhex_solutiontext { Solution }
   \tl_set:Nn \l_mhex_pointstext   { points }
+  \tl_set:Nn \l_mhex_solutionfilename { olution }
 }
 \cs_new:Nn \mhex_loadgermancaptions: {
   \tl_set:Nn \l_mhex_exercisetext { Übung }
   \tl_set:Nn \l_mhex_solutiontext { Lösung }
   \tl_set:Nn \l_mhex_pointstext   { Punkte }
+  \tl_set:Nn \l_mhex_solutionfilename { oesung }
 }
 \mhex_loadgermancaptions:
 \ProcessOptions\relax
