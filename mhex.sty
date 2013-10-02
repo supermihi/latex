@@ -45,11 +45,47 @@
   }
   {\par\vspace{2mm}}
 
+\keys_define:nn { mhexsolutionenv } {
+  points .tl_set:N = \l_mhex_cursolpoints,
+  points .value_required:,
+}
 \DeclareDocumentEnvironment
   {solution}
   {o}
-  {}
-  {}
+  {
+    \keys_set:nn {mhexsolutionenv} {points=,}
+    \IfValueTF
+      {#1}
+      {\keys_set:nn {mhexsolutionenv} {#1}}
+      { }
+    \bool_if:NTF
+      \l_mhex_solution
+      {
+        \l_mhex_exheader:n{
+          \l_mhex_solutiontext{}~
+          \tl_if_empty:NTF
+            \l_mhex_sheetno
+            { }
+            {\l_mhex_sheetno.}
+          \arabic{mhexercise}
+          \tl_if_empty:NTF
+            \l_mhex_cursolpoints
+            { }
+            {~(\l_mhex_cursolpoints{}~\l_mhex_pointstext)}
+        }
+      }
+      {
+        \par\vspace*{0pt}%
+        \setbox\z@\vbox\bgroup
+      }
+  }
+  {
+    \bool_if:NTF
+      \l_mhex_solution
+      {}
+      
+      \egroup
+  }
 %\DeclareDocumentEnvironment{subexercises}{o}
 
 \keys_define:nn { mhex } {
@@ -61,11 +97,13 @@
                                 \bool_set_false:N \l_mhex_solution_auto},
   solution / auto .code:n    = {\bool_set_true:N  \l_mhex_solution_auto},
   solution        .default:n = yes,
+  exam       .bool_set:N = \l_mhex_exammode,
 }
 
 \keys_set:nn { mhex } {
   sheetnumber = 1,
   solution    = auto,
+  exam        = false,
 }
 \bool_new:N \l_mhex_solution
 
@@ -81,7 +119,11 @@
         {\bool_set_true:N  \l_mhex_solution}
         {\bool_set_false:N \l_mhex_solution}
     }
-    {\PackageWarning{mhex}{\l_mhex_solution_option}}
+    {}
+  \bool_if:NTF
+    \l_mhex_exammode
+    {\tl_set:Nn \l_mhex_sheetno {}}
+    {}
 }
 
 
@@ -92,7 +134,7 @@
   \tl_set:Nn \l_mhex_solutionfilename { olution }
 }
 \cs_new:Nn \mhex_loadgermancaptions: {
-  \tl_set:Nn \l_mhex_exercisetext { Übung }
+  \tl_set:Nn \l_mhex_exercisetext { Aufgabe }
   \tl_set:Nn \l_mhex_solutiontext { Lösung }
   \tl_set:Nn \l_mhex_pointstext   { Punkte }
   \tl_set:Nn \l_mhex_solutionfilename { oesung }
