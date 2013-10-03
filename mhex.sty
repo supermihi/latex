@@ -1,18 +1,30 @@
 % !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
-\RequirePackage{expl3,xparse}
-\ProvidesExplPackage{mhex}{2013/09/26}{0.1}{Create Exercises}
+\RequirePackage{expl3,xparse,l3keys2e}
+\ProvidesExplPackage{mhex}{2013/10/03}{1}{Defines exercise and solution environments with the ability to switch solution output on or off.}
 
 \RequirePackage{etoolbox}
 \RequirePackage{xspace}
 \RequirePackage[inline]{enumitem}
+\RequirePackage{amsfonts,amssymb}
 \setlist[enumerate,1]{label=\alph*)}
 \setlist[enumerate,2]{label=\arabic*.}
-
+\RequirePackage{multicol}
+\RequirePackage{xcolor}
+% multi-column lists for small subexercises
+\SetEnumitemKey{columns}{
+  itemsep=1\itemsep,
+  parsep=1\parsep,
+  before=\begin{multicols}{\ifstrempty{#1}{2}{#1}},
+  after=\raggedcolumns\end{multicols}
+}
+% ======================================================================================== %
+% ========================= exercise and solution environments =========================== %
+% ======================================================================================== %
 
 \cs_new:Nn \l_mhex_exheader:n {
   \par\vspace{2.5mm}
-  \noindent{\textbf{#1}}
+  \noindent{\textbf{\textsf{#1}}}
   \par\vspace{1.5mm}
 }
 
@@ -75,7 +87,7 @@
         }
       }
       {
-        \par\vspace*{0pt}%
+        \par\vspace*{0pt}
         \setbox\z@\vbox\bgroup
       }
   }
@@ -83,61 +95,60 @@
     \bool_if:NTF
       \l_mhex_solution
       {}
-      
       \egroup
   }
 %\DeclareDocumentEnvironment{subexercises}{o}
 
+% ======================================================================================== %
+% ======================= Options for \exerciseSetup ===================================== %
+% ======================================================================================== %
+
 \keys_define:nn { mhex } {
   sheetnumber .tl_set:N = \l_mhex_sheetno,
   solution .choice:,
-  solution / yes  .code:n    = {\bool_set_true:N  \l_mhex_solution
-                                \bool_set_false:N \l_mhex_solution_auto},
-  solution / no   .code:n    = {\bool_set_false:N \l_mhex_solution
-                                \bool_set_false:N \l_mhex_solution_auto},
-  solution / auto .code:n    = {\bool_set_true:N  \l_mhex_solution_auto},
-  solution        .default:n = yes,
-  exam       .bool_set:N = \l_mhex_exammode,
+  solution / yes  .code:n     = {\bool_set_true:N  \l_mhex_solution},
+  solution / no   .code:n     = {\bool_set_false:N \l_mhex_solution},
+  solution        .default:n  = yes,
+  exam            .bool_set:N = \l_mhex_exammode,
 }
 
+% defaults
 \keys_set:nn { mhex } {
   sheetnumber = 1,
-  solution    = auto,
+  solution    = no,
   exam        = false,
 }
-\bool_new:N \l_mhex_solution
 
-\cs_new:Npn \ExerciseSetup #1 {
+\cs_new:Npn \exerciseSetup #1 {
   \keys_set:nn { mhex } { #1 }
-  \bool_if:NTF
-    \l_mhex_solution_auto
-    {
-      \PackageWarning{mhex}{\l_mhex_solutionfilename}
-      \tl_if_in:nnTF
-        {\jobname}
-        {\l_mhex_solutionfilename}
-        {\bool_set_true:N  \l_mhex_solution}
-        {\bool_set_false:N \l_mhex_solution}
-    }
-    {}
   \bool_if:NTF
     \l_mhex_exammode
     {\tl_set:Nn \l_mhex_sheetno {}}
     {}
 }
 
+% ======================================================================================== %
+% ======== Bilingual Setup: Defining Captions in German and English ====================== %
+% ======================================================================================== %
 
-\cs_new:Nn \mhex_loadenglishcaptions: {
-  \tl_set:Nn \l_mhex_exercisetext { Exercise }
-  \tl_set:Nn \l_mhex_solutiontext { Solution }
-  \tl_set:Nn \l_mhex_pointstext   { points }
-  \tl_set:Nn \l_mhex_solutionfilename { olution }
+\cs_new:Nn \l_mhex_addcaption:Nnn {
+  % add a bilingual text element.
+  % First argument is the name, second the german, third the english text.
+  % The text element will be accessible as \l_mhex_#1text.
+  \gappto \captionsenglish { \tl_set:cn {l_mhex_#1text} {#3} }
+  \gappto \captionsgerman  { \tl_set:cn {l_mhex_#1text} {#2} }
+  \gappto \captionsngerman { \tl_set:cn {l_mhex_#1text} {#2} }
 }
-\cs_new:Nn \mhex_loadgermancaptions: {
-  \tl_set:Nn \l_mhex_exercisetext { Aufgabe }
-  \tl_set:Nn \l_mhex_solutiontext { Lösung }
-  \tl_set:Nn \l_mhex_pointstext   { Punkte }
-  \tl_set:Nn \l_mhex_solutionfilename { oesung }
-}
-\mhex_loadgermancaptions:
-\ProcessOptions\relax
+
+\l_mhex_addcaption:Nnn {exercise} {Aufgabe} {Exercise}
+\l_mhex_addcaption:Nnn {solution} {Lösung}  {Solution}
+\l_mhex_addcaption:Nnn {points}   {Punkte}  {points}
+
+\DeclareDocumentCommand
+  \mhexCaption
+  { m m }
+  { \AtBeginDocument{
+      \tl_set:cn {l_mhex_#1text} {#2}
+    }
+  }
+\ProcessKeysOptions{ mhex }
