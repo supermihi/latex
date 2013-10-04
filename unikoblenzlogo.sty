@@ -84,16 +84,19 @@
 }
 
 \ExplSyntaxOn
-
+\definecolor{koblue}{RGB}{29,78,148}
+\RequirePackage{l3fp}
 \DeclareDocumentCommand
   {\unikoblenzlogo}
   { o }
   {
-  \begin{tikzpicture}[self/.style={line~width=1.1pt}]
-    \IfNoValueTF{#1}{}{\begin{pgflowlevelscope}{\pgftransformscale{#1}}}
-
-    \definecolor{koblue}{RGB}{29,78,148}
-    \path[draw=koblue,line~width=1.4pt]
+  \fp_set:Nn \uniko_scale {\IfNoValueTF{#1}{1}{#1}}
+  \begin{tikzpicture}[
+    self/.style = {line~width=1.1pt*\fp_use:N \uniko_scale},
+    scale       = {\fp_use:N \uniko_scale},
+    U/.style    = {draw=koblue,line~width=1.4pt*\fp_use:N \uniko_scale}
+  ]
+    \path[U]
       (1.04,.88)
       -- (.72,.88)
       -- (.54,.42)
@@ -146,6 +149,6 @@
       \path[fill,xshift=52.5cm] \futuraA;
       \draw[self] \futuraU;
     \end{scope}
-    \IfNoValueTF{#1}{}{\end{pgflowlevelscope}}
+    %\IfNoValueTF{#1}{}{\end{pgflowlevelscope}}
   \end{tikzpicture}
   }

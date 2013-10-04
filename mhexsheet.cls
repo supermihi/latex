@@ -1,17 +1,14 @@
 % !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
-\RequirePackage{expl3,l3keys,l3keys2e,l3skip}
+\RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
 \ProvidesExplClass{mhexsheet}{2013/09/26}{0.1}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
 % ======================================================================================== %
 \keys_define:nn { mhexsheet } {
-  language .choice:,
-  language / german  .tl_set:N = \lmhexlang,
-  language / english .tl_set:N = \lmhexlang,
-  german             .meta:n   = { language = german  },
-  english            .meta:n   = { language = english },
+  german             .code:n = {\tl_set:Nn \lmhexlang {german}},
+  english            .code:n = {\tl_set:Nn \lmhexlang {english}},
 
 }
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
@@ -21,29 +18,31 @@
 % ======== Basic Setup: Language (babel/polyglossia), Encoding, and Fonts ================ %
 % ======================================================================================== %
 
-\RequirePackage{iftex}
 \tl_set:Nn \l_mhex_babel { ngerman }
 \ProcessKeysOptions{mhexsheet}
-\ifPDFTeX
-  \RequirePackage[utf8]{inputenc}
-  \RequirePackage[T1]{fontenc}
-  \RequirePackage{libertine}
-  \RequirePackage{inconsolata}
-  \ifstrequal
-    {\lmhexlang}
-    {english}
-    {\RequirePackage[english]{babel}}
-    {\RequirePackage[ngerman]{babel}}
-\else
-  \RequirePackage{eulervm}
-  \RequirePackage{fontspec}
-  \defaultfontfeatures{Ligatures=TeX}
-  \setromanfont{Linux~Libertine~O}
-  \setsansfont{Linux~Biolinum~O}
-  \setmonofont{Inconsolata}
-  \RequirePackage{polyglossia}
-  \ExplSyntaxOff\setmainlanguage\lmhexlang\ExplSyntaxOn
-\fi
+\pdftex_if_engine:TF
+  {
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage{libertine}
+    \RequirePackage{inconsolata}
+    \str_if_eq:VnTF
+      \lmhexlang
+      {english}
+      {\RequirePackage[english]{babel}}
+      {\RequirePackage[ngerman]{babel}}
+  }
+  {
+    \RequirePackage{eulervm}
+    \RequirePackage{fontspec}
+    \defaultfontfeatures{Ligatures=TeX}
+    \setromanfont{Linux~Libertine~O}
+    \setsansfont{Linux~Biolinum~O}
+    \setmonofont{Inconsolata}
+    \RequirePackage{polyglossia}
+    % there seems to be a bug somewhere making this Expl.. stuff necessary
+    \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
+  }
 \RequirePackage{mhex}
 
 % === predefined captions ================================================================ %
@@ -75,7 +74,6 @@
 % ======================================================================================== %
 
 \RequirePackage{hyperref}
-\RequirePackage{unikoblenzlogo}
 \RequirePackage[top=2cm]{geometry}
 \RequirePackage{fancyhdr}
 \RequirePackage{zref-totpages}
@@ -95,6 +93,9 @@
   homepage     .tl_set:N = \l_mhex_homepage,
   date         .tl_set:N = \l_mhex_date,
   title        .code:n   = \AtBeginDocument{\tl_set:Nn \l_mhex_examtext {#1}},
+  logo         .code:n   = {\cs_set:Nn \l_mhex_logo: {#1}
+                            \bool_set_true:N \l_mhex_customlogo},
+  logowidth    .dim_set:N = \l_mhex_logowidth,
 }
 \keys_set:nn { mhex } {
   lecture      = No~Lecture~Given,
@@ -105,12 +106,20 @@
   operator     = ,
   homepage     = ,
   date         = ,
+  logo         = \unikoblenzlogo,
+  logowidth    = 161pt,
 }
+\bool_set_false:N \l_mhex_customlogo
 \tl_if_empty:NTF
   \l_mhex_lectureshort
   {\tl_set:Nn \l_mhex_lectureshort { \l_mhex_lecture } }  { }
 
-
+\AtBeginDocument{
+  \bool_if:NTF
+    \l_mhex_customlogo
+    {}
+    {\RequirePackage{unikoblenzlogo}}
+}
 
 
 % ======================================================================================== %
@@ -120,7 +129,7 @@
 \DeclareDocumentCommand\maketitle{}
   {
     \rule{\linewidth}{2pt}\\[2mm]
-    \begin{minipage}{\dim_eval:n {\textwidth - 5.8cm}}
+    \begin{minipage}{\dim_eval:n {\textwidth - \l_mhex_logowidth}}
       \raggedright
       \textsf{
         \l_mhex_lecture
@@ -159,9 +168,9 @@
       }
     \end{minipage}
     
-    \begin{minipage}{5.8cm}
+    \begin{minipage}{\l_mhex_logowidth}
       \begin{flushright}
-        \unikoblenzlogo
+        \l_mhex_logo:
       \end{flushright}
     \end{minipage}
     
