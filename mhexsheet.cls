@@ -43,6 +43,7 @@
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
   }
+\RequirePackage{csquotes}
 \RequirePackage{mhex}
 
 % === predefined captions ================================================================ %

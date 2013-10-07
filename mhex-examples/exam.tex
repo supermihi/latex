@@ -1,0 +1,39 @@
+\documentclass[german]{mhexsheet}
+\exerciseSetup{
+  lecture  = DAS,     % Name of the Lecture
+  exam,               % Turns on exam mode
+  semester = SS 2013, % Semester
+  title    = Abschlussklausur, % Optional title (defaults to "exam" (eng) and "Klausur" (ger))
+  date     = {17.5.2019, 10:00–12:00},
+  lecturer = Prof. Dr. Stefan Ruzika,
+  operator = Dr. Mark Steinhauer,
+  solution,           % include solutions (comment out or set "false" if you don't want them)
+}
+
+\begin{document}
+\maketitle
+For exams, specify the \verb|exam| option in \verb|\exerciseSetup|. You can change the title (default is \enquote{Exam} / \enquote{Klausur}) using the \verb|title| option. The date is set with the \verb|date| option (include time ranges and room numbers there).
+\begin{verbatim}
+\exerciseSetup{
+  lecture  = DAS,    
+  exam,              
+  semester = SS 2013,
+  title    = Abschlussklausur
+  date     = {17.5.2019, 10:00–12:00},
+  lecturer = Prof. Dr. Stefan Ruzika,
+  operator = Dr. Mark Steinhauer,
+}
+\end{verbatim}
+In \emph{exam mode} some captions are changed, the title is slightly condensed, and there is no sheet number.
+\begin{exercise}[points=10]
+Bla
+\end{exercise}
+
+\begin{solution}[points=3+3+4]
+
+
+\end{solution}
+
+\begin{exercise}
+\end{exercise}
+\end{document}

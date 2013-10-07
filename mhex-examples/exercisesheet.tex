@@ -1,0 +1,55 @@
+% load document class mhexsheet & select language as option (german or english)
+\documentclass[german]{mhexsheet}
+
+% set the parameters for the current exercise sheet with \exerciseSetup (key-value interface)
+\exerciseSetup{
+  lecture      = Linear and Network Optimization,
+  lectureshort = Optimization, % optional short name for the footer
+  semester     = WS 2013/14,
+  deadline     = 19.4.2013,
+  lecturer     = Stefan Ruzika,
+  operator     = Michael Helmling,
+  homepage     = www.google.de,
+  sheetnumber  = 12,
+  solution, % solution (or solution=true) enables output of solution environments. solution=false (default) disables it,
+  % logo = \includegraphics[width=5cm]{image.png}, % can override the standard logo
+  % logowidth = 7cm % ... and also its width
+}
+
+\begin{document}
+\maketitle
+
+\begin{exercise}
+With \verb|\begin{enumerate}[columns=<n>]| you can create multicolumn subexercise lists for small exercises:
+\begin{enumerate}[columns=3]
+  \item $1+2$
+  \item $2+3$
+  \item $3+4$
+  \item $4+5$
+  \item $5+6$
+\end{enumerate}
+If you ever feel the need, a manual column break can be inserted with \verb|\columnbreak|.
+\end{exercise}
+
+\begin{solution}
+Solutions are output if the option \verb|solution| (or \verb|solution=true|) is passed to \verb|\exerciseSetup|.
+\begin{enumerate}
+\item 3
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}[title=Lemma of Zorn,points=100]
+Optional titles and point numbers can be assigned to exercises:\\
+\verb!\begin{exercise}[title=Lemma of Zorn,points=100]!
+\end{exercise}
+Predefined captions (like \enquote{Exercise} / \enquote{Aufgabe}) can be changed with \verb|mhexCaption|. For example,
+\begin{verbatim}
+\mhexCaption{exercise}{Übungsaufgabe}
+\end{verbatim}
+changes the caption used for the exercise environment:
+\mhexCaption{exercise}{Übungsaufgabe}
+\begin{exercise}
+Test
+\end{exercise}
+You should however avoid this because it breaks the uniform appearence of the exercise sheets.
+\end{document}

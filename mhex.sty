@@ -105,17 +105,14 @@
 
 \keys_define:nn { mhex } {
   sheetnumber .tl_set:N = \l_mhex_sheetno,
-  solution .choice:,
-  solution / yes  .code:n     = {\bool_set_true:N  \l_mhex_solution},
-  solution / no   .code:n     = {\bool_set_false:N \l_mhex_solution},
-  solution        .default:n  = yes,
+  solution        .bool_set:N = \l_mhex_solution,
   exam            .bool_set:N = \l_mhex_exammode,
 }
 
 % defaults
 \keys_set:nn { mhex } {
   sheetnumber = 1,
-  solution    = no,
+  solution    = false,
   exam        = false,
 }
 
@@ -151,4 +148,14 @@
       \tl_set:cn {l_mhex_#1text} {#2}
     }
   }
+\AtBeginDocument{
+  % renew the \mhexCaption command to immediately change captions after preamble
+  \RenewDocumentCommand
+    \mhexCaption
+    { m m }
+    {\tl_set:cn {l_mhex_#1text} {#2}}
+  % ensure that babel or polyglossia are loaded
+  \@ifpackageloaded{babel}{}
+  {\@ifpackageloaded{polyglossia}{}{\PackageError{mhex}{babel~or~polyglossia~must~be~loaded!}}}
+}
 \ProcessKeysOptions{ mhex }

@@ -1,0 +1,29 @@
+\documentclass{scrartcl}
+\usepackage{iftex}
+\ifPDFTeX
+ \usepackage[utf8]{inputenc}
+ \usepackage[ngerman]{babel}
+\else
+  \usepackage{fontspec}
+  \usepackage{polyglossia}
+  \setmainlanguage{german}
+\fi
+\usepackage[
+  sheetnumber = 12,
+  solution 
+]{mhex}
+
+\begin{document}
+If you \emph{don't} use the \verb|mhexsheet| documentclass you can still load the \verb|mhex| package to get the \verb|exercise| and \verb|solution| environments, including conditional compilation of the solutions. Instead of using \verb|\mhexSetup|, the options can be directly passed to the \verb|mhex| package:
+\begin{verbatim}
+\usepackage[
+  sheetnumber = 12,
+  solution    = yes
+]{mhex}
+\end{verbatim}
+\begin{exercise}[points=2]
+\end{exercise}
+
+\begin{solution}
+\end{solution}
+\end{document}
