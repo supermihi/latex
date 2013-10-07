@@ -1,0 +1,37 @@
+% load document class mhexsheet & select language as option (german or english)
+\documentclass[english]{mhexsheet}
+
+% set the parameters for the current exercise sheet with \exerciseSetup (key-value interface)
+\exerciseSetup{
+  lecture      = Linear and Network Optimization,
+  lectureshort = Optimization, % optional short name for the footer
+  semester     = WS 2013/14,
+  deadline     = 19.4.2013,
+  lecturer     = Stefan Ruzika,
+  operator     = Michael Helmling,
+  homepage     = www.google.de,
+  sheetnumber  = 12,
+  date         = 12.4.2013, % date for the in-class part
+}
+
+\begin{document}
+\maketitle
+
+
+
+For in-class exercise sheets, specify \verb|date| instead of \verb|deadline| in the setup; this will also change the caption in the title section.
+
+If there's both in-class and take-home exercises on the same sheet, you can specify both \verb|date| and \verb|deadline| and use the commands \verb|\inclass| and \verb|\takehome| to mark the different sections in the exercise sheet.
+\inclass
+
+\begin{exercise}
+Bla
+\end{exercise}
+
+
+\takehome
+\begin{exercise}[title=Lemma of Zorn,points=100]
+Blabla
+\end{exercise}
+
+\end{document}
