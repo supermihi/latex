@@ -75,7 +75,7 @@
 % ======================================================================================== %
 
 \RequirePackage{hyperref}
-\RequirePackage[top=2cm]{geometry}
+\RequirePackage[scale=.8]{geometry}
 \RequirePackage{fancyhdr}
 \RequirePackage{zref-totpages}
 
@@ -85,17 +85,17 @@
 % ======================================================================================== %
 
 \keys_define:nn { mhex } {
-  lecture      .tl_set:N = \l_mhex_lecture,
-  lectureshort .tl_set:N = \l_mhex_lectureshort,
-  semester     .tl_set:N = \l_mhex_semester,
-  deadline     .tl_set:N = \l_mhex_deadline,
-  lecturer     .tl_set:N = \l_mhex_lecturer,
-  operator     .tl_set:N = \l_mhex_operator,
-  homepage     .tl_set:N = \l_mhex_homepage,
-  date         .tl_set:N = \l_mhex_date,
-  title        .code:n   = \AtBeginDocument{\tl_set:Nn \l_mhex_examtext {#1}},
-  logo         .code:n   = {\cs_set:Nn \l_mhex_logo: {#1}
-                            \bool_set_true:N \l_mhex_customlogo},
+  lecture      .tl_set:N    = \l_mhex_lecture,
+  lectureshort .tl_set:N    = \l_mhex_lectureshort,
+  semester     .tl_set:N    = \l_mhex_semester,
+  deadline     .tl_set:N    = \l_mhex_deadline,
+  lecturer     .clist_set:N = \l_mhex_lecturer,
+  operator     .clist_set:N = \l_mhex_operator,
+  homepage     .tl_set:N    = \l_mhex_homepage,
+  date         .tl_set:N    = \l_mhex_date,
+  title        .code:n      = \AtBeginDocument{\tl_set:Nn \l_mhex_examtext {#1}},
+  logo         .code:n      = {\cs_set:Nn \l_mhex_logo: {#1}
+                              \bool_set_true:N \l_mhex_customlogo},
   logowidth    .dim_set:N = \l_mhex_logowidth,
 }
 \keys_set:nn { mhex } {
@@ -124,12 +124,12 @@
 
 
 % ======================================================================================== %
-% ========================= Maketitle and Related  ======================================= %
+% ==================================== Maketitle ========================================= %
 % ======================================================================================== %
 
 \DeclareDocumentCommand\maketitle{}
   {
-    \rule{\linewidth}{2pt}\\[2mm]
+    \rule{\linewidth}{2pt}\\[4pt]
     \begin{minipage}{\dim_eval:n {\textwidth - \l_mhex_logowidth}}
       \raggedright
       \textsf{
@@ -173,37 +173,62 @@
       \begin{flushright}
         \l_mhex_logo:
       \end{flushright}
-    \end{minipage}
+    \end{minipage}\\[3pt]
+    \rule{\linewidth}{2pt}\\[2pt]
     
-    \\[2mm]
-    \rule{\linewidth}{2pt}
-    
-    \begin{center}
-      \small
-      \bool_if:NTF
-        \l_mhex_exammode
-        {
-          \textbf{
-            \l_mhex_lecturer
-             \tl_if_empty:NTF
-               \l_mhex_operator
-               { } {,~\l_mhex_operator}
-          }   
-        }
-        {
-          \tl_if_empty:NTF
-            \l_mhex_lecturer
-            { } {\textbf{\l_mhex_lecturetext :~}   \l_mhex_lecturer\\}
-          \tl_if_empty:NTF
-            \l_mhex_operator
-            { } {\textbf{\l_mhex_exercisestext :~} \l_mhex_operator}
-        }
-    \end{center}
-    \vspace{-2mm}
+    \bool_new:N \l_mhex_subtitle
+    \seq_new:N \l_mhex_people
+    \bool_if:NTF
+      \l_mhex_exammode
+      {
+        \clist_concat:NNN \l_mhex_cpeople \l_mhex_lecturer \l_mhex_operator
+        \clist_map_inline:Nn \l_mhex_cpeople {\seq_put_right:Nn \l_mhex_people {##1}}
+        \seq_if_empty:NTF \l_mhex_people
+          {}
+          {{\centering
+            \small
+            \textbf{\seq_use:Nn \l_mhex_people {\enspace\textbullet\enspace}}
+            \\[-1pt]
+           }
+           \bool_set_true:N \l_mhex_subtitle
+          }
+      }
+      {
+        \tl_if_empty:NTF
+          \l_mhex_lecturer
+          {}{\seq_put_right:Nn
+            \l_mhex_people
+            {\textbf{\l_mhex_lecturetext :\enspace}
+             \clist_use:Nn \l_mhex_lecturer {\nobreakspace\textbullet\nobreakspace}}
+            }
+        \tl_if_empty:NTF
+          \l_mhex_operator
+          {}{\seq_put_right:Nn
+            \l_mhex_people
+            {\textbf{\l_mhex_exercisestext :\enspace}
+             \clist_use:Nn\l_mhex_operator{\nobreakspace\textbullet\nobreakspace}}
+            }
+        \seq_if_empty:NTF \l_mhex_people
+          {}
+          {{\centering
+            \small
+            \seq_use:Nn \l_mhex_people {\\}
+            \\[-1pt]
+           }
+           \bool_set_true:N \l_mhex_subtitle
+          }
+       }
     \tl_if_empty:NTF
       \l_mhex_homepage
-      {  }
-      {\small \l_mhex_homepagetext}
+      {}
+      {
+        \bool_set_true:N \l_mhex_subtitle
+        {\small \l_mhex_homepagetext}\\[-3pt]
+      }
+    \bool_if:NTF
+      \l_mhex_subtitle
+      {\rule{\linewidth}{1pt}\\[-5pt]}{\vspace{-2mm}}
+    \par
   }
 
 % ======================================================================================== %
