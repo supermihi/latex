@@ -1,7 +1,8 @@
 % !TeX encoding = UTF-8
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
-\ProvidesExplClass{mhexsheet}{2013/09/26}{0.1}{Neatly designed exercise sheets with tons of options.}
+\RequirePackage{l3seq}[2013/05/26] % \seq_use:Nn introduced in this version
+\ProvidesExplClass{mhexsheet}{2013/10/08}{2}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
@@ -25,7 +26,8 @@
     \RequirePackage[utf8]{inputenc}
     \RequirePackage[T1]{fontenc}
     \RequirePackage{libertine}
-    \RequirePackage{inconsolata}
+    \RequirePackage{zi4}
+    \RequirePackage{euler}
     \str_if_eq:VnTF
       \lmhexlang
       {english}
@@ -33,12 +35,12 @@
       {\RequirePackage[ngerman]{babel}}
   }
   {
-    \RequirePackage{eulervm}
+    \RequirePackage{euler}
     \RequirePackage{fontspec}
     \defaultfontfeatures{Ligatures=TeX}
-    \setromanfont{Linux~Libertine~O}
+    \setmainfont{Linux~Libertine~O}
     \setsansfont{Linux~Biolinum~O}
-    \setmonofont{Inconsolata}
+    \setmonofont[Scale=MatchLowercase]{Inconsolata}
     \RequirePackage{polyglossia}
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
@@ -230,11 +232,34 @@
       {\rule{\linewidth}{1pt}\\[-5pt]}{\vspace{-2mm}}
     \par
   }
+  
+  
+%========= the inclass / takehome commands =============================================== %
+\cs_new:Nn \l_mhex_typetitlebox:nn {
+  \par
+  \colorbox{black!20}{
+    \parbox{\textwidth}{
+      {\Large\textsc{#1}}
+      \hfill
+      {\small\textit{(#2)}}
+    }
+  }
+  \bool_set_true:N \l_mhex_explicittype
+}
+  
+\DeclareDocumentCommand
+  \inclass {}
+  { \l_mhex_typetitlebox:nn { \l_mhex_inclasstitletext  } {\l_mhex_inclasstext} }
+  
+\DeclareDocumentCommand
+  \takehome {}
+  { \l_mhex_typetitlebox:nn { \l_mhex_takehometitletext } {\l_mhex_takehometext}}
+% ======================================================================================== %
+
 
 % ======================================================================================== %
 % ==================== Page Layout: Header and Footer ==================================== %
 % ======================================================================================== %
-
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -253,22 +278,4 @@
 }
 \rfoot{\l_mhex_pagetext{}~\thepage/\ztotpages}
 \lfoot{\l_mhex_lectureshort}
-
-\cs_new:Nn \l_mhex_typetitlebox:nn {
-  \par
-  \colorbox{black!20}{
-    \parbox{\textwidth}{
-      {\Large\textsc{#1}}
-      \hfill
-      {\small\textit{(#2)}}
-    }
-  }
-  \bool_set_true:N \l_mhex_explicittype
-}
-\DeclareDocumentCommand
-  \inclass {}
-  { \l_mhex_typetitlebox:nn { \l_mhex_inclasstitletext  } {\l_mhex_inclasstext} }
-  
-\DeclareDocumentCommand
-  \takehome {}
-  { \l_mhex_typetitlebox:nn { \l_mhex_takehometitletext } {\l_mhex_takehometext}}
+% ======================================================================================== %
