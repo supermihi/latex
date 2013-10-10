@@ -2,7 +2,7 @@
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
 \RequirePackage{l3seq}[2013/05/26] % \seq_use:Nn introduced in this version
-\ProvidesExplClass{mhexsheet}{2013/10/08}{2}{Neatly designed exercise sheets with tons of options.}
+\ProvidesExplClass{mhexsheet}{2013/10/10}{3}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
@@ -10,7 +10,6 @@
 \keys_define:nn { mhexsheet } {
   german             .code:n = {\tl_set:Nn \lmhexlang {german}},
   english            .code:n = {\tl_set:Nn \lmhexlang {english}},
-
 }
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
 
@@ -20,6 +19,7 @@
 % ======================================================================================== %
 
 \tl_set:Nn \l_mhex_babel { ngerman }
+\RequirePackage{amsmath,amsfonts,amssymb}
 \ProcessKeysOptions{mhexsheet}
 \pdftex_if_engine:TF
   {
@@ -35,12 +35,15 @@
       {\RequirePackage[ngerman]{babel}}
   }
   {
-    \RequirePackage{euler}
     \RequirePackage{fontspec}
     \defaultfontfeatures{Ligatures=TeX}
     \setmainfont{Linux~Libertine~O}
     \setsansfont{Linux~Biolinum~O}
     \setmonofont[Scale=MatchLowercase]{Inconsolata}
+    \RequirePackage[math-style=upright]{unicode-math}
+    \setmathfont{Neo~Euler}
+    % these fonts are just nicer from the XITS set::
+    \setmathfont[range={\mathcal,\mathbfcal,\mathbb},StylisticSet=1]{XITS~Math}
     \RequirePackage{polyglossia}
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn

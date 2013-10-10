@@ -2,41 +2,48 @@
 %% Copyright 2013 by Michael Helmling
 %% Newest version: github.com/supermihi/latex
 %% Feel free to use and modify to your wish!
+% !TeX encoding = UTF-8
+\NeedsTeXFormat{LaTeX2e}[2011/06/27]
+\RequirePackage{expl3,l3keys2e,l3keys}
+\ProvidesExplPackage
+  {mh_math}
+  {2013/10/10}
+  {2}
+  {Defines macros and loads package useful for mathematical typesetting}
 
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{mh_math}
 
-\RequirePackage{etoolbox}
-
-\newtoggle{unimath}
-\DeclareOption{unimath}{
-  \toggletrue{unimath}
+\keys_define:nn { mhmath } {
+  unimath      .bool_set:N  = \l_mhmath_unimath,
+  unimath      .initial:n   = false,
+  
+  fonts        .bool_set:N  = \l_mhmath_myfonts,
+  fonts        .initial:n   = false,
 }
 
-\providetoggle{mh_myfonts}
-\toggletrue{mh_myfonts}
-\DeclareOption{nofonts}{
-  \togglefalse{mh_myfonts}
-}
+\ProcessKeysOptions { mhmath }
+\relax
 
-\ProcessOptions\relax
 
-\RequirePackage{iftex}
 \RequirePackage{amsfonts,amsmath,amssymb}
-\iftoggle{unimath}{
-  \RequirePackage{unicode-math}
-}{}
-\iftoggle{mh_myfonts}{
-  \ifPDFTeX
-    \RequirePackage{eulervm}
-  \else
-    \iftoggle{unimath}{
-      \setmathfont[StylisticSet=0]{XITS Math} 
-    }{
-      \RequirePackage{eulervm}
-    }
-  \fi
-}{}
+\bool_if:nTF
+  { !(\pdftex_if_engine_p:) && \l_mhmath_unimath }
+  { \RequirePackage{unicode-math} }
+  {  }
+
+
+\bool_if:nTF
+ {\l_mhmath_myfonts && (\pdftex_if_engine_p: || !(\l_mhmath_unimath)) }
+ { \RequirePackage{euler} }
+ {  }
+
+\bool_if:nTF
+  {\l_mhmath_myfonts && \l_mhmath_unimath && !(\pdftex_if_engine_p:) }
+  {
+    \unimathsetup{math-style=upright}
+    \setmathfont{Neo~Euler}
+    \setmathfont[range={\mathcal,\mathbfcal,\mathbb},StylisticSet=1]{XITS~Math}
+  }
+  {  }
 
 \RequirePackage{mathtools}
 \RequirePackage{xspace}
@@ -46,13 +53,13 @@
 \newcommand{\Q}{\mathbb{Q}} % fractions
 \newcommand{\N}{\mathbb{N}} % integers
 \newcommand{\R}{\mathbb{R}} % reals
-\def\C{\mathbb{C}} % complex numbers
+\DeclareDocumentCommand\C{}{\mathbb{C}} % complex numbers
 \newcommand{\F}{\mathbb{F}} % finite fields
-\renewcommand{\O}{\mathcal{O}} % Landau notation
+\DeclareDocumentCommand\O{}{\mathcal{O}} % Landau notation
 \newcommand{\E}{\mathbb{E}} % Expectation
 \newcommand{\NP}{{\sffamily NP}} % NP complexity class
-\renewcommand{\P}{{\sffamily P}} % P complexity class
-\newcommand{\Llra}{\Longleftrightarrow}
+\DeclareDocumentCommand\P{}{\textsf{P}} % P complexity class
+\newcommand{\Llra}{\ensuremath{\Longleftrightarrow}}
 
 % Commands with size-adjusting braces
 \newcommand{\abs}[1]{\left\lvert #1 \right\rvert} % absolute value
