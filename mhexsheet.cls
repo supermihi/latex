@@ -40,10 +40,14 @@
     \setmainfont{Linux~Libertine~O}
     \setsansfont{Linux~Biolinum~O}
     \setmonofont[Scale=MatchLowercase]{Inconsolata}
-    \RequirePackage[math-style=upright]{unicode-math}
+    \RequirePackage{unicode-math}
     \setmathfont{Neo~Euler}
+    \setmathfont[range=\mathit]{Neo~Euler}
     % these fonts are just nicer from the XITS set::
     \setmathfont[range={\mathcal,\mathbfcal,\mathbb},StylisticSet=1]{XITS~Math}
+    % Restore operator names from Libertine
+    \setmathfont[range=\mathup]{Linux~Libertine~O}
+    \setmathfont[range=\mathbfup]{Linux~Libertine~O~Bold}
     \RequirePackage{polyglossia}
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn

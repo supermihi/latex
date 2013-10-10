@@ -50,7 +50,11 @@ Predefined captions (like \enquote{Exercise} / \enquote{Aufgabe}) can be changed
 changes the caption used for the exercise environment:
 \mhexCaption{exercise}{Übungsaufgabe}
 \begin{exercise}
-Test
+Berechnen Sie die Integrale (\textit{Hinweis:} $\int \frac{1}{1+x^2}=\arctan(x)+\text{const}$)
+\begin{equation*}
+I_1=\int\limits_0^\frac{\pi}{2} \frac{8\cos(x)}{1+(\sin(x))^2}dx\quad \text{und}\quad I_2=\int\limits_{-\frac{\pi}{2}}^{\frac{\pi}{2}}x^2\cdot\sin(2x)dx.
+\end{equation*}
 \end{exercise}
 You should however avoid this because it breaks the uniform appearence of the exercise sheets.
+
 \end{document}
