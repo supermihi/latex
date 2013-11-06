@@ -19,106 +19,135 @@
 %% Newest version: github.com/supermihi/latex
 %%
 %% Feel free to use and modify to your wish!
-
+\RequirePackage{expl3,l3keys2e,l3keys,xparse}
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{mh_basic}
+\ProvidesExplPackage
+  {mh_basic}
+  {2013/11/06}
+  {1}
+  {basic TeX setup file for UTF-8 encoded files with pdf-/Xe-/LuaLaTeX support}
+  
+\keys_define:nn { mhbasic } {
+  german       .code:n = {\tl_set:Nn \mhlang {german}},
+  english      .code:n = {\tl_set:Nn \mhlang {english}},
 
-\RequirePackage{etoolbox}
-\RequirePackage{iftex}
+  babel        .bool_set:N  = \l_mhbasic_babel,
+  babel        .initial:n   = true,
+  
+  fonts        .bool_set:N  = \l_mhbasic_myfonts,
+  fonts        .initial:n   = false,
+  
+  math         .bool_set:N  = \l_mhbasic_math,
+  math         .initial:n   = false,
+  
+  prettyref    .bool_set:N  = \l_mhbasic_prettyref,
+  prettyref    .initial:n   = false,
+}
 
-\newtoggle{mh_german}
-\DeclareOption{german}{\toggletrue{mh_german}}
+\ProcessKeysOptions { mhbasic }
 
-\DeclareOption{english}{\togglefalse{mh_german}}
+\bool_if:NTF
+  \l_mhbasic_math
+  {\ExplSyntaxOff\RequirePackage{mh_math}\ExplSyntaxOn}
+  {}
 
-\newtoggle{myfonts}
-\toggletrue{myfonts}
-\DeclareOption{nofonts}{\togglefalse{myfonts}}
-
-\newtoggle{loadbabel}
-\toggletrue{loadbabel}
-\DeclareOption{nobabel}{\togglefalse{loadbabel}}
-
-\newtoggle{math}
-\DeclareOption{math}{\toggletrue{math}}
-
-\ProcessOptions\relax
-
-\iftoggle{math}{\RequirePackage{mh_math}}{}
-
-\ifPDFTeX
-  \RequirePackage[utf8]{inputenc}
-  \RequirePackage[T1]{fontenc}
-  \iftoggle{myfonts}{
-    \RequirePackage{libertine}
-    \RequirePackage{inconsolata}
-  }{
-    \RequirePackage{lmodern}
+\pdftex_if_engine:TF
+  {
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage[T1]{fontenc}
+    \bool_if:NTF
+      \l_mhbasic_myfonts
+      {
+        \RequirePackage{libertine}
+        \RequirePackage{inconsolata}
+      }
+      {\RequirePackage{lmodern}}
+    \bool_if:NTF
+      \l_mhbasic_babel
+      {
+        \str_if_eq:VnTF
+          \mhlang
+          {english}
+          {\RequirePackage[english]{babel}}
+          {\RequirePackage[ngerman]{babel}}
+      }
+      {  }
   }
-  \iftoggle{loadbabel}{
-    \RequirePackage[\iftoggle{mh_german}{ngerman}{american}]{babel}
-  }{}
-\else
-  \RequirePackage{fontspec}
-  \defaultfontfeatures{Ligatures=TeX}
-  \iftoggle{myfonts}{
-    \setromanfont[Numbers=Proportional]{Linux Libertine O}
-    \setsansfont[Numbers=Proportional]{Linux Biolinum O}
-    \setmonofont{Inconsolata}
-  }{}
-  \iftoggle{loadbabel}{
-    \RequirePackage{polyglossia}
-    \iftoggle{mh_german}{
-      \setmainlanguage[babelshorthands=true]{german}
-    }{
-      \setmainlanguage[variant=american]{english}
-    }
-  }{}
-\fi
+  {
+    \RequirePackage{fontspec}
+    \defaultfontfeatures{Ligatures=TeX}
+    \bool_if:NTF
+      \l_mhbasic_myfonts
+      {
+        \setromanfont[Numbers=Proportional]{Linux~Libertine~O}
+        \setsansfont[Numbers=Proportional]{Linux~Biolinum~O}
+        \setmonofont{Inconsolata}
+      }
+      {  }
+    \bool_if:NTF
+      \l_mhbasic_babel
+      {
+        \RequirePackage[babelshorthands]{polyglossia}
+        \ExplSyntaxOff\setmainlanguage{\mhlang}\ExplSyntaxOn
+      }
+      {  }
+  }
 
-\RequirePackage{csquotes} % provides \enquote{...}
+\RequirePackage{csquotes}
 \RequirePackage{microtype}
-\RequirePackage[newcommands]{ragged2e} % improves center, flushright etc.
+\RequirePackage[newcommands]{ragged2e}
+\RequirePackage{xspace}
 
 % common abbreviations
-\newcommand{\emphex}[1]{\emph{#1}\index{#1}}
-\RequirePackage{xspace}
-\iftoggle{mh_german}{
-  \newcommand{\zB}{\text{z.\,B.}\xspace}
-}{
-  \newcommand\st{\text{s.\,t.}\xspace}
-  \newcommand\ie{\text{i.\,e.}\xspace}
-  \newcommand\eg{\text{e.\,g.}\xspace}
-  \newcommand\wrt{\text{wrt.}\xspace}
-}
+\DeclareDocumentCommand
+  {\emphex}
+  { m }
+  {\emph{#1}\index{#1}}
 
-% reference formats
-\RequirePackage{prettyref}
-\newrefformat{eq}{\textup{(\ref{#1})}}
-\newrefformat{def}{Definition~\ref{#1}}
-\newrefformat{lemma}{Lemma~\ref{#1}}
-\iftoggle{mh_german}{
-  \newrefformat{alg}{Algorithmus~\ref{#1}}
-  \newrefformat{fig}{Abbildung~\ref{#1}}
-  \newrefformat{rem}{Bemerkung~\ref{#1}}
-  \newrefformat{example}{Beispiel~\ref{#1}}
-  \newrefformat{chapter}{Kapitel~\ref{#1}}
-  \newrefformat{sec}{Abschnitt~\ref{#1}}
-  \newrefformat{thm}{Satz~\ref{#1}}
-  \newrefformat{obs}{Beobachtung~\ref{#1}}
-  \newrefformat{cor}{Korollar~\ref{#1}}
-  \newrefformat{line}{Zeile~\ref{#1}}
-  \newrefformat{table}{Tabelle~\ref{#1}}
-}{
-  \newrefformat{alg}{Algorithm~\ref{#1}}
-  \newrefformat{fig}{Figure~\ref{#1}}
-  \newrefformat{rem}{Remark~\ref{#1}}
-  \newrefformat{example}{Example~\ref{#1}}
-  \newrefformat{chapter}{Chapter~\ref{#1}}
-  \newrefformat{sec}{Section~\ref{#1}}
-  \newrefformat{thm}{Theorem~\ref{#1}}
-  \newrefformat{obs}{Observation~\ref{#1}}
-  \newrefformat{cor}{Corollary~\ref{#1}}
-  \newrefformat{line}{Line~\ref{#1}}
-  \newrefformat{table}{Table~\ref{#1}}
-}
+\str_if_eq:VnTF
+  \mhlang
+  {german}
+  {\DeclareDocumentCommand{\zB}{}{\text{z.\,B.}\xspace}}
+  {
+    \DeclareDocumentCommand{\st}  { } {\text{s.\,t.} \xspace}
+    \DeclareDocumentCommand{\ie}  { } {\text{i.\,e.} \xspace}
+    \DeclareDocumentCommand{\eg}  { } {\text{e.\,g.} \xspace}
+    \DeclareDocumentCommand{\wrt} { } {\text{wrt.}   \xspace}
+  }
+
+\bool_if:NTF
+  \l_mhbasic_prettyref
+  {
+    % reference formats
+    \RequirePackage{prettyref}
+    \newrefformat{eq}{\textup{(\ref{#1})}}
+    \newrefformat{def}{Definition~\ref{#1}}
+    \newrefformat{lemma}{Lemma~\ref{#1}}
+    \iftoggle{mh_german}{
+      \newrefformat{alg}{Algorithmus~\ref{#1}}
+      \newrefformat{fig}{Abbildung~\ref{#1}}
+      \newrefformat{rem}{Bemerkung~\ref{#1}}
+      \newrefformat{example}{Beispiel~\ref{#1}}
+      \newrefformat{chapter}{Kapitel~\ref{#1}}
+      \newrefformat{sec}{Abschnitt~\ref{#1}}
+      \newrefformat{thm}{Satz~\ref{#1}}
+      \newrefformat{obs}{Beobachtung~\ref{#1}}
+      \newrefformat{cor}{Korollar~\ref{#1}}
+      \newrefformat{line}{Zeile~\ref{#1}}
+      \newrefformat{table}{Tabelle~\ref{#1}}
+    }{
+      \newrefformat{alg}{Algorithm~\ref{#1}}
+      \newrefformat{fig}{Figure~\ref{#1}}
+      \newrefformat{rem}{Remark~\ref{#1}}
+      \newrefformat{example}{Example~\ref{#1}}
+      \newrefformat{chapter}{Chapter~\ref{#1}}
+      \newrefformat{sec}{Section~\ref{#1}}
+      \newrefformat{thm}{Theorem~\ref{#1}}
+      \newrefformat{obs}{Observation~\ref{#1}}
+      \newrefformat{cor}{Corollary~\ref{#1}}
+      \newrefformat{line}{Line~\ref{#1}}
+      \newrefformat{table}{Table~\ref{#1}}
+    }
+  }
+  {
+  }

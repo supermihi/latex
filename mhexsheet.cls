@@ -2,7 +2,7 @@
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
 \RequirePackage{l3seq}[2013/05/26] % \seq_use:Nn introduced in this version
-\ProvidesExplClass{mhexsheet}{2013/10/10}{3}{Neatly designed exercise sheets with tons of options.}
+\ProvidesExplClass{mhexsheet}{2013/10/10}{4}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
@@ -48,7 +48,7 @@
     % Restore operator names from Libertine
     \setmathfont[range=\mathup]{Linux~Libertine~O}
     \setmathfont[range=\mathbfup]{Linux~Libertine~O~Bold}
-    \RequirePackage{polyglossia}
+    \RequirePackage[babelshorthands]{polyglossia}
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
   }
