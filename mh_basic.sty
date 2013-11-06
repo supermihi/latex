@@ -1,20 +1,4 @@
 %% mh_basic -- basic tex setup file with XeTeX/LuaTeX support.
-%%
-%% Supports UTF-8 input encoding. Options:
-%%
-%% - math:    Load mh_math. This is a convenience option.
-%%
-%% - nofonts: Don't load my favorite fonts. If this is not given
-%%            sets Linux Libertine as roman, Linux Biolinum as
-%%            sans, and Inconsolata as monospaced font.
-%%
-%% - german:  Set everything up for german use. Affects the 
-%%            babel / polyglossia language and prettyref definitions.
-%%
-%% - nobabel: Don't load babel (or polyglossia).
-%%
-%% This package loads prettyref and sets a lot of useful refformats.
-%% 
 %% Copyright 2013 by Michael Helmling
 %% Newest version: github.com/supermihi/latex
 %%
@@ -24,7 +8,7 @@
 \ProvidesExplPackage
   {mh_basic}
   {2013/11/06}
-  {1}
+  {2}
   {basic TeX setup file for UTF-8 encoded files with pdf-/Xe-/LuaLaTeX support}
   
 \keys_define:nn { mhbasic } {
@@ -123,31 +107,34 @@
     \newrefformat{eq}{\textup{(\ref{#1})}}
     \newrefformat{def}{Definition~\ref{#1}}
     \newrefformat{lemma}{Lemma~\ref{#1}}
-    \iftoggle{mh_german}{
-      \newrefformat{alg}{Algorithmus~\ref{#1}}
-      \newrefformat{fig}{Abbildung~\ref{#1}}
-      \newrefformat{rem}{Bemerkung~\ref{#1}}
-      \newrefformat{example}{Beispiel~\ref{#1}}
-      \newrefformat{chapter}{Kapitel~\ref{#1}}
-      \newrefformat{sec}{Abschnitt~\ref{#1}}
-      \newrefformat{thm}{Satz~\ref{#1}}
-      \newrefformat{obs}{Beobachtung~\ref{#1}}
-      \newrefformat{cor}{Korollar~\ref{#1}}
-      \newrefformat{line}{Zeile~\ref{#1}}
-      \newrefformat{table}{Tabelle~\ref{#1}}
-    }{
-      \newrefformat{alg}{Algorithm~\ref{#1}}
-      \newrefformat{fig}{Figure~\ref{#1}}
-      \newrefformat{rem}{Remark~\ref{#1}}
-      \newrefformat{example}{Example~\ref{#1}}
-      \newrefformat{chapter}{Chapter~\ref{#1}}
-      \newrefformat{sec}{Section~\ref{#1}}
-      \newrefformat{thm}{Theorem~\ref{#1}}
-      \newrefformat{obs}{Observation~\ref{#1}}
-      \newrefformat{cor}{Corollary~\ref{#1}}
-      \newrefformat{line}{Line~\ref{#1}}
-      \newrefformat{table}{Table~\ref{#1}}
-    }
+    \str_if_eq:VnTF
+      \mhlang
+      {german}
+      {
+        \newrefformat{alg}{Algorithmus~\ref{#1}}
+        \newrefformat{fig}{Abbildung~\ref{#1}}
+        \newrefformat{rem}{Bemerkung~\ref{#1}}
+        \newrefformat{example}{Beispiel~\ref{#1}}
+        \newrefformat{chapter}{Kapitel~\ref{#1}}
+        \newrefformat{sec}{Abschnitt~\ref{#1}}
+        \newrefformat{thm}{Satz~\ref{#1}}
+        \newrefformat{obs}{Beobachtung~\ref{#1}}
+        \newrefformat{cor}{Korollar~\ref{#1}}
+        \newrefformat{line}{Zeile~\ref{#1}}
+        \newrefformat{table}{Tabelle~\ref{#1}}
+      }
+      {
+        \newrefformat{alg}{Algorithm~\ref{#1}}
+        \newrefformat{fig}{Figure~\ref{#1}}
+        \newrefformat{rem}{Remark~\ref{#1}}
+        \newrefformat{example}{Example~\ref{#1}}
+        \newrefformat{chapter}{Chapter~\ref{#1}}
+        \newrefformat{sec}{Section~\ref{#1}}
+        \newrefformat{thm}{Theorem~\ref{#1}}
+        \newrefformat{obs}{Observation~\ref{#1}}
+        \newrefformat{cor}{Corollary~\ref{#1}}
+        \newrefformat{line}{Line~\ref{#1}}
+        \newrefformat{table}{Table~\ref{#1}}
+      }
   }
-  {
-  }
+  {  }
