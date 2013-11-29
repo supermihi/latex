@@ -7,9 +7,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesExplPackage
   {mh_basic}
-  {2013/11/06}
-  {2}
-  {basic TeX setup file for UTF-8 encoded files with pdf-/Xe-/LuaLaTeX support}
+  {2013/11/29}
+  {3}
+  {LaTeX setup package for UTF-8 encoded files with pdf-/Xe-/LuaLaTeX and optional math support}
   
 \keys_define:nn { mhbasic } {
   german       .code:n = {\tl_set:Nn \mhlang {german}},
@@ -22,7 +22,10 @@
   fonts        .initial:n   = false,
   
   math         .bool_set:N  = \l_mhbasic_math,
-  math         .initial:n   = false,
+  math         .initial:n   = true,
+  
+  unimath      .bool_set:N  = \l_mhbasic_unimath,
+  unimath      .initial:n   = false,
   
   prettyref    .bool_set:N  = \l_mhbasic_prettyref,
   prettyref    .initial:n   = false,
@@ -32,8 +35,26 @@
 
 \bool_if:NTF
   \l_mhbasic_math
-  {\ExplSyntaxOff\RequirePackage{mh_math}\ExplSyntaxOn}
-  {}
+  {
+    \RequirePackage{amsfonts,amsmath,amssymb}
+    \bool_if:nTF
+      { !(\pdftex_if_engine_p:) && \l_mhbasic_unimath }
+      { \RequirePackage{unicode-math} }
+      {  }
+    \bool_if:nTF
+     {\l_mhbasic_myfonts && (\pdftex_if_engine_p: || !(\l_mhbasic_unimath)) }
+     { \RequirePackage{euler} }
+     {  }
+   \bool_if:nTF
+     {\l_mhbasic_myfonts && \l_mhbasic_unimath && !(\pdftex_if_engine_p:) }
+     {
+       \unimathsetup{math-style=upright}
+       \setmathfont{Neo~Euler}
+       \setmathfont[range={\mathcal,\mathbfcal,\mathbb},StylisticSet=1]{XITS~Math}
+     }
+     {  }
+  }
+  {  }
 
 \pdftex_if_engine:TF
   {
@@ -82,6 +103,53 @@
 \RequirePackage[newcommands]{ragged2e}
 \RequirePackage{xspace}
 
+\bool_if:NTF
+  \l_mhbasic_math
+  {
+    \RequirePackage{mathtools}
+    % Useful math abbreviations
+    \newcommand{\Z}{\mathbb{Z}} % integrals
+    \newcommand{\Q}{\mathbb{Q}} % fractions
+    \newcommand{\N}{\mathbb{N}} % integers
+    \newcommand{\R}{\mathbb{R}} % reals
+    \DeclareDocumentCommand\C{}{\mathbb{C}} % complex numbers
+    \newcommand{\F}{\mathbb{F}} % finite fields
+    \DeclareDocumentCommand\O{}{\mathcal{O}} % Landau notation
+    \newcommand{\E}{\mathbb{E}} % Expectation
+    \newcommand{\NP}{{\sffamily NP}} % NP complexity class
+    \DeclareDocumentCommand\P{}{\textsf{P}} % P complexity class
+    \newcommand{\Llra}{\ensuremath{\Longleftrightarrow}}
+    
+    % Commands with size-adjusting braces
+    \newcommand{\abs}[1]{\left\lvert #1 \right\rvert} % absolute value
+    \newcommand{\norm}[1]{\left\| #1 \right\|} % norms
+    \newcommand{\legendre}[2]{\left(\frac{#1}{#2}\right)} % Legendre symbol (fraction in parentheses)
+    \newcommand{\gauss}[1]{\left\lfloor #1 \right\rfloor} % Gauss operator (floor)
+    
+    % Text mode punctuation in display formulas
+    \newcommand\tp{\text{.}}
+    \newcommand\tk{\text{,}}
+    \newcommand\ts{\text{;}}
+    
+    % := with vertically centered colon (requires mathtools)
+    \newcommand\definedAs{\vcentcolon=} 
+    
+    \newcommand{\algname}[1]{\textsc{#1}} % name of algorithms in small caps
+    
+    % Math operators
+    \newcommand{\op}[1]{\operatorname{#1}} % handy abbreviation
+    \DeclareMathOperator{\ggT}{ggT}
+    \DeclareMathOperator{\kgV}{kgV}
+    \DeclareMathOperator{\ord}{ord}
+    \DeclareMathOperator*{\argmin}{arg\,min}
+    \DeclareMathOperator*{\argmax}{arg\,max}
+    \DeclareMathOperator{\conv}{conv}
+    \DeclareMathOperator{\aff}{aff}
+    \DeclareMathOperator{\eq}{eq}
+    \DeclareMathOperator{\rank}{rank}
+    \DeclareMathOperator{\spn}{span}
+  }
+  {  }
 % common abbreviations
 \DeclareDocumentCommand
   {\emphex}
