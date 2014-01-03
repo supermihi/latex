@@ -32,6 +32,12 @@
 }
 
 \ProcessKeysOptions { mhbasic }
+\bool_if:NTF % unimath implies math
+  \l_mhbasic_unimath
+  {
+    \bool_set_true:N \l_mhbasic_math
+  }
+  {  }
 
 \bool_if:NTF
   \l_mhbasic_math
