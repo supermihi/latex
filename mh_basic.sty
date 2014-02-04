@@ -30,7 +30,7 @@
   prettyref    .bool_set:N  = \l_mhbasic_prettyref,
   prettyref    .initial:n   = false,
 }
-
+\tl_set:Nn \mhlang {english} % default language
 \ProcessKeysOptions { mhbasic }
 \bool_if:NTF % unimath implies math
   \l_mhbasic_unimath
@@ -63,7 +63,7 @@
   {  }
 
 \pdftex_if_engine:TF
-  {
+  { % pdfLaTeX
     \RequirePackage[utf8]{inputenc}
     \RequirePackage[T1]{fontenc}
     \bool_if:NTF
@@ -84,7 +84,7 @@
       }
       {  }
   }
-  {
+  { % XeLaTeX or LuaLaTeX
     \RequirePackage{fontspec}
     \defaultfontfeatures{Ligatures=TeX}
     \bool_if:NTF
