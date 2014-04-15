@@ -8,3 +8,4 @@
 *.out
 *.thm
 *.synctex.gz
+mhex-examples/*.pdf

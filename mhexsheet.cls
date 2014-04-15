@@ -1,8 +1,9 @@
 % !TeX encoding = UTF-8
+% For the most current version, see https://github.com/supermihi/latex
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
 \RequirePackage{l3seq}[2013/05/26] % \seq_use:Nn introduced in this version
-\ProvidesExplClass{mhexsheet}{2013/10/10}{4}{Neatly designed exercise sheets with tons of options.}
+\ProvidesExplClass{mhexsheet}{2014/04/15}{5}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
@@ -60,13 +61,14 @@
 \l_mhex_addcaption:Nnn {solutionsheet} {Lösungsblatt}   {Solution~Sheet}
 \l_mhex_addcaption:Nnn {withsolutions} {mit~Lösung}     {including~solutions}
 \l_mhex_addcaption:Nnn {page}          {Seite}          {Page}
-\l_mhex_addcaption:Nnn {deadline}      {Abgabe~bis}     {Due~date:}
 \l_mhex_addcaption:Nnn {lecture}       {Vorlesung}      {Lecture}
 \l_mhex_addcaption:Nnn {exercises}     {Übungen}        {Exercises}
 \l_mhex_addcaption:Nnn {inclasstitle}  {Präsenzübungen} {In-Class~Exercises}
 \l_mhex_addcaption:Nnn {takehometitle} {Hausübungen}    {Turn-In~Exercises}
-\l_mhex_addcaption:Nnn {deadlinepre}   {Abgabefrist:}   {Deadline:}
 \l_mhex_addcaption:Nnn {exam}          {Klausur}        {Exam}
+\l_mhex_addcaption:Nnn {deadline}
+  {Abgabe~bis~\l_mhex_deadline}
+  {Due~date:~\l_mhex_deadline}
 \l_mhex_addcaption:Nnn {takehome}
   {Bitte~bis~\l_mhex_deadline{}~abgeben}
   {Please~hand~in~by~\l_mhex_deadline}
@@ -139,6 +141,7 @@
 \DeclareDocumentCommand\maketitle{}
   {
     \rule{\linewidth}{2pt}\\[4pt]
+    % first minipage: lecture name, semester, sheet number
     \begin{minipage}{\dim_eval:n {\textwidth - \l_mhex_logowidth}}
       \raggedright
       \textsf{
@@ -164,27 +167,30 @@
           \l_mhex_exammode
           {\l_mhex_date}
           {
+            % exercise mode: show deadline if it exists
             \tl_if_empty:NTF
-              \l_mhex_date
+              \l_mhex_deadline
               { 
                 \tl_if_empty:NTF
-                  \l_mhex_deadline
+                  \l_mhex_date
                   {}
-                  {\l_mhex_deadlinetext{}~\l_mhex_deadline }
+                  {\l_mhex_inclasstext}
               }
-              { \l_mhex_inclasstext }
+              {
+                \l_mhex_deadlinetext
+              }
               
           }
       }
     \end{minipage}
-    
+    % second minipage: logo
     \begin{minipage}{\l_mhex_logowidth}
       \begin{flushright}
         \l_mhex_logo:
       \end{flushright}
     \end{minipage}\\[3pt]
     \rule{\linewidth}{2pt}\\[2pt]
-    
+    % subtitle: names of lecturer / operator
     \bool_new:N \l_mhex_subtitle
     \seq_new:N \l_mhex_people
     \bool_if:NTF
