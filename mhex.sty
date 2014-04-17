@@ -23,9 +23,9 @@
 % ======================================================================================== %
 
 \cs_new:Nn \l_mhex_exheader:n {
-  \par\vspace{2.5mm}
+  \par\medskip
   \noindent{\textbf{\textsf{#1}}}
-  \par\vspace{1.5mm}
+  \par\nopagebreak
 }
 
 \keys_define:nn { mhexerciseenv } {
@@ -55,7 +55,7 @@
         \tl_if_empty:NTF \l_mhex_curexpoints {} {~(\l_mhex_curexpoints{}~\l_mhex_pointstext)}
       }
   }
-  {\par\vspace{2mm}}
+  {\par\smallskip}
 
 \keys_define:nn { mhexsolutionenv } {
   points .tl_set:N = \l_mhex_cursolpoints,
