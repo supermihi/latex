@@ -12,6 +12,7 @@
   german             .code:n = {\tl_set:Nn \lmhexlang {german}},
   english            .code:n = {\tl_set:Nn \lmhexlang {english}},
 }
+\tl_set:Nn \lmhexlang {german}
 \LoadClass[a4paper,11pt,parskip=half-]{scrartcl}
 
 
@@ -85,7 +86,7 @@
 % ============================ Load Additional Packages ================================== %
 % ======================================================================================== %
 
-\RequirePackage{hyperref}
+\RequirePackage[colorlinks=true,linkcolor=blue,citecolor=green!70!black,linktocpage,ocgcolorlinks=true]{hyperref}
 \RequirePackage[scale=.8]{geometry}
 \RequirePackage{fancyhdr}
 \RequirePackage{zref-totpages}
