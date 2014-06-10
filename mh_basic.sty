@@ -106,7 +106,7 @@
 
 \RequirePackage{csquotes}
 \RequirePackage{microtype}
-\RequirePackage[newcommands]{ragged2e}
+\RequirePackage{ragged2e}
 \RequirePackage{xspace}
 
 \bool_if:NTF
@@ -127,10 +127,11 @@
     \newcommand{\Llra}{\ensuremath{\Longleftrightarrow}}
     
     % Commands with size-adjusting braces
-    \newcommand{\abs}[1]{\left\lvert #1 \right\rvert} % absolute value
-    \newcommand{\norm}[1]{\left\| #1 \right\|} % norms
-    \newcommand{\legendre}[2]{\left(\frac{#1}{#2}\right)} % Legendre symbol (fraction in parentheses)
-    \newcommand{\gauss}[1]{\left\lfloor #1 \right\rfloor} % Gauss operator (floor)
+    \newcommand\abs[1]{\left\lvert #1 \right\rvert} % absolute value
+    \newcommand\norm[1]{\left\| #1 \right\|} % norms
+    \newcommand\set[1]{\left\{#1\right\}} % sets
+    \newcommand\legendre[2]{\left(\frac{#1}{#2}\right)} % Legendre symbol (fraction in parentheses)
+    \newcommand\gauss[1]{\left\lfloor #1 \right\rfloor} % Gauss operator (floor)
     
     % Text mode punctuation in display formulas
     \newcommand\tp{\text{.}}
