@@ -1,9 +1,8 @@
 % !TeX encoding = UTF-8
 % For the most current version, see https://github.com/supermihi/latex
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
-\RequirePackage{expl3,l3keys,l3keys2e,l3skip,l3tl}
-\RequirePackage{l3seq}[2013/05/26] % \seq_use:Nn introduced in this version
-\ProvidesExplClass{mhexsheet}{2014/04/15}{5}{Neatly designed exercise sheets with tons of options.}
+\RequirePackage{expl3,l3keys2e}
+\ProvidesExplClass{mhexsheet}{2014/06/25}{6}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
@@ -41,7 +40,7 @@
     \defaultfontfeatures{Ligatures=TeX}
     \setmainfont{Linux~Libertine~O}
     \setsansfont{Linux~Biolinum~O}
-    \setmonofont[Scale=MatchLowercase]{Inconsolata}
+    \setmonofont{Inconsolata} %[Scale=MatchLowercase] does not work due to bug in current fontspec
     \RequirePackage{unicode-math}
     \setmathfont{Neo~Euler}
     \setmathfont[range=\mathit]{Neo~Euler}
