@@ -40,7 +40,7 @@
     \defaultfontfeatures{Ligatures=TeX}
     \setmainfont{Linux~Libertine~O}
     \setsansfont{Linux~Biolinum~O}
-    \setmonofont{Inconsolata} %[Scale=MatchLowercase] does not work due to bug in current fontspec
+    \setmonofont{Inconsolata}[Scale=MatchLowercase]
     \RequirePackage{unicode-math}
     \setmathfont{Neo~Euler}
     \setmathfont[range=\mathit]{Neo~Euler}
