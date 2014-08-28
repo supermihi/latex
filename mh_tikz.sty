@@ -6,7 +6,9 @@
 \tikzset{v/.style={draw,circle,inner sep=.8mm,minimum size=4mm}} % vertex
 \tikzset{a/.style={->,sloped}} % arc
 \tikzset{e/.style={sloped}} % edge
-\tikzset{dot/.style={fill,circle,inner sep=0mm,minimum size=1mm}}
+\tikzset{
+  dot/.style={fill,circle,inner sep=0mm,minimum size=#1},
+  dot/.default=1mm}
 \tikzset{>=stealth} % nicer arrows
 \DeclareOption{coloredgraphs}{
   \tikzset{v/.append style={draw=blue!40,thick,fill=blue!8}}
