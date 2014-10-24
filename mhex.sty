@@ -12,7 +12,6 @@
 \setlist[enumerate,2]{label=\arabic*.}
 \RequirePackage{multicol}
 \RequirePackage{xcolor}
-\RequirePackage{cleveref}
 % multi-column lists for small subexercises
 \SetEnumitemKey{columns}{
   itemsep=1\itemsep,
@@ -80,7 +79,7 @@
       {
         \l_mhex_exheader:n{
           \l_mhex_solutiontext{}~
-          \cref{mhexref\arabic{mhexercise}}
+          \ref{mhexref\arabic{mhexercise}}
           \tl_if_empty:NTF
             \l_mhex_cursolpoints
             {}
@@ -139,7 +138,7 @@
 
 \l_mhex_addcaption:Nnn {exercise}  {Aufgabe}  {Exercise}
 \l_mhex_addcaption:Nnn {exercises} {Aufgaben} {Exercises}
-\l_mhex_addcaption:Nnn {solution}  {Lösung~zu}   {Solution to}
+\l_mhex_addcaption:Nnn {solution}  {Lösung~zu~Aufgabe}   {Solution~to~Exercise}
 \l_mhex_addcaption:Nnn {points}    {Punkte}   {points}
 
 \DeclareDocumentCommand
@@ -158,6 +157,7 @@
   % ensure that babel or polyglossia are loaded
   \@ifpackageloaded{babel}{}
   {\@ifpackageloaded{polyglossia}{}{\PackageError{mhex}{babel~or~polyglossia~must~be~loaded!}}}
-  \crefname{mhexercise}{\l_mhex_exercisetext}{\l_mhex_exercisestext}
+  \@ifpackageloaded{cleveref}{\crefname{mhexercise}{\l_mhex_exercisetext}{\l_mhex_exercisestext}}
 }
+
 \ProcessKeysOptions{ mhex }

@@ -50,6 +50,7 @@
     \setmathfont[range=\mathup]{Linux~Libertine~O}
     \setmathfont[range=\mathbfup]{Linux~Libertine~O~Bold}
     \RequirePackage[babelshorthands]{polyglossia}
+    \RequirePackage[footsepline=.4pt]{scrlayer-scrpage}
     % there seems to be a bug somewhere making this Expl.. stuff necessary
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
   }
@@ -85,9 +86,9 @@
 % ============================ Load Additional Packages ================================== %
 % ======================================================================================== %
 
-\RequirePackage[colorlinks=true,linkcolor=blue,citecolor=green!70!black,linktocpage,ocgcolorlinks=true]{hyperref}
+\RequirePackage{hyperref}
 \RequirePackage[scale=.8]{geometry}
-\RequirePackage{fancyhdr}
+%\RequirePackage{fancyhdr}
 \RequirePackage{zref-totpages}
 
 
@@ -273,12 +274,7 @@
 % ======================================================================================== %
 % ==================== Page Layout: Header and Footer ==================================== %
 % ======================================================================================== %
-
-\pagestyle{fancy}
-\fancyhead{}
-\renewcommand\headrulewidth{0pt}
-\renewcommand\footrulewidth{.4pt}
-\cfoot{
+\cofoot{
   \bool_if:NTF
     \l_mhex_solution
     {\l_mhex_solutionsheettext}
@@ -289,6 +285,7 @@
     }
   {}~\l_mhex_sheetno
 }
-\rfoot{\l_mhex_pagetext{}~\thepage/\ztotpages}
-\lfoot{\l_mhex_lectureshort}
+\rofoot{\l_mhex_pagetext{}~\thepage/\ztotpages}
+\lofoot{\l_mhex_lectureshort}
+\setkomafont{pageheadfoot}{\normalfont}
 % ======================================================================================== %
