@@ -55,6 +55,7 @@
     \ExplSyntaxOff\setmainlanguage{\lmhexlang}\ExplSyntaxOn
   }
 \RequirePackage{csquotes}
+\RequirePackage{microtype}
 \RequirePackage{mhex}
 
 % === predefined captions ================================================================ %
@@ -88,7 +89,7 @@
 
 \RequirePackage{hyperref}
 \RequirePackage[scale=.8]{geometry}
-%\RequirePackage{fancyhdr}
+\RequirePackage{scrlayer-scrpage}
 \RequirePackage{zref-totpages}
 
 
