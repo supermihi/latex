@@ -2,7 +2,7 @@
 % For the most current version, see https://github.com/supermihi/latex
 \NeedsTeXFormat{LaTeX2e}[2011/06/27]
 \RequirePackage{expl3,l3keys2e}
-\ProvidesExplClass{mhexsheet}{2014/06/25}{6}{Neatly designed exercise sheets with tons of options.}
+\ProvidesExplClass{mhexsheet}{2014/10/22}{7}{Neatly designed exercise sheets with tons of options.}
 
 % ======================================================================================== %
 % ============ Set Class Options for Language Setup and Load scrartcl ==================== %
