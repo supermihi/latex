@@ -78,8 +78,7 @@
   {Zur~Bearbeitung~in~der~Übung~am~\l_mhex_date}
   { To~be~done~in~the~tutorial~on~\l_mhex_date }
 \l_mhex_addcaption:Nnn {homepage}
-  {Dieses~Übungsblatt~sowie~weitere~Informationen~zur~Übung~
-   sind~unter~\url{\l_mhex_homepage}~erhältlich}
+  {Download~von~Übungsblättern,~Zusatzmaterial~etc.:~\url{\l_mhex_homepage}}
   {Download~this~sheet~at~\url{\l_mhex_homepage}}
 % ======================================================================================== %
 
