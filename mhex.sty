@@ -25,7 +25,7 @@
 \cs_new:Nn \l_mhex_exheader:n {
   \par\medskip
   \noindent{\textbf{\textsf{#1}}}
-  \par\nopagebreak
+  \par
 }
 
 \keys_define:nn { mhexerciseenv } {
@@ -57,6 +57,7 @@
         \tl_if_empty:NTF \l_mhex_curexpoints {} {~(\l_mhex_curexpoints{}~\l_mhex_pointstext)}
       }
     \label{mhexref\arabic{mhexercise}}
+    \nopagebreak[4]
   }
   {\par\smallskip}
 
