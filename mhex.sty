@@ -140,6 +140,8 @@
 \l_mhex_addcaption:Nnn {exercises} {Aufgaben} {Exercises}
 \l_mhex_addcaption:Nnn {solution}  {Lösung~zu~Aufgabe}   {Solution~to~Exercise}
 \l_mhex_addcaption:Nnn {points}    {Punkte}   {points}
+\l_mhex_addcaption:Nnn {part}      {Teil}     {part}
+\l_mhex_addcaption:Nnn {parts}     {Teile}    {parts}
 
 \DeclareDocumentCommand
   \mhexCaption
@@ -157,7 +159,10 @@
   % ensure that babel or polyglossia are loaded
   \@ifpackageloaded{babel}{}
   {\@ifpackageloaded{polyglossia}{}{\PackageError{mhex}{babel~or~polyglossia~must~be~loaded!}}}
-  \@ifpackageloaded{cleveref}{\crefname{mhexercise}{\l_mhex_exercisetext}{\l_mhex_exercisestext}}
+  \@ifpackageloaded{cleveref}{
+    \crefname{mhexercise}{\l_mhex_exercisetext}{\l_mhex_exercisestext}
+    \crefname{enumi}{\l_mhex_parttext}{\l_mhex_partstext}
+  }
 }
 
 \ProcessKeysOptions{ mhex }
