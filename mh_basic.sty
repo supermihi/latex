@@ -107,6 +107,7 @@
 \RequirePackage{csquotes}
 \RequirePackage{microtype}
 \RequirePackage{ragged2e}
+\RequirePackage{tabularx}
 \RequirePackage{xspace}
 
 \bool_if:NTF
@@ -122,6 +123,7 @@
     \newcommand{\F}{\mathbb{F}} % finite fields
     \DeclareDocumentCommand\O{}{\mathcal{O}} % Landau notation
     \newcommand{\E}{\mathbb{E}} % Expectation
+    \DeclareMathOperator{\Var}{Var} % Variance
     \newcommand{\NP}{{\sffamily NP}} % NP complexity class
     \DeclareDocumentCommand\P{}{\textsf{P}} % P complexity class
     \newcommand{\Llra}{\ensuremath{\Longleftrightarrow}}
@@ -164,13 +166,16 @@
 % common abbreviations
 \DeclareDocumentCommand
   {\emphex}
-  { m }
-  {\emph{#1}\index{#1}}
+  { o m }
+  {\emph{#2}\index{\IfNoValueTF{#1}{#2}{#1}}}
 
 \str_if_eq:VnTF
   \mhlang
   {german}
-  {\DeclareDocumentCommand{\zB}{}{\text{z.\,B.}\xspace}}
+  {
+    \DeclareDocumentCommand{\zB}{}{\text{z.\,B.}\xspace}
+    \DeclareDocumentCommand{\dh}{}{\text{d.\,h.}\xspace}
+  }
   {
     \DeclareDocumentCommand{\st}  { } {\text{s.\,t.} \xspace}
     \DeclareDocumentCommand{\ie}  { } {\text{i.\,e.} \xspace}
