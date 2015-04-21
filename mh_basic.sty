@@ -38,17 +38,22 @@
     \bool_set_true:N \l_mhbasic_math
   }
   {  }
+% no unimath in pdftex mode!
+\bool_if:NTF
+  \pdftex_if_engine_p:
+  {\bool_set_false:N \l_mhbasic_unimath}
+  {}
 
 \bool_if:NTF
   \l_mhbasic_math
   {
     \RequirePackage{amsfonts,amsmath,amssymb}
-    \bool_if:nTF
-      { !(\pdftex_if_engine_p:) && \l_mhbasic_unimath }
+    \bool_if:NTF
+      \l_mhbasic_unimath
       { \RequirePackage{unicode-math} }
       {  }
     \bool_if:nTF
-     {\l_mhbasic_myfonts && (\pdftex_if_engine_p: || !(\l_mhbasic_unimath)) }
+     {\l_mhbasic_myfonts && !(\l_mhbasic_unimath) }
      { \RequirePackage{euler} }
      {  }
    \bool_if:nTF
@@ -72,7 +77,7 @@
         \RequirePackage{libertine}
         \RequirePackage{inconsolata}
       }
-      {\RequirePackage{lmodern}}
+      {}
     \bool_if:NTF
       \l_mhbasic_babel
       {
@@ -174,7 +179,8 @@
   {german}
   {
     \DeclareDocumentCommand{\zB}{}{\text{z.\,B.}\xspace}
-    \DeclareDocumentCommand{\dh}{}{\text{d.\,h.}\xspace}
+    \AtBeginDocument{
+    \DeclareDocumentCommand{\dh}{}{\text{d.\,h.}\xspace}}
   }
   {
     \DeclareDocumentCommand{\st}  { } {\text{s.\,t.} \xspace}
